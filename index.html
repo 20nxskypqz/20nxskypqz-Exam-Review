@@ -2,10 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta
-    name="viewport"
-    content="width=device-width,initial-scale=1,viewport-fit=cover"
-  />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>20nxskypqz Exam Review</title>
 
   <!-- Google Fonts: Niramit -->
@@ -87,11 +84,9 @@
 
   <!-- PDF.js (ES Module build) -->
   <script type="module">
-    // Use a specific, stable version of pdfjs-dist
     import * as pdfjsLib from 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.mjs';
     import 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.mjs';
 
-    // ---------- DOM ----------
     const fileInput = document.getElementById('file');
     const drop = document.getElementById('drop');
     const viewer = document.getElementById('viewer');
@@ -100,10 +95,9 @@
     const scaleVal = document.getElementById('scaleVal');
     const openRaw = document.getElementById('openRaw');
 
-    // Set this to a file in your repo to auto-load on open, e.g., 'files/lesson.pdf'
-    const defaultPdf = ''; // e.g. 'files/lesson.pdf'
+    // โหลดไฟล์นี้อัตโนมัติ
+    const defaultPdf = 'files/สังคมศึกษาทุกเรื่องม.4_1-68.pdf';
 
-    // Also support ?file=... in URL
     const params = new URLSearchParams(location.search);
     const paramFile = params.get('file');
 
@@ -123,13 +117,11 @@
       openRaw.href = src;
 
       try {
-        // Load document
         const loadingTask = pdfjsLib.getDocument(src);
         const pdf = await loadingTask.promise;
         currentDoc = pdf;
         setStatus(`Loaded ${pdf.numPages} page(s). Rendering…`);
 
-        // Render each page
         for (let p = 1; p <= pdf.numPages; p++) {
           const page = await pdf.getPage(p);
           const viewport = page.getViewport({ scale });
@@ -161,7 +153,6 @@
       }
     }
 
-    // File input
     fileInput.addEventListener('change', async (e) => {
       const file = e.target.files?.[0];
       if (!file) return;
@@ -169,7 +160,6 @@
       await renderPdf(blobUrl, parseFloat(scaleInput.value));
     });
 
-    // Drag & drop
     const stop = e => { e.preventDefault(); e.stopPropagation(); };
     ['dragenter','dragover','dragleave','drop'].forEach(evt => {
       drop.addEventListener(evt, stop, false);
@@ -191,7 +181,6 @@
     });
     drop.addEventListener('click', () => fileInput.click());
 
-    // Zoom
     scaleInput.addEventListener('input', () => {
       const scale = parseFloat(scaleInput.value);
       scaleVal.textContent = Math.round(scale*100) + '%';
@@ -200,7 +189,6 @@
       if (currentDoc && currentSrc) renderPdf(currentSrc, parseFloat(scaleInput.value));
     });
 
-    // Auto-load if configured
     const initial = paramFile || defaultPdf;
     if (initial) renderPdf(initial, currentScale);
   </script>
