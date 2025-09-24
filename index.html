@@ -1,55 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>20nxskypqz Exam Review</title>
-    <!-- โหลดฟอนต์ Niramit จาก Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Niramit', sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f9f9f9;
-            text-align: center;
-        }
-        .container {
-            max-width: 800px;
-            padding: 20px;
-        }
-        h1 {
-            font-weight: 700;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        h2 {
-            font-weight: 700;
-            font-size: 2rem;
-            margin-top: 0;
-        }
-        .pdf-content {
-            text-align: left;
-            margin-top: 30px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,viewport-fit=cover"
+  />
+  <title>20nxskypqz Exam Review</title>
+
+  <!-- Google Fonts: Niramit -->
+  <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root { --bg:#f9f9f9; --card:#ffffff; --shadow:0 6px 24px rgba(0,0,0,.08); }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: 'Niramit', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+      background: var(--bg); color:#111; line-height:1.6;
+      display:flex; min-height:100dvh; align-items:stretch; justify-content:center;
+    }
+    .wrap { width:100%; max-width:1000px; padding:28px; display:flex; flex-direction:column; gap:20px; }
+    header { text-align:center; margin-top:8px; }
+    header h1 { margin:0 0 8px; font-size:clamp(28px,4vw,40px); font-weight:700; }
+    header h2 { margin:0; font-size:clamp(22px,3.2vw,32px); font-weight:700; opacity:.9; }
+    .panel {
+      background:var(--card); border-radius:16px; box-shadow:var(--shadow);
+      padding:16px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between;
+    }
+    .left { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .drop {
+      flex:1 1 260px; border:2px dashed #bbb; border-radius:12px; padding:14px;
+      text-align:center; cursor:pointer; background:#fff;
+    }
+    .drop.dragover { border-color:#333; background:#fafafa; }
+    .controls { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .controls label { font-weight:700; }
+    .controls input[type="range"] { width:180px; }
+    #status { font-size:14px; opacity:.8; }
+    #viewer {
+      background:transparent; display:grid; gap:14px;
+      grid-template-columns:1fr; padding-bottom:20px;
+    }
+    .pageCard {
+      background:var(--card); border-radius:16px; box-shadow:var(--shadow);
+      padding:12px; overflow:auto;
+    }
+    .pageHeader { font-weight:700; font-size:14px; opacity:.7; margin:4px 6px 10px; }
+    canvas { width:100%; height:auto; display:block; border-radius:10px; }
+    .hide { display:none; }
+    .small { font-size:12px; opacity:.75; }
+    button, .btn {
+      appearance:none; border:none; border-radius:999px; padding:10px 14px;
+      background:#111; color:#fff; font-weight:700; cursor:pointer;
+    }
+    button:disabled { opacity:.5; cursor:not-allowed; }
+    a.btn { text-decoration:none; display:inline-block; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to</h1>
-        <h2>20nxskypqz Exam Review</h2>
-        <!-- พื้นที่วางเนื้อหาจากไฟล์ PDF -->
-        <div class="pdf-content" id="pdf-content">
-            <!-- ข้อความจากไฟล์ PDF จะถูกวางตรงนี้ -->
+  <main class="wrap">
+    <header>
+      <h1>Welcome to</h1>
+      <h2>20nxskypqz Exam Review</h2>
+    </header>
+
+    <section class="panel" id="panel">
+      <div class="left">
+        <label class="btn" for="file">Choose PDF</label>
+        <input id="file" type="file" accept="application/pdf" class="hide" />
+        <div id="drop" class="drop" tabindex="0" aria-label="Drop PDF here">
+          Drop PDF here or click “Choose PDF”
         </div>
-    </div>
+      </div>
+
+      <div class="controls">
+        <label for="scale">Zoom</label>
+        <input id="scale" type="range" min="0.8" max="2.0" step="0.1" value="1.2" />
+        <span id="scaleVal" class="small">120%</span>
+        <a id="openRaw" class="btn" target="_blank" rel="noopener">Open PDF</a>
+      </div>
+      <div id="status" class="small">No file loaded</div>
+    </section>
+
+    <section id="viewer" aria-live="polite"></section>
+  </main>
+
+  <!-- PDF.js (ES Module build) -->
+  <script type="module">
+    // Use a specific, stable version of pdfjs-dist
+    import * as pdfjsLib from 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.mjs';
+    import 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.mjs';
+
+    // ---------- DOM ----------
+    const fileInput = document.getElementById('file');
+    const drop = document.getElementById('drop');
+    const viewer = document.getElementById('viewer');
+    const statusEl = document.getElementById('status');
+    const scaleInput = document.getElementById('scale');
+    const scaleVal = document.getElementById('scaleVal');
+    const openRaw = document.getElementById('openRaw');
+
+    // Set this to a file in your repo to auto-load on open, e.g., 'files/lesson.pdf'
+    const defaultPdf = ''; // e.g. 'files/lesson.pdf'
+
+    // Also support ?file=... in URL
+    const params = new URLSearchParams(location.search);
+    const paramFile = params.get('file');
+
+    let currentDoc = null;
+    let currentSrc = '';
+    let currentScale = parseFloat(scaleInput.value);
+
+    function setStatus(msg) { statusEl.textContent = msg; }
+    function clearViewer() { viewer.innerHTML = ''; }
+
+    async function renderPdf(src, scale=1.2) {
+      setStatus('Loading PDF…');
+      clearViewer();
+      currentScale = scale;
+      scaleVal.textContent = Math.round(scale*100) + '%';
+      currentSrc = src;
+      openRaw.href = src;
+
+      try {
+        // Load document
+        const loadingTask = pdfjsLib.getDocument(src);
+        const pdf = await loadingTask.promise;
+        currentDoc = pdf;
+        setStatus(`Loaded ${pdf.numPages} page(s). Rendering…`);
+
+        // Render each page
+        for (let p = 1; p <= pdf.numPages; p++) {
+          const page = await pdf.getPage(p);
+          const viewport = page.getViewport({ scale });
+
+          const card = document.createElement('div');
+          card.className = 'pageCard';
+
+          const header = document.createElement('div');
+          header.className = 'pageHeader';
+          header.textContent = `Page ${p} / ${pdf.numPages}`;
+          card.appendChild(header);
+
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d', { alpha: false });
+          canvas.width = Math.floor(viewport.width);
+          canvas.height = Math.floor(viewport.height);
+
+          const renderTask = page.render({ canvasContext: context, viewport });
+          await renderTask.promise;
+
+          card.appendChild(canvas);
+          viewer.appendChild(card);
+          setStatus(`Rendered page ${p} / ${pdf.numPages}`);
+        }
+        setStatus('Done.');
+      } catch (err) {
+        console.error(err);
+        setStatus('Failed to load/render PDF. Check the file path or try another PDF.');
+      }
+    }
+
+    // File input
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const blobUrl = URL.createObjectURL(file);
+      await renderPdf(blobUrl, parseFloat(scaleInput.value));
+    });
+
+    // Drag & drop
+    const stop = e => { e.preventDefault(); e.stopPropagation(); };
+    ['dragenter','dragover','dragleave','drop'].forEach(evt => {
+      drop.addEventListener(evt, stop, false);
+    });
+    ['dragenter','dragover'].forEach(evt => {
+      drop.addEventListener(evt, () => drop.classList.add('dragover'));
+    });
+    ['dragleave','drop'].forEach(evt => {
+      drop.addEventListener(evt, () => drop.classList.remove('dragover'));
+    });
+    drop.addEventListener('drop', (e) => {
+      const file = e.dataTransfer?.files?.[0];
+      if (file && file.type === 'application/pdf') {
+        const blobUrl = URL.createObjectURL(file);
+        renderPdf(blobUrl, parseFloat(scaleInput.value));
+      } else {
+        setStatus('Please drop a PDF file.');
+      }
+    });
+    drop.addEventListener('click', () => fileInput.click());
+
+    // Zoom
+    scaleInput.addEventListener('input', () => {
+      const scale = parseFloat(scaleInput.value);
+      scaleVal.textContent = Math.round(scale*100) + '%';
+    });
+    scaleInput.addEventListener('change', async () => {
+      if (currentDoc && currentSrc) renderPdf(currentSrc, parseFloat(scaleInput.value));
+    });
+
+    // Auto-load if configured
+    const initial = paramFile || defaultPdf;
+    if (initial) renderPdf(initial, currentScale);
+  </script>
 </body>
 </html>
