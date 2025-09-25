@@ -9,25 +9,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
-    :root { --bg:#f9f9f9; --card:#fff; --shadow:0 6px 24px rgba(0,0,0,.08); }
+    :root { --bg:#f9f9f9; --card:#fff; --shadow:0 6px 24px rgba(0,0,0,.08); --ink:#111; }
     * { box-sizing:border-box; }
     body {
-      margin:0; background:var(--bg); color:#111; font-family:'Niramit',system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+      margin:0; background:var(--bg); color:var(--ink);
+      font-family:'Niramit',system-ui,-apple-system,Segoe UI,Arial,sans-serif;
       line-height:1.8; padding:20px;
     }
     h1,h2 { text-align:center; margin:0 0 10px 0; font-weight:700; }
     .docTitle { text-align:center; font-weight:700; margin:16px auto 8px; font-size:22px; }
     #content {
-      max-width: 960px; margin: 12px auto 24px; background:var(--card); border-radius:12px; box-shadow:var(--shadow);
-      padding: 20px; white-space: normal; /* เราจะจัดบรรทัดเองด้วย <div.line> */
-      font-size:18px;
+      max-width:960px; margin:12px auto 24px; background:var(--card); border-radius:12px; box-shadow:var(--shadow);
+      padding:20px; white-space:normal; font-size:18px;
     }
-    .line { display:block; }          /* 1 บรรทัดใน PDF = 1 บรรทัดจริง */
-    .chunk { display:inline; }        /* ชิ้นข้อความภายในบรรทัด */
+    .line { display:block; }
+    .chunk { display:inline; }
     .bold { font-weight:700 !important; }
     .italic { font-style:italic; }
     .error { color:#c00; text-align:center; font-weight:700; margin-top:16px; }
-    .divider { height:12px; }         /* เว้นเล็กน้อยระหว่างหน้า แต่ไม่ขึ้นหน้าใหม่ */
+    .divider { height:12px; }
   </style>
 </head>
 <body>
@@ -41,152 +41,206 @@
     import * as pdfjsLib from 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.mjs';
     import 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.mjs';
 
-    // ====== ตั้งค่าไฟล์และเกณฑ์ ======
     const PDF_PATH = 'files/สังคมศึกษาทุกเรื่องม.4_1-68.pdf';
-
-    // tolerance สำหรับจับ "อยู่บรรทัดเดียวกัน" (หน่วยพิกัด PDF)
-    const Y_TOLERANCE = 3.0;
-
-    // เกณฑ์ให้หัวข้อหนาอัตโนมัติ
-    const AUTO_BOLD_1 = 25;
-    const AUTO_BOLD_2 = 20;
+    const Y_TOL = 3.0;          // รวมเป็นบรรทัดเดียวถ้า Y ใกล้กันในช่วงนี้
+    const AUTO_BOLD_1 = 25;     // หนาอัตโนมัติ (หัวข้อใหญ่)
+    const AUTO_BOLD_2 = 20;     // หนาอัตโนมัติ (หัวข้อรอง)
 
     const contentEl = document.getElementById('content');
 
-    // HTML escape
+    const BOLD_RE   = /(bold|black|heavy|demi|semi[-\s]?bold|semibold|demibold|bd|700|800|900)/i;
+    const ITALIC_RE = /(italic|oblique|it|slanted)/i;
+    const SARABUN_RE = /(sarabun|saraban|thsarabun|sarabunpsk|thsarabunnew)/i;
+
     const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-    // ตรวจจับ bold/italic จากชื่อฟอนต์และ family (ครอบคลุม Sarabun/Saraban/PSK/New)
-    const BOLD_HINTS_RE = /(bold|black|heavy|demi|semi[-\s]?bold|semibold|demibold|db|bd|700|800|900)/i;
-    const ITALIC_HINTS_RE = /(italic|oblique|it|slanted)/i;
-    const SARABUN_FAMILY_RE = /(sarabun|saraban|thsarabun|sarabunpsk)/i;
-
-    function isBoldFromName(fontName='', fontFamily='') {
-      return BOLD_HINTS_RE.test(fontName) || BOLD_HINTS_RE.test(fontFamily);
-    }
-    function isItalicFromName(fontName='', fontFamily='') {
-      return ITALIC_HINTS_RE.test(fontName) || ITALIC_HINTS_RE.test(fontFamily);
+    // ตัด prefix ซับเซ็ตฟอนต์ เช่น ABCDEF+THSarabunNew-Bold -> THSarabunNew-Bold
+    function normalizeFontKey(k='') {
+      const plus = k.indexOf('+');
+      return plus > -1 ? k.slice(plus+1) : k;
     }
 
-    // จัดกลุ่ม items ตามแกน Y เป็นบรรทัด
-    function groupItemsIntoLines(items) {
-      const lines = [];
-      const used = new Array(items.length).fill(false);
-
-      const it = items.map((item, idx) => {
-        const t = item.transform || [1,0,0,1,0,0];
-        const fs = Math.max(Math.abs(t[0]||0), Math.abs(t[3]||0)) || 18;
-        const x = t[4] || 0;
-        const y = t[5] || 0;
-        const w = item.width || 0;
-        return { idx, item, x, y, w, fontSize: fs };
+    // รวม items เป็นบรรทัดจากแกน Y
+    function groupIntoLines(items){
+      const lines=[]; const used = new Array(items.length).fill(false);
+      const arr = items.map((item,idx)=>{
+        const t=item.transform||[1,0,0,1,0,0];
+        const fs=Math.max(Math.abs(t[0]||0),Math.abs(t[3]||0))||18;
+        const x=t[4]||0, y=t[5]||0;
+        const w=item.width||0;
+        return {idx,item,x,y,w,fontSize:fs};
       });
-
-      // เรียงจากบนลงล่าง
-      it.sort((a,b) => b.y - a.y);
-
-      for (let i=0;i<it.length;i++){
-        if (used[i]) continue;
-        const base = it[i];
-        used[i] = true;
-        const line = [base];
-
-        for (let j=i+1;j<it.length;j++){
-          if (used[j]) continue;
-          const cand = it[j];
-          if (Math.abs(cand.y - base.y) <= Y_TOLERANCE) {
-            used[j] = true;
-            line.push(cand);
-          }
+      arr.sort((a,b)=>b.y-a.y);
+      for(let i=0;i<arr.length;i++){
+        if(used[i]) continue;
+        const base=arr[i]; used[i]=true;
+        const line=[base];
+        for(let j=i+1;j<arr.length;j++){
+          if(used[j]) continue;
+          const cand=arr[j];
+          if(Math.abs(cand.y-base.y)<=Y_TOL){ used[j]=true; line.push(cand); }
         }
-
-        // ซ้าย→ขวา
-        line.sort((a,b) => a.x - b.x);
+        line.sort((a,b)=>a.x-b.x);
         lines.push(line);
       }
-
-      // บน→ล่าง
-      lines.sort((A,B)=>B[0].y - A[0].y);
+      lines.sort((A,B)=>B[0].y-A[0].y);
       return lines;
     }
 
-    // ช่องว่างระหว่างชิ้นข้อความ (คำนวณจากช่องว่างจริง)
-    function needsSpace(prev, curr) {
-      if (!prev) return false;
-      const prevEndX = prev.x + (prev.w || 0);
-      const gap = curr.x - prevEndX;
-      const threshold = Math.max(2, prev.fontSize * 0.25);
-      return gap > threshold;
+    // ช่องว่างระหว่างชิ้นข้อความ (จากช่องว่างจริง)
+    function needsSpace(prev,curr){
+      if(!prev) return false;
+      const prevEnd=prev.x+(prev.w||0);
+      const gap=curr.x-prevEnd;
+      const th=Math.max(2, prev.fontSize*0.25);
+      return gap>th;
     }
 
-    // บังคับเว้นวรรคกรณีพิเศษ:
-    //  - "•" ต้องมีช่องว่างตามหลัง
-    //  - "1." "2." "10." ฯลฯ ต้องมีช่องว่างตามหลัง
-    function forceTrailingSpaceIfListToken(text) {
-      if (text === '•') return true;
-      if (/^\d+\.$/.test(text)) return true;
+    // บังคับวรรคหลัง bullet และเลขลำดับ
+    function forceTrailSpaceToken(txt){
+      if(txt==='•') return true;
+      if(/^\d+\.$/.test(txt)) return true;
       return false;
     }
 
-    async function renderTextContinuous(url) {
+    // ----------- อัลกอริทึมจับ Bold อัตโนมัติ -----------
+    // ผลรวมสถิติแต่ละฟอนต์ใน 1 เอกสาร: วัด "ความกว้างต่ออักษร ต่อขนาด" เพื่อแยกหนา-บางในแฟมิลีเดียวกัน
+    function collectFontStats(allPages) {
+      // statsPerFont: key=fontName (raw), { family, normName, count, sumRatio }
+      const statsPerFont = {};
+      // groups: key=family (normalize), set of font keys
+      const familyGroup = {};
+
+      for (const {items, styles} of allPages) {
+        for (const it of items) {
+          const nameRaw = it.item.fontName || '';
+          const nameNorm = normalizeFontKey(nameRaw);
+          const family = (styles[nameRaw]?.fontFamily || '').toLowerCase();
+
+          const len = (it.item.str||'').length || 1;
+          const width = it.w || 0;
+          const ratio = len ? ( (width/len) / (it.fontSize||1) ) : 0; // กว้างต่ออักษร ต่อขนาด
+
+          const s = statsPerFont[nameRaw] || { family, normName:nameNorm, count:0, sumRatio:0 };
+          s.count += 1;
+          s.sumRatio += ratio;
+          statsPerFont[nameRaw] = s;
+
+          const famKey = family || nameNorm.toLowerCase();
+          if (!familyGroup[famKey]) familyGroup[famKey] = new Set();
+          familyGroup[famKey].add(nameRaw);
+        }
+      }
+
+      // ตัดสิน "ตัวหนาคาดเดา" ต่อแฟมิลี: ตัวที่ avgRatio สูงสุด (หรือสูงกว่าเพื่อนชัดเจน) = Bold
+      const heuristicBold = new Set();
+      for (const famKey of Object.keys(familyGroup)) {
+        const members = Array.from(familyGroup[famKey] || []);
+        if (members.length < 2) continue; // มีแบบเดียว เดายาก ข้าม
+
+        let bestKey = null, bestAvg = -Infinity;
+        let secondAvg = -Infinity;
+
+        for (const k of members) {
+          const s = statsPerFont[k];
+          if (!s || s.count === 0) continue;
+          const avg = s.sumRatio / s.count;
+          if (avg > bestAvg) { secondAvg = bestAvg; bestAvg = avg; bestKey = k; }
+          else if (avg > secondAvg) { secondAvg = avg; }
+        }
+
+        // ต้องเหนือกว่าอย่างมีนัยยะ (ค่าเผื่อ) จึงถือว่า "หนา"
+        if (bestKey && bestAvg > 0 && (bestAvg - secondAvg) > 0.03) { // threshold 0.03 ปรับได้
+          heuristicBold.add(bestKey);
+        }
+      }
+
+      return { statsPerFont, heuristicBold };
+    }
+
+    function decideBoldItalic(fontNameRaw, family, fontSize, heuristicBold) {
+      const nameNorm = normalizeFontKey(fontNameRaw).toLowerCase();
+      const familyLC = (family||'').toLowerCase();
+
+      // 1) ถอดรหัสจากชื่อ (หลังตัด subset) และ family
+      let isBold = BOLD_RE.test(nameNorm) || BOLD_RE.test(familyLC);
+      let isItalic = ITALIC_RE.test(nameNorm) || ITALIC_RE.test(familyLC);
+
+      // 2) พิเศษสำหรับ Sarabun: ถ้ามีคำใบ้ bold ใน name/family ให้หนาทันที
+      if (SARABUN_RE.test(nameNorm) || SARABUN_RE.test(familyLC)) {
+        if (BOLD_RE.test(nameNorm) || BOLD_RE.test(familyLC)) isBold = true;
+      }
+
+      // 3) ฮิวริสติกต่อแฟมิลีเดียวกัน: ถ้าถูกจัดเป็นตัวหนาจากสถิติ ให้หนา
+      if (heuristicBold.has(fontNameRaw)) isBold = true;
+
+      // 4) หัวข้อใหญ่: บังคับหนา
+      if (fontSize >= AUTO_BOLD_1 || fontSize >= AUTO_BOLD_2) isBold = true;
+
+      return { isBold, isItalic };
+    }
+    // ------------------------------------------------------
+
+    async function renderPdfText() {
+      contentEl.innerHTML = 'Loading text from PDF...';
       try {
-        const pdf = await pdfjsLib.getDocument(url).promise;
-        contentEl.innerHTML = '';
+        const pdf = await pdfjsLib.getDocument(PDF_PATH).promise;
 
-        for (let p=1; p<=pdf.numPages; p++){
+        // ===== Pass 1: รวบรวมข้อมูลทุกหน้า (items + styles) เพื่อประเมินฮิวริสติก =====
+        const allPages = [];
+        for (let p=1; p<=pdf.numPages; p++) {
           const page = await pdf.getPage(p);
-          const textContent = await page.getTextContent();
+          const tc = await page.getTextContent();
+          // enrich items with computed fontSize/width for stats
+          const enriched = (tc.items||[]).map(it => {
+            const t = it.transform || [1,0,0,1,0,0];
+            const fs = Math.max(Math.abs(t[0]||0), Math.abs(t[3]||0)) || 18;
+            const w = it.width || 0;
+            return { item: it, fontSize: fs, w };
+          });
+          allPages.push({ items: enriched, styles: tc.styles || {} });
+        }
+        const { heuristicBold } = collectFontStats(allPages);
 
-          const styles = textContent.styles || {}; // ใช้เพื่อเช็ค fontFamily
-          // (optional) debug: ดูว่ามีฟอนต์อะไรบ้าง
-          // console.log('Styles keys:', Object.keys(styles));
-          // Object.entries(styles).forEach(([k,v]) => console.log(k, v.fontFamily));
+        // ===== Pass 2: เรนเดอร์จริง พร้อมตัดสิน Bold/Italic อัตโนมัติ =====
+        contentEl.innerHTML = '';
+        for (let p=1; p<=pdf.numPages; p++) {
+          const { items: enriched, styles } = allPages[p-1];
 
-          if (!textContent.items || textContent.items.length === 0) {
-            continue; // หน้านี้อาจเป็นภาพล้วน
-          }
+          // จัดบรรทัดจาก enriched(item+fontSize+w)
+          const itemsForGrouping = enriched.map(e => {
+            // reconstruct minimal item for grouping
+            const it = e.item;
+            const t = it.transform || [1,0,0,1,0,0];
+            return { item: it, x: t[4]||0, y: t[5]||0, w: it.width||0, fontSize: e.fontSize };
+          });
+          const lines = groupIntoLines(itemsForGrouping);
 
-          const lines = groupItemsIntoLines(textContent.items);
-
-          for (const line of lines){
+          for (const line of lines) {
             const lineEl = document.createElement('div');
             lineEl.className = 'line';
 
             let prev = null;
-            for (let k=0;k<line.length;k++){
-              const seg = line[k];
-              const { item, fontSize, x, y, w } = seg;
-              const raw = (item.str || '').trim();
-              if (!raw) { prev = seg; continue; }
+            for (const seg of line) {
+              const it = seg.item;
+              const text = (it.str || '').trim();
+              if (!text) { prev = seg; continue; }
 
               const span = document.createElement('span');
               span.className = 'chunk';
-              span.style.fontSize = `${fontSize}px`;
+              span.style.fontSize = `${seg.fontSize}px`;
 
-              const fontName = item.fontName || '';
-              const fontFamily = styles[fontName]?.fontFamily || '';
+              const fontNameRaw = it.fontName || '';
+              const family = styles[fontNameRaw]?.fontFamily || '';
 
-              // 1) หนา/เอียงจากข้อมูลฟอนต์จริง
-              if (isBoldFromName(fontName, fontFamily)) span.classList.add('bold');
-              if (isItalicFromName(fontName, fontFamily)) span.classList.add('italic');
+              const { isBold, isItalic } = decideBoldItalic(fontNameRaw, family, seg.fontSize, heuristicBold);
+              if (isBold) span.classList.add('bold');
+              if (isItalic) span.classList.add('italic');
 
-              // 2) ถ้าเป็นตระกูล Sarabun/Saraban และมี hint ว่าเป็น Bold ใน family/name → หนาแน่นอน
-              if (SARABUN_FAMILY_RE.test(fontName) || SARABUN_FAMILY_RE.test(fontFamily)) {
-                if (BOLD_HINTS_RE.test(fontName) || BOLD_HINTS_RE.test(fontFamily)) {
-                  span.classList.add('bold');
-                }
-              }
+              const prefix = needsSpace(prev, seg) ? ' ' : '';
+              const trail = forceTrailSpaceToken(text) ? ' ' : '';
 
-              // 3) หนาอัตโนมัติสำหรับหัวข้อใหญ่
-              if (fontSize >= AUTO_BOLD_1 || fontSize >= AUTO_BOLD_2) {
-                span.classList.add('bold');
-              }
-
-              // ช่องว่างนำหน้า (ตามตำแหน่งจริง) + บังคับวรรคหลัง bullet/เลขลำดับ
-              const prefixSpace = needsSpace(prev, seg) ? ' ' : '';
-              const forceTrail = forceTrailingSpaceIfListToken(raw) ? ' ' : '';
-
-              span.innerHTML = esc(prefixSpace + raw + forceTrail);
+              span.innerHTML = esc(prefix + text + trail);
               lineEl.appendChild(span);
 
               prev = seg;
@@ -196,14 +250,14 @@
           }
 
           if (p < pdf.numPages) {
-            const div = document.createElement('div');
-            div.className = 'divider';
-            contentEl.appendChild(div);
+            const d = document.createElement('div');
+            d.className = 'divider';
+            contentEl.appendChild(d);
           }
         }
 
         if (!contentEl.textContent.trim()) {
-          contentEl.innerHTML = '<div class="error">พบว่าไฟล์หน้า/ทั้งหมดไม่มีเลเยอร์ข้อความ (เป็นภาพสแกน) — หากต้องการข้อความ ให้ใช้ไฟล์ที่เป็นข้อความ หรือเพิ่ม OCR</div>';
+          contentEl.innerHTML = '<div class="error">พบว่าไฟล์นี้ไม่มีเลเยอร์ข้อความ (เป็นภาพ) — ต้องทำ OCR ก่อน หรือส่งไฟล์ที่เป็นข้อความจริง</div>';
         }
       } catch (err) {
         console.error(err);
@@ -211,7 +265,7 @@
       }
     }
 
-    renderTextContinuous(PDF_PATH);
+    renderPdfText();
   </script>
 </body>
 </html>
