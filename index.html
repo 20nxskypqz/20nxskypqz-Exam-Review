@@ -19,7 +19,7 @@
     .docTitle { text-align:center; font-weight:700; margin:16px auto 8px; font-size:22px; }
     #content {
       max-width: 960px; margin: 12px auto 24px; background:var(--card); border-radius:12px; box-shadow:var(--shadow);
-      padding: 20px; white-space: normal; /* เราจะจัดบรรทัดเองด้วย <br> */
+      padding: 20px; white-space: normal; /* เราจะจัดบรรทัดเองด้วย <div.line> */
       font-size:18px;
     }
     .line { display:block; }          /* 1 บรรทัดใน PDF = 1 บรรทัดจริง */
@@ -54,13 +54,20 @@
     // HTML escape
     const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
+    // ตรวจจับ "ควรถือว่าเป็นตัวหนา" จากชื่อฟอนต์/ตระกูลฟอนต์
+    function isBoldFromName(fontName='', fontFamily='') {
+      const s1 = fontName.toLowerCase();
+      const s2 = (fontFamily || '').toLowerCase();
+      const boldHints = /(bold|black|heavy|demi|semibold|semi-bold|bd|700|800|900)/;
+      return boldHints.test(s1) || boldHints.test(s2);
+    }
+
     // จัดกลุ่ม items ตามแกน Y เป็นบรรทัด
     function groupItemsIntoLines(items) {
-      // map: keyY -> array of items
       const lines = [];
       const used = new Array(items.length).fill(false);
 
-      // สร้างสำเนาพร้อมพิกัด
+      // เพิ่มพิกัด/ขนาด
       const it = items.map((item, idx) => {
         const t = item.transform || [1,0,0,1,0,0];
         const fs = Math.max(Math.abs(t[0]||0), Math.abs(t[3]||0)) || 18;
@@ -70,7 +77,7 @@
         return { idx, item, x, y, w, fontSize: fs };
       });
 
-      // เรียงจากบนลงล่าง (PDF พิกัด y สูง=บน)
+      // เรียงจากบนลงล่าง
       it.sort((a,b) => b.y - a.y);
 
       for (let i=0;i<it.length;i++){
@@ -88,27 +95,32 @@
           }
         }
 
-        // เรียงซ้าย→ขวาในบรรทัด
+        // ซ้าย→ขวา
         line.sort((a,b) => a.x - b.x);
         lines.push(line);
       }
 
-      // เรียงบรรทัดบน→ล่าง
+      // บน→ล่าง
       lines.sort((A,B)=>B[0].y - A[0].y);
       return lines;
     }
 
-    // คำนวณว่าจะเติมช่องว่างระหว่างชิ้นข้อความไหม (ดูจากช่องว่างจริง)
+    // ช่องว่างระหว่างชิ้นข้อความ (คำนวณจากช่องว่างจริง)
     function needsSpace(prev, curr) {
       if (!prev) return false;
-      // คาดคะเนปลายหางของชิ้นก่อนหน้า
       const prevEndX = prev.x + (prev.w || 0);
       const gap = curr.x - prevEndX;
-
-      // เกณฑ์หยาบ: ถ้าช่องว่างมากพอ → เติม space
-      // ใช้สัดส่วนของขนาดฟอนต์ช่วยตัดสิน (คร่าว ๆ)
       const threshold = Math.max(2, prev.fontSize * 0.25);
       return gap > threshold;
+    }
+
+    // บังคับเว้นวรรคกรณีพิเศษ:
+    //  - "•" ต้องมีช่องว่างตามหลัง
+    //  - "1." "2." "10." ฯลฯ ต้องมีช่องว่างตามหลัง
+    function forceTrailingSpaceIfListToken(text) {
+      if (text === '•') return true;
+      if (/^\d+\.$/.test(text)) return true;
+      return false;
     }
 
     async function renderTextContinuous(url) {
@@ -120,52 +132,61 @@
           const page = await pdf.getPage(p);
           const textContent = await page.getTextContent();
 
+          const styles = textContent.styles || {}; // ใช้เพื่อเช็ค fontFamily
+
           if (!textContent.items || textContent.items.length === 0) {
-            // บางหน้าอาจไม่มี text (รูปภาพล้วน)
-            continue;
+            continue; // หน้านี้อาจเป็นภาพล้วน
           }
 
-          // กลุ่มเป็นบรรทัดจากพิกัด
           const lines = groupItemsIntoLines(textContent.items);
 
-          // สร้าง DOM ตามบรรทัด
           for (const line of lines){
             const lineEl = document.createElement('div');
             lineEl.className = 'line';
 
             let prev = null;
-            for (const seg of line){
+            for (let k=0;k<line.length;k++){
+              const seg = line[k];
               const { item, fontSize, x, y, w } = seg;
               const raw = (item.str || '').trim();
               if (!raw) { prev = seg; continue; }
 
-              // ทำ span
+              // สร้าง span
               const span = document.createElement('span');
               span.className = 'chunk';
               span.style.fontSize = `${fontSize}px`;
 
-              // หนา/เอียงจากฟอนต์จริง
-              const name = (item.fontName || '').toLowerCase();
-              if (name.includes('bold'))   span.classList.add('bold');
-              if (name.includes('italic') || name.includes('oblique')) span.classList.add('italic');
+              // ตรวจหนา/เอียงจากแหล่งข้อมูลจริง
+              const fontName = item.fontName || '';
+              const fontFamily = styles[fontName]?.fontFamily || '';
+              if (isBoldFromName(fontName, fontFamily)) span.classList.add('bold');
+              if (
+                fontName.toLowerCase().includes('italic') ||
+                fontName.toLowerCase().includes('oblique') ||
+                (fontFamily && /italic|oblique/i.test(fontFamily))
+              ) {
+                span.classList.add('italic');
+              }
 
-              // หนาอัตโนมัติสำหรับหัวข้อ
+              // หนาอัตโนมัติสำหรับหัวข้อขนาดใหญ่
               if (fontSize >= AUTO_BOLD_1 || fontSize >= AUTO_BOLD_2) {
                 span.classList.add('bold');
               }
 
-              // เติมช่องว่างถ้าระยะห่างมากพอ
-              const prefix = needsSpace(prev, seg) ? ' ' : '';
-              span.innerHTML = esc(prefix + raw + ''); // เว้นวรรคปลายคำเราให้ด้วยระยะจริงแล้ว
+              // คำนวณช่องว่างนำหน้า (ระหว่างชิ้นในบรรทัด)
+              const prefixSpace = needsSpace(prev, seg) ? ' ' : '';
+              // บังคับช่องว่างตามท้าย token พิเศษ (• หรือ 1. 2. ฯลฯ)
+              const forceTrail = forceTrailingSpaceIfListToken(raw) ? ' ' : '';
 
+              span.innerHTML = esc(prefixSpace + raw + forceTrail);
               lineEl.appendChild(span);
+
               prev = seg;
             }
 
             contentEl.appendChild(lineEl);
           }
 
-          // เว้นเล็กน้อยหลัง “จบหน้า” เพื่อไม่ชนย่อหน้าถัดไป
           if (p < pdf.numPages) {
             const div = document.createElement('div');
             div.className = 'divider';
@@ -173,7 +194,6 @@
           }
         }
 
-        // ถ้าไม่มี text เลย (สแกนรูป) แจ้งเตือน
         if (!contentEl.textContent.trim()) {
           contentEl.innerHTML = '<div class="error">พบว่าไฟล์หน้า/ทั้งหมดไม่มีเลเยอร์ข้อความ (เป็นภาพสแกน) — หากต้องการข้อความ ให้ใช้ไฟล์ที่เป็นข้อความ หรือเพิ่ม OCR</div>';
         }
