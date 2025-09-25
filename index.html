@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>20nxskypqz Exam Review — รวม สังคมศึกษา + ชีววิทยา ม.4_1-68</title>
+  <title>20nxskypqz Exam Review — รวม สังคมศึกษา + ชีววิทยา + E31101 ม.4_1-68</title>
 
   <!-- ฟอนต์ Niramit -->
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet">
@@ -50,7 +50,7 @@
     #content ul, #content ol { padding-left: 1.4em; margin: 8px 0; }
     #content li { margin: 4px 0; }
 
-    /* คั่นหมวดใหญ่ (สังคม / ชีวฯ) */
+    /* คั่นหมวดใหญ่ */
     .major-section { margin: 28px 0 16px; }
     .major-heading {
       font-size: 26px; font-weight: 700; margin: 0 0 12px 0;
@@ -64,7 +64,7 @@
       padding: 8px 12px; border-radius: 10px; background:#f4f4f4;
     }
 
-    /* TOC เล็กๆ */
+    /* TOC */
     .toc { max-width:1100px; margin: 12px auto 16px; display:flex; gap:16px; flex-wrap:wrap; }
     .toc a {
       text-decoration:none; color:#111; border:1px solid #ddd; border-radius:999px;
@@ -80,6 +80,7 @@
   <nav class="toc">
     <a href="#soc">สังคมศึกษา ม.4_1-68</a>
     <a href="#bio">ชีววิทยา ม.4_1-68</a>
+    <a href="#e31101">E31101 M.4_1-68</a>
   </nav>
 
   <div class="toolbar">
@@ -95,7 +96,7 @@
   <!-- Mammoth.js (DOCX → HTML ในเบราว์เซอร์) -->
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
   <script>
-    // ===== รายการไฟล์ =====
+    // ===== กลุ่มเอกสาร =====
     const SOCIAL = {
       id: 'soc',
       title: 'สังคมศึกษา ม.4_1-68',
@@ -114,12 +115,20 @@
       ]
     };
 
+    const E31101 = {
+      id: 'e31101',
+      title: 'E31101 M.4_1-68',
+      docs: [
+        { file: 'files/E31101.docx', title: 'E31101' } // ไฟล์ใหม่
+      ]
+    };
+
     const statusEl  = document.getElementById('status');
     const contentEl = document.getElementById('content');
     const reloadBtn = document.getElementById('reload');
 
     async function loadArrayBuffer(url) {
-      const res = await fetch(url, { cache: 'no-store' });
+      const res = await fetch(encodeURI(url), { cache: 'no-store' });
       if (!res.ok) throw new Error('โหลดไฟล์ไม่ได้: ' + url + ' [' + res.status + ']');
       return await res.arrayBuffer();
     }
@@ -202,12 +211,14 @@
         statusEl.textContent = 'Loading documents…';
         contentEl.innerHTML = '';
 
-        // เรนเดอร์ทั้งสองหมวด
-        const socNode = await renderGroup(SOCIAL);
-        const bioNode = await renderGroup(BIO);
+        // เรนเดอร์ทุกหมวด
+        const socNode   = await renderGroup(SOCIAL);
+        const bioNode   = await renderGroup(BIO);
+        const e31101Node= await renderGroup(E31101);
 
         contentEl.appendChild(socNode);
         contentEl.appendChild(bioNode);
+        contentEl.appendChild(e31101Node);
 
         statusEl.textContent = 'Done.';
       } catch (e) {
@@ -238,7 +249,7 @@
       );
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url; a.download = 'รวม_สังคมศึกษา+ชีววิทยา_ม.4_1-68.html';
+      a.href = url; a.download = 'รวม_สังคมศึกษา+ชีววิทยา+E31101_ม.4_1-68.html';
       a.click();
       URL.revokeObjectURL(url);
     });
