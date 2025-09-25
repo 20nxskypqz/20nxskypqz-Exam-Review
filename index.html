@@ -16,6 +16,8 @@
       font-family: 'Niramit', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
       line-height: 1.8; padding: 20px;
     }
+
+    /* หัวเว็บ (ยังให้อยู่กึ่งกลาง) */
     h1, h2 { text-align: center; margin: 0 0 10px 0; font-weight: 700; }
     .docTitle { text-align: center; font-weight: 700; margin: 16px auto 8px; font-size: 22px; }
 
@@ -29,7 +31,10 @@
       border-radius: 12px; box-shadow: var(--shadow); padding: 24px;
     }
 
-    /* จูนสไตล์ผลลัพธ์จาก DOCX ให้สวยอ่านง่าย */
+    /* ---------- สไตล์ภายในเอกสาร ---------- */
+    /* หัวข้อในเอกสาร (ที่มาจากขนาด ~25/20 → map เป็น h1/h2/h3) ให้ชิดซ้าย */
+    #content h1, #content h2, #content h3 { text-align: left; }
+
     #content h1 { font-size: 28px; font-weight: 700; margin: 18px 0 8px; }
     #content h2 { font-size: 24px; font-weight: 700; margin: 16px 0 6px; }
     #content h3 { font-size: 20px; font-weight: 700; margin: 14px 0 6px; }
@@ -52,7 +57,7 @@
   <div id="status">Loading DOCX…</div>
   <div id="content">Preparing…</div>
 
-  <!-- Mammoth.js (แปลง DOCX → HTML ในเบราว์เซอร์) -->
+  <!-- Mammoth.js (DOCX → HTML ในเบราว์เซอร์) -->
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
   <script>
     // ใช้ไฟล์เดิม แค่เปลี่ยนนามสกุลเป็น .docx
@@ -80,7 +85,7 @@
     };
 
     function fixListSpacing(container) {
-      // บังคับเว้นวรรคหลังเลขลำดับ/จุดนำหน้า และ bullet "•"
+      // บังคับเว้นวรรคหลังเลขลำดับ/จุดนำหน้า และ bullet "•" (กันกรณีติดกัน)
       container.querySelectorAll('li').forEach(li => {
         li.innerHTML = li.innerHTML
           .replace(/^(\d+)\.\s?/, (_,m)=> m + '. ')
@@ -112,7 +117,7 @@
       const blob = new Blob(
         [
           '<!doctype html><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet">',
-          '<style>body{font-family:Niramit,system-ui,-apple-system,Segoe UI,Arial,sans-serif;line-height:1.8;padding:24px;max-width:960px;margin:0 auto} h1{font-size:28px} h2{font-size:24px} h3{font-size:20px}</style>',
+          '<style>body{font-family:Niramit,system-ui,-apple-system,Segoe UI,Arial,sans-serif;line-height:1.8;padding:24px;max-width:960px;margin:0 auto} h1{text-align:left;font-size:28px} h2{text-align:left;font-size:24px} h3{text-align:left;font-size:20px}</style>',
           contentEl.innerHTML
         ],
         { type: 'text/html;charset=utf-8' }
