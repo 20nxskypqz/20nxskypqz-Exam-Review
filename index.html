@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>20nxskypqz Exam Review</title>
 
-  <!-- Google Fonts: Niramit -->
+  <!-- ฟอนต์ Niramit -->
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
@@ -35,15 +35,14 @@
     .controls input[type="range"] { width:180px; }
     #status { font-size:14px; opacity:.8; }
     #viewer {
-      background:transparent; display:grid; gap:14px;
-      grid-template-columns:1fr; padding-bottom:20px;
+      background:transparent; display:flex; flex-direction:column; gap:20px;
+      padding-bottom:20px;
     }
     .pageCard {
       background:var(--card); border-radius:16px; box-shadow:var(--shadow);
       padding:12px; overflow:auto;
     }
-    .pageHeader { font-weight:700; font-size:14px; opacity:.7; margin:4px 6px 10px; }
-    canvas { width:100%; height:auto; display:block; border-radius:10px; }
+    canvas { width:100%; height:auto; display:block; border-radius:10px; margin-bottom:20px; }
     .hide { display:none; }
     .small { font-size:12px; opacity:.75; }
     button, .btn {
@@ -52,6 +51,7 @@
     }
     button:disabled { opacity:.5; cursor:not-allowed; }
     a.btn { text-decoration:none; display:inline-block; }
+    .docTitle { text-align:center; font-weight:700; margin:20px 0; font-size:20px; }
   </style>
 </head>
 <body>
@@ -79,10 +79,12 @@
       <div id="status" class="small">No file loaded</div>
     </section>
 
+    <div class="docTitle">สังคมศึกษาทุกเรื่อง ม.4_1-68</div>
+
     <section id="viewer" aria-live="polite"></section>
   </main>
 
-  <!-- PDF.js (ES Module build) -->
+  <!-- PDF.js -->
   <script type="module">
     import * as pdfjsLib from 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.mjs';
     import 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.mjs';
@@ -95,7 +97,7 @@
     const scaleVal = document.getElementById('scaleVal');
     const openRaw = document.getElementById('openRaw');
 
-    // โหลดไฟล์นี้อัตโนมัติ
+    // ไฟล์ PDF ที่จะโหลดอัตโนมัติ
     const defaultPdf = 'files/สังคมศึกษาทุกเรื่องม.4_1-68.pdf';
 
     const params = new URLSearchParams(location.search);
@@ -122,17 +124,10 @@
         currentDoc = pdf;
         setStatus(`Loaded ${pdf.numPages} page(s). Rendering…`);
 
+        // แสดงทุกหน้าต่อกันเป็นเอกสารยาว
         for (let p = 1; p <= pdf.numPages; p++) {
           const page = await pdf.getPage(p);
           const viewport = page.getViewport({ scale });
-
-          const card = document.createElement('div');
-          card.className = 'pageCard';
-
-          const header = document.createElement('div');
-          header.className = 'pageHeader';
-          header.textContent = `Page ${p} / ${pdf.numPages}`;
-          card.appendChild(header);
 
           const canvas = document.createElement('canvas');
           const context = canvas.getContext('2d', { alpha: false });
@@ -142,8 +137,7 @@
           const renderTask = page.render({ canvasContext: context, viewport });
           await renderTask.promise;
 
-          card.appendChild(canvas);
-          viewer.appendChild(card);
+          viewer.appendChild(canvas);
           setStatus(`Rendered page ${p} / ${pdf.numPages}`);
         }
         setStatus('Done.');
