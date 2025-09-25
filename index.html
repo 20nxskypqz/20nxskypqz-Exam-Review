@@ -27,8 +27,15 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       max-width: 900px;
       margin: 20px auto;
-      white-space: pre-wrap; /* ให้เว้นบรรทัดตามต้นฉบับ */
+      white-space: pre-wrap;
       font-size: 18px;
+      line-height: 1.8;
+    }
+    .bold {
+      font-weight: bold;
+    }
+    .italic {
+      font-style: italic;
     }
     .error {
       color: red;
@@ -48,33 +55,52 @@
     import * as pdfjsLib from 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.mjs';
     import 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.mjs';
 
-    // กำหนดไฟล์ PDF
     const pdfPath = 'files/สังคมศึกษาทุกเรื่องม.4_1-68.pdf';
     const contentDiv = document.getElementById('content');
 
     async function extractTextFromPDF(url) {
       try {
-        // โหลด PDF
         const pdf = await pdfjsLib.getDocument(url).promise;
-        let fullText = '';
+        let fullHTML = '';
 
-        // ดึงข้อความจากทุกหน้า
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
           const textContent = await page.getTextContent();
-          const pageText = textContent.items.map(item => item.str).join(' ');
-          fullText += pageText + '\n\n'; // ต่อข้อความทุกหน้า
+
+          textContent.items.forEach(item => {
+            const fontSize = item.transform[0]; // ขนาดอักษรจาก transform
+            const text = item.str.trim();
+            if (!text) return;
+
+            let classes = '';
+            let style = `font-size:${fontSize}px;`;
+
+            // ตรวจสอบ fontName จาก PDF
+            if (item.fontName) {
+              const fontName = item.fontName.toLowerCase();
+              if (fontName.includes('bold')) classes += ' bold';
+              if (fontName.includes('italic') || fontName.includes('oblique')) classes += ' italic';
+            }
+
+            // บังคับให้หัวข้อ ≥ 25 หรือ ≥ 20 เป็นตัวหนา
+            if (fontSize >= 25 || fontSize >= 20) {
+              classes += ' bold';
+            }
+
+            // สร้าง span พร้อม style
+            fullHTML += `<span class="${classes}" style="${style}">${text} </span>`;
+          });
+
+          fullHTML += '<br><br>'; // เว้นระหว่างหน้าบางส่วน
         }
 
-        // แสดงข้อความทั้งหมด
-        contentDiv.textContent = fullText || 'ไม่พบข้อความในไฟล์ PDF';
+        contentDiv.innerHTML = fullHTML || 'ไม่พบข้อความในไฟล์ PDF';
       } catch (err) {
         contentDiv.innerHTML = '<div class="error">Error: โหลดข้อความจาก PDF ไม่ได้</div>';
         console.error('PDF load error:', err);
       }
     }
 
-    // เรียกฟังก์ชันเพื่อดึงข้อความจาก PDF
     extractTextFromPDF(pdfPath);
   </script>
 </body>
