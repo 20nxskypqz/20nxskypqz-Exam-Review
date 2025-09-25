@@ -2,59 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>20nxskypqz Exam Review</title>
 
-  <!-- ฟอนต์ Niramit -->
+  <!-- Google Font: Niramit -->
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
+    :root { --bg:#f9f9f9; --card:#fff; --shadow:0 6px 24px rgba(0,0,0,.08); }
+    * { box-sizing:border-box; }
     body {
-      font-family: 'Niramit', sans-serif;
-      margin: 0;
-      padding: 20px;
-      background: #f9f9f9;
-      line-height: 1.6;
-      color: #111;
+      margin:0; background:var(--bg); color:#111; font-family:'Niramit',system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+      line-height:1.8; padding:20px;
     }
-    h1, h2 {
-      text-align: center;
-      margin: 0 0 10px 0;
-      font-weight: 700;
-    }
-    .docTitle {
-      text-align: center;
-      margin: 16px auto 8px;
-      font-size: 22px;
-      font-weight: 700; /* ให้หัวเรื่องนี้หนาแน่นอน */
-      max-width: 900px;
-    }
+    h1,h2 { text-align:center; margin:0 0 10px 0; font-weight:700; }
+    .docTitle { text-align:center; font-weight:700; margin:16px auto 8px; font-size:22px; }
     #content {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      max-width: 900px;
-      margin: 10px auto 24px;
-      white-space: pre-wrap;  /* รักษาขึ้นบรรทัด */
-      font-size: 18px;        /* ค่าพื้นฐาน ถ้า span ไม่มีขนาดจาก PDF */
-      line-height: 1.8;
+      max-width: 960px; margin: 12px auto 24px; background:var(--card); border-radius:12px; box-shadow:var(--shadow);
+      padding: 20px; white-space: normal; /* เราจะจัดบรรทัดเองด้วย <br> */
+      font-size:18px;
     }
-    .bold   { font-weight: 700; }
-    .italic { font-style: italic; }
-    .error {
-      color: #c00;
-      text-align: center;
-      font-weight: 700;
-      margin-top: 20px;
-    }
+    .line { display:block; }          /* 1 บรรทัดใน PDF = 1 บรรทัดจริง */
+    .chunk { display:inline; }        /* ชิ้นข้อความภายในบรรทัด */
+    .bold { font-weight:700; }
+    .italic { font-style:italic; }
+    .error { color:#c00; text-align:center; font-weight:700; margin-top:16px; }
+    .divider { height:12px; }         /* เว้นเล็กน้อยระหว่างหน้า แต่ไม่ขึ้นหน้าใหม่ */
   </style>
 </head>
 <body>
   <h1>Welcome to</h1>
   <h2>20nxskypqz Exam Review</h2>
-
-  <!-- หัวเรื่องตามที่ขอ -->
   <div class="docTitle">สังคมศึกษา ม.4_1-68</div>
 
   <div id="content">Loading text from PDF...</div>
@@ -63,74 +41,149 @@
     import * as pdfjsLib from 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.mjs';
     import 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.mjs';
 
-    // ชี้ไปที่ไฟล์ PDF (ชื่อภาษาไทย)
-    const pdfPath = 'files/สังคมศึกษาทุกเรื่องม.4_1-68.pdf';
-    const contentDiv = document.getElementById('content');
+    // ====== ตั้งค่าไฟล์และเกณฑ์ ======
+    const PDF_PATH = 'files/สังคมศึกษาทุกเรื่องม.4_1-68.pdf';
+    // tolerance สำหรับจับ "อยู่บรรทัดเดียวกัน" (หน่วยพิกัด PDF)
+    const Y_TOLERANCE = 3.0;
+    // เกณฑ์ให้หัวข้อหนาอัตโนมัติ
+    const AUTO_BOLD_1 = 25;
+    const AUTO_BOLD_2 = 20;
 
-    // เกณฑ์ทำหัวข้อหนาอัตโนมัติ
-    const AUTO_BOLD_SIZE_1 = 25;
-    const AUTO_BOLD_SIZE_2 = 20;
+    const contentEl = document.getElementById('content');
 
-    // helper: สร้าง span ปลอดภัย
-    function escapeHtml(s) {
-      return s
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-    }
+    // HTML escape
+    const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-    async function extractTextFromPDF(url) {
-      try {
-        const pdf = await pdfjsLib.getDocument(url).promise;
-        let fullHTML = '';
+    // จัดกลุ่ม items ตามแกน Y เป็นบรรทัด
+    function groupItemsIntoLines(items) {
+      // map: keyY -> array of items
+      const lines = [];
+      const used = new Array(items.length).fill(false);
 
-        for (let i = 1; i <= pdf.numPages; i++) {
-          const page = await pdf.getPage(i);
-          const textContent = await page.getTextContent();
+      // สร้างสำเนาพร้อมพิกัด
+      const it = items.map((item, idx) => {
+        const t = item.transform || [1,0,0,1,0,0];
+        const fs = Math.max(Math.abs(t[0]||0), Math.abs(t[3]||0)) || 18;
+        const x = t[4] || 0;
+        const y = t[5] || 0;
+        const w = item.width || 0; // อาจไม่มี
+        return { idx, item, x, y, w, fontSize: fs };
+      });
 
-          // ต่อข้อความ “ทั้งหมด” (ไม่แบ่งหน้าเป็นบล็อก) แต่เว้นระหว่างหน้าบาง ๆ
-          textContent.items.forEach(item => {
-            const raw = (item.str || '').trim();
-            if (!raw) return;
+      // เรียงจากบนลงล่าง (PDF พิกัด y สูง=บน)
+      it.sort((a,b) => b.y - a.y);
 
-            // บางไฟล์ค่า font size จะอยู่ที่ transform[0] (scaleX) หรือ [3] (scaleY)
-            // เอาค่าที่มากกว่าเพื่อความชัวร์
-            const t = item.transform || [1,0,0,1,0,0];
-            const fsX = Math.abs(t[0]);
-            const fsY = Math.abs(t[3]);
-            const fontSize = Math.max(fsX, fsY) || 18;
+      for (let i=0;i<it.length;i++){
+        if (used[i]) continue;
+        const base = it[i];
+        used[i] = true;
+        const line = [base];
 
-            let classes = '';
-            let style = `font-size:${fontSize}px;`;
-
-            // ดึง fontName ถ้ามี เพื่อดู bold/italic จริงจากไฟล์
-            if (item.fontName) {
-              const name = item.fontName.toLowerCase();
-              if (name.includes('bold'))   classes += ' bold';
-              if (name.includes('italic') || name.includes('oblique')) classes += ' italic';
-            }
-
-            // บังคับหนาอัตโนมัติสำหรับหัวข้อ >= 25 และ >= 20
-            if (fontSize >= AUTO_BOLD_SIZE_1 || fontSize >= AUTO_BOLD_SIZE_2) {
-              classes += ' bold';
-            }
-
-            // ต่อเป็น span (มีช่องว่างคั่นคำ)
-            fullHTML += `<span class="${classes}" style="${style}">${escapeHtml(raw)} </span>`;
-          });
-
-          // เว้นช่วงเล็กน้อยหลังจบหน้า
-          fullHTML += '\n\n';
+        for (let j=i+1;j<it.length;j++){
+          if (used[j]) continue;
+          const cand = it[j];
+          if (Math.abs(cand.y - base.y) <= Y_TOLERANCE) {
+            used[j] = true;
+            line.push(cand);
+          }
         }
 
-        contentDiv.innerHTML = fullHTML || 'ไม่พบข้อความในไฟล์ PDF';
+        // เรียงซ้าย→ขวาในบรรทัด
+        line.sort((a,b) => a.x - b.x);
+        lines.push(line);
+      }
+
+      // เรียงบรรทัดบน→ล่าง
+      lines.sort((A,B)=>B[0].y - A[0].y);
+      return lines;
+    }
+
+    // คำนวณว่าจะเติมช่องว่างระหว่างชิ้นข้อความไหม (ดูจากช่องว่างจริง)
+    function needsSpace(prev, curr) {
+      if (!prev) return false;
+      // คาดคะเนปลายหางของชิ้นก่อนหน้า
+      const prevEndX = prev.x + (prev.w || 0);
+      const gap = curr.x - prevEndX;
+
+      // เกณฑ์หยาบ: ถ้าช่องว่างมากพอ → เติม space
+      // ใช้สัดส่วนของขนาดฟอนต์ช่วยตัดสิน (คร่าว ๆ)
+      const threshold = Math.max(2, prev.fontSize * 0.25);
+      return gap > threshold;
+    }
+
+    async function renderTextContinuous(url) {
+      try {
+        const pdf = await pdfjsLib.getDocument(url).promise;
+        contentEl.innerHTML = '';
+
+        for (let p=1; p<=pdf.numPages; p++){
+          const page = await pdf.getPage(p);
+          const textContent = await page.getTextContent();
+
+          if (!textContent.items || textContent.items.length === 0) {
+            // บางหน้าอาจไม่มี text (รูปภาพล้วน)
+            continue;
+          }
+
+          // กลุ่มเป็นบรรทัดจากพิกัด
+          const lines = groupItemsIntoLines(textContent.items);
+
+          // สร้าง DOM ตามบรรทัด
+          for (const line of lines){
+            const lineEl = document.createElement('div');
+            lineEl.className = 'line';
+
+            let prev = null;
+            for (const seg of line){
+              const { item, fontSize, x, y, w } = seg;
+              const raw = (item.str || '').trim();
+              if (!raw) { prev = seg; continue; }
+
+              // ทำ span
+              const span = document.createElement('span');
+              span.className = 'chunk';
+              span.style.fontSize = `${fontSize}px`;
+
+              // หนา/เอียงจากฟอนต์จริง
+              const name = (item.fontName || '').toLowerCase();
+              if (name.includes('bold'))   span.classList.add('bold');
+              if (name.includes('italic') || name.includes('oblique')) span.classList.add('italic');
+
+              // หนาอัตโนมัติสำหรับหัวข้อ
+              if (fontSize >= AUTO_BOLD_1 || fontSize >= AUTO_BOLD_2) {
+                span.classList.add('bold');
+              }
+
+              // เติมช่องว่างถ้าระยะห่างมากพอ
+              const prefix = needsSpace(prev, seg) ? ' ' : '';
+              span.innerHTML = esc(prefix + raw + ''); // เว้นวรรคปลายคำเราให้ด้วยระยะจริงแล้ว
+
+              lineEl.appendChild(span);
+              prev = seg;
+            }
+
+            contentEl.appendChild(lineEl);
+          }
+
+          // เว้นเล็กน้อยหลัง “จบหน้า” เพื่อไม่ชนย่อหน้าถัดไป
+          if (p < pdf.numPages) {
+            const div = document.createElement('div');
+            div.className = 'divider';
+            contentEl.appendChild(div);
+          }
+        }
+
+        // ถ้าไม่มี text เลย (สแกนรูป) แจ้งเตือน
+        if (!contentEl.textContent.trim()) {
+          contentEl.innerHTML = '<div class="error">พบว่าไฟล์หน้า/ทั้งหมดไม่มีเลเยอร์ข้อความ (เป็นภาพสแกน) — หากต้องการข้อความ ให้ใช้ไฟล์ที่เป็นข้อความ หรือเพิ่ม OCR</div>';
+        }
       } catch (err) {
-        contentDiv.innerHTML = '<div class="error">Error: โหลดข้อความจาก PDF ไม่ได้</div>';
-        console.error('PDF load error:', err);
+        console.error(err);
+        contentEl.innerHTML = '<div class="error">Error: โหลดข้อความจาก PDF ไม่ได้</div>';
       }
     }
 
-    extractTextFromPDF(pdfPath);
+    renderTextContinuous(PDF_PATH);
   </script>
 </body>
 </html>
