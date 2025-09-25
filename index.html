@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>20nxskypqz Exam Review</title>
 
   <!-- Google Font: Niramit -->
@@ -24,7 +24,7 @@
     }
     .line { display:block; }          /* 1 บรรทัดใน PDF = 1 บรรทัดจริง */
     .chunk { display:inline; }        /* ชิ้นข้อความภายในบรรทัด */
-    .bold { font-weight:700; }
+    .bold { font-weight:700 !important; }
     .italic { font-style:italic; }
     .error { color:#c00; text-align:center; font-weight:700; margin-top:16px; }
     .divider { height:12px; }         /* เว้นเล็กน้อยระหว่างหน้า แต่ไม่ขึ้นหน้าใหม่ */
@@ -43,8 +43,10 @@
 
     // ====== ตั้งค่าไฟล์และเกณฑ์ ======
     const PDF_PATH = 'files/สังคมศึกษาทุกเรื่องม.4_1-68.pdf';
+
     // tolerance สำหรับจับ "อยู่บรรทัดเดียวกัน" (หน่วยพิกัด PDF)
     const Y_TOLERANCE = 3.0;
+
     // เกณฑ์ให้หัวข้อหนาอัตโนมัติ
     const AUTO_BOLD_1 = 25;
     const AUTO_BOLD_2 = 20;
@@ -54,12 +56,16 @@
     // HTML escape
     const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-    // ตรวจจับ "ควรถือว่าเป็นตัวหนา" จากชื่อฟอนต์/ตระกูลฟอนต์
+    // ตรวจจับ bold/italic จากชื่อฟอนต์และ family (ครอบคลุม Sarabun/Saraban/PSK/New)
+    const BOLD_HINTS_RE = /(bold|black|heavy|demi|semi[-\s]?bold|semibold|demibold|db|bd|700|800|900)/i;
+    const ITALIC_HINTS_RE = /(italic|oblique|it|slanted)/i;
+    const SARABUN_FAMILY_RE = /(sarabun|saraban|thsarabun|sarabunpsk)/i;
+
     function isBoldFromName(fontName='', fontFamily='') {
-      const s1 = fontName.toLowerCase();
-      const s2 = (fontFamily || '').toLowerCase();
-      const boldHints = /(bold|black|heavy|demi|semibold|semi-bold|bd|700|800|900)/;
-      return boldHints.test(s1) || boldHints.test(s2);
+      return BOLD_HINTS_RE.test(fontName) || BOLD_HINTS_RE.test(fontFamily);
+    }
+    function isItalicFromName(fontName='', fontFamily='') {
+      return ITALIC_HINTS_RE.test(fontName) || ITALIC_HINTS_RE.test(fontFamily);
     }
 
     // จัดกลุ่ม items ตามแกน Y เป็นบรรทัด
@@ -67,13 +73,12 @@
       const lines = [];
       const used = new Array(items.length).fill(false);
 
-      // เพิ่มพิกัด/ขนาด
       const it = items.map((item, idx) => {
         const t = item.transform || [1,0,0,1,0,0];
         const fs = Math.max(Math.abs(t[0]||0), Math.abs(t[3]||0)) || 18;
         const x = t[4] || 0;
         const y = t[5] || 0;
-        const w = item.width || 0; // อาจไม่มี
+        const w = item.width || 0;
         return { idx, item, x, y, w, fontSize: fs };
       });
 
@@ -133,6 +138,9 @@
           const textContent = await page.getTextContent();
 
           const styles = textContent.styles || {}; // ใช้เพื่อเช็ค fontFamily
+          // (optional) debug: ดูว่ามีฟอนต์อะไรบ้าง
+          // console.log('Styles keys:', Object.keys(styles));
+          // Object.entries(styles).forEach(([k,v]) => console.log(k, v.fontFamily));
 
           if (!textContent.items || textContent.items.length === 0) {
             continue; // หน้านี้อาจเป็นภาพล้วน
@@ -151,31 +159,31 @@
               const raw = (item.str || '').trim();
               if (!raw) { prev = seg; continue; }
 
-              // สร้าง span
               const span = document.createElement('span');
               span.className = 'chunk';
               span.style.fontSize = `${fontSize}px`;
 
-              // ตรวจหนา/เอียงจากแหล่งข้อมูลจริง
               const fontName = item.fontName || '';
               const fontFamily = styles[fontName]?.fontFamily || '';
+
+              // 1) หนา/เอียงจากข้อมูลฟอนต์จริง
               if (isBoldFromName(fontName, fontFamily)) span.classList.add('bold');
-              if (
-                fontName.toLowerCase().includes('italic') ||
-                fontName.toLowerCase().includes('oblique') ||
-                (fontFamily && /italic|oblique/i.test(fontFamily))
-              ) {
-                span.classList.add('italic');
+              if (isItalicFromName(fontName, fontFamily)) span.classList.add('italic');
+
+              // 2) ถ้าเป็นตระกูล Sarabun/Saraban และมี hint ว่าเป็น Bold ใน family/name → หนาแน่นอน
+              if (SARABUN_FAMILY_RE.test(fontName) || SARABUN_FAMILY_RE.test(fontFamily)) {
+                if (BOLD_HINTS_RE.test(fontName) || BOLD_HINTS_RE.test(fontFamily)) {
+                  span.classList.add('bold');
+                }
               }
 
-              // หนาอัตโนมัติสำหรับหัวข้อขนาดใหญ่
+              // 3) หนาอัตโนมัติสำหรับหัวข้อใหญ่
               if (fontSize >= AUTO_BOLD_1 || fontSize >= AUTO_BOLD_2) {
                 span.classList.add('bold');
               }
 
-              // คำนวณช่องว่างนำหน้า (ระหว่างชิ้นในบรรทัด)
+              // ช่องว่างนำหน้า (ตามตำแหน่งจริง) + บังคับวรรคหลัง bullet/เลขลำดับ
               const prefixSpace = needsSpace(prev, seg) ? ' ' : '';
-              // บังคับช่องว่างตามท้าย token พิเศษ (• หรือ 1. 2. ฯลฯ)
               const forceTrail = forceTrailingSpaceIfListToken(raw) ? ' ' : '';
 
               span.innerHTML = esc(prefixSpace + raw + forceTrail);
