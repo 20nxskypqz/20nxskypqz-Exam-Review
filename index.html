@@ -15,10 +15,19 @@
       padding: 20px;
       background: #f9f9f9;
       line-height: 1.6;
+      color: #111;
     }
     h1, h2 {
       text-align: center;
-      margin-bottom: 10px;
+      margin: 0 0 10px 0;
+      font-weight: 700;
+    }
+    .docTitle {
+      text-align: center;
+      margin: 16px auto 8px;
+      font-size: 22px;
+      font-weight: 700; /* ให้หัวเรื่องนี้หนาแน่นอน */
+      max-width: 900px;
     }
     #content {
       background: #fff;
@@ -26,21 +35,17 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       max-width: 900px;
-      margin: 20px auto;
-      white-space: pre-wrap;
-      font-size: 18px;
+      margin: 10px auto 24px;
+      white-space: pre-wrap;  /* รักษาขึ้นบรรทัด */
+      font-size: 18px;        /* ค่าพื้นฐาน ถ้า span ไม่มีขนาดจาก PDF */
       line-height: 1.8;
     }
-    .bold {
-      font-weight: bold;
-    }
-    .italic {
-      font-style: italic;
-    }
+    .bold   { font-weight: 700; }
+    .italic { font-style: italic; }
     .error {
-      color: red;
+      color: #c00;
       text-align: center;
-      font-weight: bold;
+      font-weight: 700;
       margin-top: 20px;
     }
   </style>
@@ -49,14 +54,30 @@
   <h1>Welcome to</h1>
   <h2>20nxskypqz Exam Review</h2>
 
+  <!-- หัวเรื่องตามที่ขอ -->
+  <div class="docTitle">สังคมศึกษา ม.4_1-68</div>
+
   <div id="content">Loading text from PDF...</div>
 
   <script type="module">
     import * as pdfjsLib from 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.mjs';
     import 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.mjs';
 
+    // ชี้ไปที่ไฟล์ PDF (ชื่อภาษาไทย)
     const pdfPath = 'files/สังคมศึกษาทุกเรื่องม.4_1-68.pdf';
     const contentDiv = document.getElementById('content');
+
+    // เกณฑ์ทำหัวข้อหนาอัตโนมัติ
+    const AUTO_BOLD_SIZE_1 = 25;
+    const AUTO_BOLD_SIZE_2 = 20;
+
+    // helper: สร้าง span ปลอดภัย
+    function escapeHtml(s) {
+      return s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
 
     async function extractTextFromPDF(url) {
       try {
@@ -67,31 +88,39 @@
           const page = await pdf.getPage(i);
           const textContent = await page.getTextContent();
 
+          // ต่อข้อความ “ทั้งหมด” (ไม่แบ่งหน้าเป็นบล็อก) แต่เว้นระหว่างหน้าบาง ๆ
           textContent.items.forEach(item => {
-            const fontSize = item.transform[0]; // ขนาดอักษรจาก transform
-            const text = item.str.trim();
-            if (!text) return;
+            const raw = (item.str || '').trim();
+            if (!raw) return;
+
+            // บางไฟล์ค่า font size จะอยู่ที่ transform[0] (scaleX) หรือ [3] (scaleY)
+            // เอาค่าที่มากกว่าเพื่อความชัวร์
+            const t = item.transform || [1,0,0,1,0,0];
+            const fsX = Math.abs(t[0]);
+            const fsY = Math.abs(t[3]);
+            const fontSize = Math.max(fsX, fsY) || 18;
 
             let classes = '';
             let style = `font-size:${fontSize}px;`;
 
-            // ตรวจสอบ fontName จาก PDF
+            // ดึง fontName ถ้ามี เพื่อดู bold/italic จริงจากไฟล์
             if (item.fontName) {
-              const fontName = item.fontName.toLowerCase();
-              if (fontName.includes('bold')) classes += ' bold';
-              if (fontName.includes('italic') || fontName.includes('oblique')) classes += ' italic';
+              const name = item.fontName.toLowerCase();
+              if (name.includes('bold'))   classes += ' bold';
+              if (name.includes('italic') || name.includes('oblique')) classes += ' italic';
             }
 
-            // บังคับให้หัวข้อ ≥ 25 หรือ ≥ 20 เป็นตัวหนา
-            if (fontSize >= 25 || fontSize >= 20) {
+            // บังคับหนาอัตโนมัติสำหรับหัวข้อ >= 25 และ >= 20
+            if (fontSize >= AUTO_BOLD_SIZE_1 || fontSize >= AUTO_BOLD_SIZE_2) {
               classes += ' bold';
             }
 
-            // สร้าง span พร้อม style
-            fullHTML += `<span class="${classes}" style="${style}">${text} </span>`;
+            // ต่อเป็น span (มีช่องว่างคั่นคำ)
+            fullHTML += `<span class="${classes}" style="${style}">${escapeHtml(raw)} </span>`;
           });
 
-          fullHTML += '<br><br>'; // เว้นระหว่างหน้าบางส่วน
+          // เว้นช่วงเล็กน้อยหลังจบหน้า
+          fullHTML += '\n\n';
         }
 
         contentDiv.innerHTML = fullHTML || 'ไม่พบข้อความในไฟล์ PDF';
