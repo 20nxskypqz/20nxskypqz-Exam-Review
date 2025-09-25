@@ -1,265 +1,130 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>20nxskypqz Exam Review</title>
 
-  <!-- Google Font: Niramit -->
+  <!-- ฟอนต์ Niramit -->
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
-    :root { --bg:#f9f9f9; --card:#fff; --shadow:0 6px 24px rgba(0,0,0,.08); --ink:#111; }
-    * { box-sizing:border-box; }
+    :root { --bg:#f9f9f9; --card:#fff; --ink:#111; --shadow:0 6px 24px rgba(0,0,0,.08); }
+    * { box-sizing: border-box; }
     body {
-      margin:0; background:var(--bg); color:var(--ink);
-      font-family:'Niramit',system-ui,-apple-system,Segoe UI,Arial,sans-serif;
-      line-height:1.8; padding:20px;
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: 'Niramit', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+      line-height: 1.8; padding: 20px;
     }
-    h1,h2 { text-align:center; margin:0 0 10px 0; font-weight:700; }
-    .docTitle { text-align:center; font-weight:700; margin:16px auto 8px; font-size:22px; }
-    .status { text-align:center; font-size:14px; opacity:.75; margin:10px 0; }
+    h1, h2 { text-align: center; margin: 0 0 10px 0; font-weight: 700; }
+    .docTitle { text-align: center; font-weight: 700; margin: 16px auto 8px; font-size: 22px; }
+
+    .toolbar { max-width: 960px; margin: 0 auto 12px; display: flex; gap: 8px; justify-content: flex-end; }
+    .btn { appearance:none; border:1px solid #111; background:#111; color:#fff; border-radius:999px; padding:8px 12px; font-weight:700; cursor:pointer; }
+    .btn.alt { background:#fff; color:#111; }
+
+    #status { text-align:center; font-size:14px; opacity:.75; margin:8px 0 16px; }
     #content {
-      max-width:960px; margin:12px auto 24px; background:var(--card); border-radius:12px; box-shadow:var(--shadow);
-      padding:20px; white-space:normal; font-size:18px;
+      max-width: 960px; margin: 0 auto 24px; background: var(--card);
+      border-radius: 12px; box-shadow: var(--shadow); padding: 24px;
     }
-    .line { display:block; }
-    .chunk { display:inline; }
-    .bold { font-weight:700 !important; }
-    .italic { font-style:italic; }
-    .divider { height:12px; }
-    .error { color:#c00; text-align:center; font-weight:700; margin-top:16px; }
+
+    /* จูนสไตล์ผลลัพธ์จาก DOCX ให้สวยอ่านง่าย */
+    #content h1 { font-size: 28px; font-weight: 700; margin: 18px 0 8px; }
+    #content h2 { font-size: 24px; font-weight: 700; margin: 16px 0 6px; }
+    #content h3 { font-size: 20px; font-weight: 700; margin: 14px 0 6px; }
+    #content p  { margin: 8px 0; }
+    #content strong { font-weight: 700; }
+    #content em { font-style: italic; }
+    #content ul, #content ol { padding-left: 1.4em; margin: 8px 0; }
+    #content li { margin: 4px 0; }
   </style>
 </head>
 <body>
   <h1>Welcome to</h1>
   <h2>20nxskypqz Exam Review</h2>
   <div class="docTitle">สังคมศึกษา ม.4_1-68</div>
-  <div class="status" id="status">Loading…</div>
 
-  <div id="content">Loading text from PDF…</div>
+  <div class="toolbar">
+    <button id="downloadHtml" class="btn alt">Download as HTML</button>
+  </div>
 
-  <script type="module">
-    import * as pdfjsLib from 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.mjs';
-    import 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.mjs';
-    // Tesseract.js (OCR) - ใช้จาก CDN
-    import 'https://unpkg.com/tesseract.js@5/dist/tesseract.min.js';
+  <div id="status">Loading DOCX…</div>
+  <div id="content">Preparing…</div>
 
-    const PDF_PATH = 'files/สังคมศึกษาทุกเรื่องม.4_1-68.pdf';
-    const Y_TOL = 3.0;          // รวมชิ้นข้อความให้เป็นบรรทัดถ้า y ใกล้กัน
-    const AUTO_BOLD_1 = 25;     // ทำหนาอัตโนมัติจากขนาด (โหมด text layer)
-    const AUTO_BOLD_2 = 20;
-
+  <!-- Mammoth.js (แปลง DOCX → HTML ในเบราว์เซอร์) -->
+  <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+  <script>
+    // ใช้ไฟล์เดิม แค่เปลี่ยนนามสกุลเป็น .docx
+    const DOCX_URL = 'files/สังคมศึกษาทุกเรื่องม.4_1-68.docx';
+    const statusEl = document.getElementById('status');
     const contentEl = document.getElementById('content');
-    const statusEl  = document.getElementById('status');
 
-    const BOLD_RE   = /(bold|black|heavy|demi|semi[-\s]?bold|semibold|demibold|bd|700|800|900)/i;
-    const ITALIC_RE = /(italic|oblique|it|slanted)/i;
-    const SARABUN_RE = /(sarabun|saraban|thsarabun|sarabunpsk|thsarabunnew)/i;
+    async function loadArrayBuffer(url) {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error('โหลดไฟล์ไม่ได้: ' + res.status);
+      return await res.arrayBuffer();
+    }
 
-    const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    // map สไตล์จาก Word → HTML (หัวข้อ/หนา/เอียง)
+    const options = {
+      styleMap: [
+        "p[style-name='Title'] => h1:fresh",
+        "p[style-name='Subtitle'] => h2:fresh",
+        "p[style-name='Heading 1'] => h1:fresh",
+        "p[style-name='Heading 2'] => h2:fresh",
+        "p[style-name='Heading 3'] => h3:fresh",
+        "b => strong",
+        "i => em"
+      ]
+    };
 
-    // -------- Utilities for text-layer path --------
-    function groupIntoLines(items){
-      const lines=[]; const used = new Array(items.length).fill(false);
-      const arr = items.map((item,idx)=>{
-        const t=item.transform||[1,0,0,1,0,0];
-        const fs=Math.max(Math.abs(t[0]||0),Math.abs(t[3]||0))||18;
-        const x=t[4]||0, y=t[5]||0;
-        const w=item.width||0;
-        return {idx,item,x,y,w,fontSize:fs};
+    function fixListSpacing(container) {
+      // บังคับเว้นวรรคหลังเลขลำดับ/จุดนำหน้า และ bullet "•"
+      container.querySelectorAll('li').forEach(li => {
+        li.innerHTML = li.innerHTML
+          .replace(/^(\d+)\.\s?/, (_,m)=> m + '. ')
+          .replace(/^•\s?/, '• ');
       });
-      arr.sort((a,b)=>b.y-a.y);
-      for(let i=0;i<arr.length;i++){
-        if(used[i]) continue;
-        const base=arr[i]; used[i]=true;
-        const line=[base];
-        for(let j=i+1;j<arr.length;j++){
-          if(used[j]) continue;
-          const cand=arr[j];
-          if(Math.abs(cand.y-base.y)<=Y_TOL){ used[j]=true; line.push(cand); }
-        }
-        line.sort((a,b)=>a.x-b.x);
-        lines.push(line);
+    }
+
+    async function renderDocx() {
+      try {
+        statusEl.textContent = 'Loading DOCX…';
+        const buffer = await loadArrayBuffer(DOCX_URL);
+
+        const { value: html, messages } = await window.mammoth.convertToHtml({ arrayBuffer: buffer }, options);
+
+        contentEl.innerHTML = html;
+        fixListSpacing(contentEl);
+
+        statusEl.textContent = 'Done.';
+        if (messages && messages.length) console.log('Mammoth messages:', messages);
+      } catch (e) {
+        console.error(e);
+        statusEl.innerHTML = '<span style="color:#c00;font-weight:700">โหลดเอกสารไม่ได้ — ตรวจพาธ/ชื่อไฟล์ .docx</span>';
+        contentEl.innerHTML = '';
       }
-      lines.sort((A,B)=>B[0].y-A[0].y);
-      return lines;
-    }
-    function needsSpace(prev,curr){
-      if(!prev) return false;
-      const prevEnd=prev.x+(prev.w||0);
-      const gap=curr.x-prevEnd;
-      const th=Math.max(2, prev.fontSize*0.25);
-      return gap>th;
-    }
-    function forceTrailSpaceToken(txt){
-      if(txt==='•') return true;
-      if(/^\d+\.$/.test(txt)) return true;
-      return false;
-    }
-    function normalizeFontKey(k=''){ const i=k.indexOf('+'); return i>-1?k.slice(i+1):k; }
-
-    function decideBoldItalic(fontNameRaw, family, fontSize){
-      const nameNorm = normalizeFontKey(fontNameRaw).toLowerCase();
-      const familyLC = (family||'').toLowerCase();
-      let isBold = BOLD_RE.test(nameNorm) || BOLD_RE.test(familyLC);
-      let isItalic = ITALIC_RE.test(nameNorm) || ITALIC_RE.test(familyLC);
-      if (SARABUN_RE.test(nameNorm) || SARABUN_RE.test(familyLC)) {
-        if (BOLD_RE.test(nameNorm) || BOLD_RE.test(familyLC)) isBold = true;
-      }
-      if (fontSize >= AUTO_BOLD_1 || fontSize >= AUTO_BOLD_2) isBold = true;
-      return { isBold, isItalic };
     }
 
-    // -------- OCR helpers --------
-    async function ocrPageToLines(page, scale=2){
-      // render pdf page to canvas (ภาพ) เพื่อ OCR
-      const viewport = await page.getViewport({ scale });
-      const canvas = document.createElement('canvas');
-      canvas.width  = Math.ceil(viewport.width);
-      canvas.height = Math.ceil(viewport.height);
-      const ctx = canvas.getContext('2d', { alpha:false });
-      await page.render({ canvasContext: ctx, viewport }).promise;
-
-      // ใช้ Tesseract (tha+eng)
-      statusEl.textContent = `OCR processing… (this page)`;
-      const result = await Tesseract.recognize(
-        canvas,
-        'tha+eng',
-        {
-          // ดาวน์โหลด traineddata จาก CDN กลาง
-          langPath: 'https://tessdata.projectnaptha.com/4.0.0',
-          logger: m => { if (m.status) statusEl.textContent = `OCR: ${m.status} ${Math.round((m.progress||0)*100)}%`; }
-        }
+    // ปุ่มดาวน์โหลด HTML ที่เรนเดอร์แล้ว
+    document.getElementById('downloadHtml').addEventListener('click', () => {
+      const blob = new Blob(
+        [
+          '<!doctype html><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet">',
+          '<style>body{font-family:Niramit,system-ui,-apple-system,Segoe UI,Arial,sans-serif;line-height:1.8;padding:24px;max-width:960px;margin:0 auto} h1{font-size:28px} h2{font-size:24px} h3{font-size:20px}</style>',
+          contentEl.innerHTML
+        ],
+        { type: 'text/html;charset=utf-8' }
       );
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'exported.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
 
-      // สร้าง “บรรทัด” จาก result.data.lines (คงลำดับบน→ล่าง)
-      // ประมาณขนาดอักษรจากความสูง bbox ของบรรทัด
-      const lines = (result.data.lines||[]).map(L => {
-        const text = (L.text || '').trim();
-        const height = Math.abs(L.bbox.y1 - L.bbox.y0) || 18;
-        return { text, height };
-      }).filter(l => l.text);
-
-      return lines;
-    }
-
-    function renderOcrLines(allLines){
-      // คำนวณค่าเฉลี่ยความสูงบรรทัดเพื่อเดาหัวข้อ
-      const heights = allLines.map(l => l.height);
-      const avg = heights.reduce((a,b)=>a+b,0)/(heights.length||1);
-      const h1 = avg*1.45; // ใหญ่กว่าค่าเฉลี่ยมาก = หัวข้อใหญ่
-      const h2 = avg*1.25; // ใหญ่กว่าค่าเฉลี่ยพอควร = หัวข้อรอง
-
-      contentEl.innerHTML = '';
-      for (const L of allLines){
-        const div = document.createElement('div');
-        div.className = 'line';
-
-        // ตัดคำบางกรณี เพื่อคงเว้นวรรคหลัง bullet/เลขลำดับ
-        let txt = L.text;
-        // แยกคำต้นบรรทัดเพื่อเติม space หลัง token
-        txt = txt.replace(/^(\d+\.)\s?/, (_,m)=> m+' ');
-        txt = txt.replace(/^•\s?/, '• ');
-
-        // map ความสูงบรรทัดเป็นขนาดฟอนต์ (ช่วง 16–28px)
-        const size = Math.max(16, Math.min(28, (L.height/avg)*18));
-        const span = document.createElement('span');
-        span.className = 'chunk';
-        span.style.fontSize = `${size}px`;
-        // ถ้าเป็นหัวข้อ (ใหญ่กว่าเกณฑ์) → หนาอัตโนมัติ
-        if (L.height >= h1 || L.height >= h2) span.classList.add('bold');
-
-        span.textContent = txt;
-        div.appendChild(span);
-        contentEl.appendChild(div);
-      }
-    }
-
-    // -------- Main pipeline --------
-    async function run() {
-      try{
-        statusEl.textContent = 'Loading PDF…';
-        const pdf = await pdfjsLib.getDocument(PDF_PATH).promise;
-
-        // PASS 1: พยายามดึงจาก text layer ก่อน
-        statusEl.textContent = 'Extracting text layer…';
-        let totalTextCount = 0;
-        const pagesForText = [];
-        for (let p=1; p<=pdf.numPages; p++){
-          const page = await pdf.getPage(p);
-          const tc = await page.getTextContent();
-          pagesForText.push({ page, tc });
-          totalTextCount += (tc.items||[]).length;
-        }
-
-        if (totalTextCount > 0){
-          // มี text layer → เรนเดอร์ตามพิกัด + รักษารูปแบบ
-          contentEl.innerHTML = '';
-          statusEl.textContent = `Rendering styled text (${pdf.numPages} pages)…`;
-
-          for (let i=0; i<pagesForText.length; i++){
-            const { page, tc } = pagesForText[i];
-            const styles = tc.styles || {};
-            const lines = groupIntoLines(tc.items||[]);
-
-            for (const line of lines){
-              const lineEl = document.createElement('div');
-              lineEl.className = 'line';
-
-              let prev=null;
-              for(const seg of line){
-                const {item,x,y,w,fontSize} = seg;
-                const raw=(item.str||'').trim();
-                if(!raw){ prev=seg; continue; }
-
-                const span=document.createElement('span');
-                span.className='chunk';
-                span.style.fontSize=`${fontSize}px`;
-
-                const fontName = item.fontName || '';
-                const family = styles[fontName]?.fontFamily || '';
-                const flags = decideBoldItalic(fontName, family, fontSize);
-                if (flags.isBold) span.classList.add('bold');
-                if (flags.isItalic) span.classList.add('italic');
-
-                const prefix = needsSpace(prev,seg) ? ' ' : '';
-                const trail = forceTrailSpaceToken(raw) ? ' ' : '';
-                span.innerHTML = esc(prefix + raw + trail);
-                lineEl.appendChild(span);
-
-                prev=seg;
-              }
-              contentEl.appendChild(lineEl);
-            }
-            if (i < pagesForText.length-1){
-              const d=document.createElement('div'); d.className='divider'; contentEl.appendChild(d);
-            }
-          }
-          statusEl.textContent = 'Done.';
-          return;
-        }
-
-        // PASS 2: ไม่มี text layer → ใช้ OCR อัตโนมัติ
-        statusEl.textContent = 'No text layer found. Switching to OCR…';
-        let allLines = [];
-        for (let p=1; p<=pdf.numPages; p++){
-          const page = await pdf.getPage(p);
-          statusEl.textContent = `OCR page ${p}/${pdf.numPages}…`;
-          const lines = await ocrPageToLines(page, 2);  // scale 2x เพื่อความชัด
-          allLines = allLines.concat(lines);
-        }
-        statusEl.textContent = 'Rendering OCR result…';
-        renderOcrLines(allLines);
-        statusEl.textContent = 'Done (OCR).';
-      }catch(err){
-        console.error(err);
-        contentEl.innerHTML = '<div class="error">Error: โหลด/ประมวลผล PDF ไม่ได้</div>';
-        statusEl.textContent = 'Error.';
-      }
-    }
-
-    run();
+    renderDocx();
   </script>
 </body>
 </html>
