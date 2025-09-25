@@ -18,6 +18,7 @@
     }
     h1,h2 { text-align:center; margin:0 0 10px 0; font-weight:700; }
     .docTitle { text-align:center; font-weight:700; margin:16px auto 8px; font-size:22px; }
+    .status { text-align:center; font-size:14px; opacity:.75; margin:10px 0; }
     #content {
       max-width:960px; margin:12px auto 24px; background:var(--card); border-radius:12px; box-shadow:var(--shadow);
       padding:20px; white-space:normal; font-size:18px;
@@ -26,27 +27,31 @@
     .chunk { display:inline; }
     .bold { font-weight:700 !important; }
     .italic { font-style:italic; }
-    .error { color:#c00; text-align:center; font-weight:700; margin-top:16px; }
     .divider { height:12px; }
+    .error { color:#c00; text-align:center; font-weight:700; margin-top:16px; }
   </style>
 </head>
 <body>
   <h1>Welcome to</h1>
   <h2>20nxskypqz Exam Review</h2>
   <div class="docTitle">สังคมศึกษา ม.4_1-68</div>
+  <div class="status" id="status">Loading…</div>
 
-  <div id="content">Loading text from PDF...</div>
+  <div id="content">Loading text from PDF…</div>
 
   <script type="module">
     import * as pdfjsLib from 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.mjs';
     import 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.mjs';
+    // Tesseract.js (OCR) - ใช้จาก CDN
+    import 'https://unpkg.com/tesseract.js@5/dist/tesseract.min.js';
 
     const PDF_PATH = 'files/สังคมศึกษาทุกเรื่องม.4_1-68.pdf';
-    const Y_TOL = 3.0;          // รวมเป็นบรรทัดเดียวถ้า Y ใกล้กันในช่วงนี้
-    const AUTO_BOLD_1 = 25;     // หนาอัตโนมัติ (หัวข้อใหญ่)
-    const AUTO_BOLD_2 = 20;     // หนาอัตโนมัติ (หัวข้อรอง)
+    const Y_TOL = 3.0;          // รวมชิ้นข้อความให้เป็นบรรทัดถ้า y ใกล้กัน
+    const AUTO_BOLD_1 = 25;     // ทำหนาอัตโนมัติจากขนาด (โหมด text layer)
+    const AUTO_BOLD_2 = 20;
 
     const contentEl = document.getElementById('content');
+    const statusEl  = document.getElementById('status');
 
     const BOLD_RE   = /(bold|black|heavy|demi|semi[-\s]?bold|semibold|demibold|bd|700|800|900)/i;
     const ITALIC_RE = /(italic|oblique|it|slanted)/i;
@@ -54,13 +59,7 @@
 
     const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-    // ตัด prefix ซับเซ็ตฟอนต์ เช่น ABCDEF+THSarabunNew-Bold -> THSarabunNew-Bold
-    function normalizeFontKey(k='') {
-      const plus = k.indexOf('+');
-      return plus > -1 ? k.slice(plus+1) : k;
-    }
-
-    // รวม items เป็นบรรทัดจากแกน Y
+    // -------- Utilities for text-layer path --------
     function groupIntoLines(items){
       const lines=[]; const used = new Array(items.length).fill(false);
       const arr = items.map((item,idx)=>{
@@ -86,8 +85,6 @@
       lines.sort((A,B)=>B[0].y-A[0].y);
       return lines;
     }
-
-    // ช่องว่างระหว่างชิ้นข้อความ (จากช่องว่างจริง)
     function needsSpace(prev,curr){
       if(!prev) return false;
       const prevEnd=prev.x+(prev.w||0);
@@ -95,177 +92,174 @@
       const th=Math.max(2, prev.fontSize*0.25);
       return gap>th;
     }
-
-    // บังคับวรรคหลัง bullet และเลขลำดับ
     function forceTrailSpaceToken(txt){
       if(txt==='•') return true;
       if(/^\d+\.$/.test(txt)) return true;
       return false;
     }
+    function normalizeFontKey(k=''){ const i=k.indexOf('+'); return i>-1?k.slice(i+1):k; }
 
-    // ----------- อัลกอริทึมจับ Bold อัตโนมัติ -----------
-    // ผลรวมสถิติแต่ละฟอนต์ใน 1 เอกสาร: วัด "ความกว้างต่ออักษร ต่อขนาด" เพื่อแยกหนา-บางในแฟมิลีเดียวกัน
-    function collectFontStats(allPages) {
-      // statsPerFont: key=fontName (raw), { family, normName, count, sumRatio }
-      const statsPerFont = {};
-      // groups: key=family (normalize), set of font keys
-      const familyGroup = {};
-
-      for (const {items, styles} of allPages) {
-        for (const it of items) {
-          const nameRaw = it.item.fontName || '';
-          const nameNorm = normalizeFontKey(nameRaw);
-          const family = (styles[nameRaw]?.fontFamily || '').toLowerCase();
-
-          const len = (it.item.str||'').length || 1;
-          const width = it.w || 0;
-          const ratio = len ? ( (width/len) / (it.fontSize||1) ) : 0; // กว้างต่ออักษร ต่อขนาด
-
-          const s = statsPerFont[nameRaw] || { family, normName:nameNorm, count:0, sumRatio:0 };
-          s.count += 1;
-          s.sumRatio += ratio;
-          statsPerFont[nameRaw] = s;
-
-          const famKey = family || nameNorm.toLowerCase();
-          if (!familyGroup[famKey]) familyGroup[famKey] = new Set();
-          familyGroup[famKey].add(nameRaw);
-        }
-      }
-
-      // ตัดสิน "ตัวหนาคาดเดา" ต่อแฟมิลี: ตัวที่ avgRatio สูงสุด (หรือสูงกว่าเพื่อนชัดเจน) = Bold
-      const heuristicBold = new Set();
-      for (const famKey of Object.keys(familyGroup)) {
-        const members = Array.from(familyGroup[famKey] || []);
-        if (members.length < 2) continue; // มีแบบเดียว เดายาก ข้าม
-
-        let bestKey = null, bestAvg = -Infinity;
-        let secondAvg = -Infinity;
-
-        for (const k of members) {
-          const s = statsPerFont[k];
-          if (!s || s.count === 0) continue;
-          const avg = s.sumRatio / s.count;
-          if (avg > bestAvg) { secondAvg = bestAvg; bestAvg = avg; bestKey = k; }
-          else if (avg > secondAvg) { secondAvg = avg; }
-        }
-
-        // ต้องเหนือกว่าอย่างมีนัยยะ (ค่าเผื่อ) จึงถือว่า "หนา"
-        if (bestKey && bestAvg > 0 && (bestAvg - secondAvg) > 0.03) { // threshold 0.03 ปรับได้
-          heuristicBold.add(bestKey);
-        }
-      }
-
-      return { statsPerFont, heuristicBold };
-    }
-
-    function decideBoldItalic(fontNameRaw, family, fontSize, heuristicBold) {
+    function decideBoldItalic(fontNameRaw, family, fontSize){
       const nameNorm = normalizeFontKey(fontNameRaw).toLowerCase();
       const familyLC = (family||'').toLowerCase();
-
-      // 1) ถอดรหัสจากชื่อ (หลังตัด subset) และ family
       let isBold = BOLD_RE.test(nameNorm) || BOLD_RE.test(familyLC);
       let isItalic = ITALIC_RE.test(nameNorm) || ITALIC_RE.test(familyLC);
-
-      // 2) พิเศษสำหรับ Sarabun: ถ้ามีคำใบ้ bold ใน name/family ให้หนาทันที
       if (SARABUN_RE.test(nameNorm) || SARABUN_RE.test(familyLC)) {
         if (BOLD_RE.test(nameNorm) || BOLD_RE.test(familyLC)) isBold = true;
       }
-
-      // 3) ฮิวริสติกต่อแฟมิลีเดียวกัน: ถ้าถูกจัดเป็นตัวหนาจากสถิติ ให้หนา
-      if (heuristicBold.has(fontNameRaw)) isBold = true;
-
-      // 4) หัวข้อใหญ่: บังคับหนา
       if (fontSize >= AUTO_BOLD_1 || fontSize >= AUTO_BOLD_2) isBold = true;
-
       return { isBold, isItalic };
     }
-    // ------------------------------------------------------
 
-    async function renderPdfText() {
-      contentEl.innerHTML = 'Loading text from PDF...';
-      try {
-        const pdf = await pdfjsLib.getDocument(PDF_PATH).promise;
+    // -------- OCR helpers --------
+    async function ocrPageToLines(page, scale=2){
+      // render pdf page to canvas (ภาพ) เพื่อ OCR
+      const viewport = await page.getViewport({ scale });
+      const canvas = document.createElement('canvas');
+      canvas.width  = Math.ceil(viewport.width);
+      canvas.height = Math.ceil(viewport.height);
+      const ctx = canvas.getContext('2d', { alpha:false });
+      await page.render({ canvasContext: ctx, viewport }).promise;
 
-        // ===== Pass 1: รวบรวมข้อมูลทุกหน้า (items + styles) เพื่อประเมินฮิวริสติก =====
-        const allPages = [];
-        for (let p=1; p<=pdf.numPages; p++) {
-          const page = await pdf.getPage(p);
-          const tc = await page.getTextContent();
-          // enrich items with computed fontSize/width for stats
-          const enriched = (tc.items||[]).map(it => {
-            const t = it.transform || [1,0,0,1,0,0];
-            const fs = Math.max(Math.abs(t[0]||0), Math.abs(t[3]||0)) || 18;
-            const w = it.width || 0;
-            return { item: it, fontSize: fs, w };
-          });
-          allPages.push({ items: enriched, styles: tc.styles || {} });
+      // ใช้ Tesseract (tha+eng)
+      statusEl.textContent = `OCR processing… (this page)`;
+      const result = await Tesseract.recognize(
+        canvas,
+        'tha+eng',
+        {
+          // ดาวน์โหลด traineddata จาก CDN กลาง
+          langPath: 'https://tessdata.projectnaptha.com/4.0.0',
+          logger: m => { if (m.status) statusEl.textContent = `OCR: ${m.status} ${Math.round((m.progress||0)*100)}%`; }
         }
-        const { heuristicBold } = collectFontStats(allPages);
+      );
 
-        // ===== Pass 2: เรนเดอร์จริง พร้อมตัดสิน Bold/Italic อัตโนมัติ =====
-        contentEl.innerHTML = '';
-        for (let p=1; p<=pdf.numPages; p++) {
-          const { items: enriched, styles } = allPages[p-1];
+      // สร้าง “บรรทัด” จาก result.data.lines (คงลำดับบน→ล่าง)
+      // ประมาณขนาดอักษรจากความสูง bbox ของบรรทัด
+      const lines = (result.data.lines||[]).map(L => {
+        const text = (L.text || '').trim();
+        const height = Math.abs(L.bbox.y1 - L.bbox.y0) || 18;
+        return { text, height };
+      }).filter(l => l.text);
 
-          // จัดบรรทัดจาก enriched(item+fontSize+w)
-          const itemsForGrouping = enriched.map(e => {
-            // reconstruct minimal item for grouping
-            const it = e.item;
-            const t = it.transform || [1,0,0,1,0,0];
-            return { item: it, x: t[4]||0, y: t[5]||0, w: it.width||0, fontSize: e.fontSize };
-          });
-          const lines = groupIntoLines(itemsForGrouping);
+      return lines;
+    }
 
-          for (const line of lines) {
-            const lineEl = document.createElement('div');
-            lineEl.className = 'line';
+    function renderOcrLines(allLines){
+      // คำนวณค่าเฉลี่ยความสูงบรรทัดเพื่อเดาหัวข้อ
+      const heights = allLines.map(l => l.height);
+      const avg = heights.reduce((a,b)=>a+b,0)/(heights.length||1);
+      const h1 = avg*1.45; // ใหญ่กว่าค่าเฉลี่ยมาก = หัวข้อใหญ่
+      const h2 = avg*1.25; // ใหญ่กว่าค่าเฉลี่ยพอควร = หัวข้อรอง
 
-            let prev = null;
-            for (const seg of line) {
-              const it = seg.item;
-              const text = (it.str || '').trim();
-              if (!text) { prev = seg; continue; }
+      contentEl.innerHTML = '';
+      for (const L of allLines){
+        const div = document.createElement('div');
+        div.className = 'line';
 
-              const span = document.createElement('span');
-              span.className = 'chunk';
-              span.style.fontSize = `${seg.fontSize}px`;
+        // ตัดคำบางกรณี เพื่อคงเว้นวรรคหลัง bullet/เลขลำดับ
+        let txt = L.text;
+        // แยกคำต้นบรรทัดเพื่อเติม space หลัง token
+        txt = txt.replace(/^(\d+\.)\s?/, (_,m)=> m+' ');
+        txt = txt.replace(/^•\s?/, '• ');
 
-              const fontNameRaw = it.fontName || '';
-              const family = styles[fontNameRaw]?.fontFamily || '';
+        // map ความสูงบรรทัดเป็นขนาดฟอนต์ (ช่วง 16–28px)
+        const size = Math.max(16, Math.min(28, (L.height/avg)*18));
+        const span = document.createElement('span');
+        span.className = 'chunk';
+        span.style.fontSize = `${size}px`;
+        // ถ้าเป็นหัวข้อ (ใหญ่กว่าเกณฑ์) → หนาอัตโนมัติ
+        if (L.height >= h1 || L.height >= h2) span.classList.add('bold');
 
-              const { isBold, isItalic } = decideBoldItalic(fontNameRaw, family, seg.fontSize, heuristicBold);
-              if (isBold) span.classList.add('bold');
-              if (isItalic) span.classList.add('italic');
-
-              const prefix = needsSpace(prev, seg) ? ' ' : '';
-              const trail = forceTrailSpaceToken(text) ? ' ' : '';
-
-              span.innerHTML = esc(prefix + text + trail);
-              lineEl.appendChild(span);
-
-              prev = seg;
-            }
-
-            contentEl.appendChild(lineEl);
-          }
-
-          if (p < pdf.numPages) {
-            const d = document.createElement('div');
-            d.className = 'divider';
-            contentEl.appendChild(d);
-          }
-        }
-
-        if (!contentEl.textContent.trim()) {
-          contentEl.innerHTML = '<div class="error">พบว่าไฟล์นี้ไม่มีเลเยอร์ข้อความ (เป็นภาพ) — ต้องทำ OCR ก่อน หรือส่งไฟล์ที่เป็นข้อความจริง</div>';
-        }
-      } catch (err) {
-        console.error(err);
-        contentEl.innerHTML = '<div class="error">Error: โหลดข้อความจาก PDF ไม่ได้</div>';
+        span.textContent = txt;
+        div.appendChild(span);
+        contentEl.appendChild(div);
       }
     }
 
-    renderPdfText();
+    // -------- Main pipeline --------
+    async function run() {
+      try{
+        statusEl.textContent = 'Loading PDF…';
+        const pdf = await pdfjsLib.getDocument(PDF_PATH).promise;
+
+        // PASS 1: พยายามดึงจาก text layer ก่อน
+        statusEl.textContent = 'Extracting text layer…';
+        let totalTextCount = 0;
+        const pagesForText = [];
+        for (let p=1; p<=pdf.numPages; p++){
+          const page = await pdf.getPage(p);
+          const tc = await page.getTextContent();
+          pagesForText.push({ page, tc });
+          totalTextCount += (tc.items||[]).length;
+        }
+
+        if (totalTextCount > 0){
+          // มี text layer → เรนเดอร์ตามพิกัด + รักษารูปแบบ
+          contentEl.innerHTML = '';
+          statusEl.textContent = `Rendering styled text (${pdf.numPages} pages)…`;
+
+          for (let i=0; i<pagesForText.length; i++){
+            const { page, tc } = pagesForText[i];
+            const styles = tc.styles || {};
+            const lines = groupIntoLines(tc.items||[]);
+
+            for (const line of lines){
+              const lineEl = document.createElement('div');
+              lineEl.className = 'line';
+
+              let prev=null;
+              for(const seg of line){
+                const {item,x,y,w,fontSize} = seg;
+                const raw=(item.str||'').trim();
+                if(!raw){ prev=seg; continue; }
+
+                const span=document.createElement('span');
+                span.className='chunk';
+                span.style.fontSize=`${fontSize}px`;
+
+                const fontName = item.fontName || '';
+                const family = styles[fontName]?.fontFamily || '';
+                const flags = decideBoldItalic(fontName, family, fontSize);
+                if (flags.isBold) span.classList.add('bold');
+                if (flags.isItalic) span.classList.add('italic');
+
+                const prefix = needsSpace(prev,seg) ? ' ' : '';
+                const trail = forceTrailSpaceToken(raw) ? ' ' : '';
+                span.innerHTML = esc(prefix + raw + trail);
+                lineEl.appendChild(span);
+
+                prev=seg;
+              }
+              contentEl.appendChild(lineEl);
+            }
+            if (i < pagesForText.length-1){
+              const d=document.createElement('div'); d.className='divider'; contentEl.appendChild(d);
+            }
+          }
+          statusEl.textContent = 'Done.';
+          return;
+        }
+
+        // PASS 2: ไม่มี text layer → ใช้ OCR อัตโนมัติ
+        statusEl.textContent = 'No text layer found. Switching to OCR…';
+        let allLines = [];
+        for (let p=1; p<=pdf.numPages; p++){
+          const page = await pdf.getPage(p);
+          statusEl.textContent = `OCR page ${p}/${pdf.numPages}…`;
+          const lines = await ocrPageToLines(page, 2);  // scale 2x เพื่อความชัด
+          allLines = allLines.concat(lines);
+        }
+        statusEl.textContent = 'Rendering OCR result…';
+        renderOcrLines(allLines);
+        statusEl.textContent = 'Done (OCR).';
+      }catch(err){
+        console.error(err);
+        contentEl.innerHTML = '<div class="error">Error: โหลด/ประมวลผล PDF ไม่ได้</div>';
+        statusEl.textContent = 'Error.';
+      }
+    }
+
+    run();
   </script>
 </body>
 </html>
