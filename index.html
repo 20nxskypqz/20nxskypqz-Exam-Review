@@ -1,190 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>20nxskypqz Exam Review</title>
 
   <!-- ฟอนต์ Niramit -->
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
-    :root { --bg:#f9f9f9; --card:#ffffff; --shadow:0 6px 24px rgba(0,0,0,.08); }
-    * { box-sizing: border-box; }
     body {
-      margin: 0; font-family: 'Niramit', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      background: var(--bg); color:#111; line-height:1.6;
-      display:flex; min-height:100dvh; align-items:stretch; justify-content:center;
+      font-family: 'Niramit', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f9f9f9;
+      line-height: 1.6;
     }
-    .wrap { width:100%; max-width:1000px; padding:28px; display:flex; flex-direction:column; gap:20px; }
-    header { text-align:center; margin-top:8px; }
-    header h1 { margin:0 0 8px; font-size:clamp(28px,4vw,40px); font-weight:700; }
-    header h2 { margin:0; font-size:clamp(22px,3.2vw,32px); font-weight:700; opacity:.9; }
-    .panel {
-      background:var(--card); border-radius:16px; box-shadow:var(--shadow);
-      padding:16px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between;
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 10px;
     }
-    .left { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    .drop {
-      flex:1 1 260px; border:2px dashed #bbb; border-radius:12px; padding:14px;
-      text-align:center; cursor:pointer; background:#fff;
+    #content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 900px;
+      margin: 20px auto;
+      white-space: pre-wrap; /* ให้เว้นบรรทัดตามต้นฉบับ */
+      font-size: 18px;
     }
-    .drop.dragover { border-color:#333; background:#fafafa; }
-    .controls { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    .controls label { font-weight:700; }
-    .controls input[type="range"] { width:180px; }
-    #status { font-size:14px; opacity:.8; }
-    #viewer {
-      background:transparent; display:flex; flex-direction:column; gap:20px;
-      padding-bottom:20px;
+    .error {
+      color: red;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 20px;
     }
-    .pageCard {
-      background:var(--card); border-radius:16px; box-shadow:var(--shadow);
-      padding:12px; overflow:auto;
-    }
-    canvas { width:100%; height:auto; display:block; border-radius:10px; margin-bottom:20px; }
-    .hide { display:none; }
-    .small { font-size:12px; opacity:.75; }
-    button, .btn {
-      appearance:none; border:none; border-radius:999px; padding:10px 14px;
-      background:#111; color:#fff; font-weight:700; cursor:pointer;
-    }
-    button:disabled { opacity:.5; cursor:not-allowed; }
-    a.btn { text-decoration:none; display:inline-block; }
-    .docTitle { text-align:center; font-weight:700; margin:20px 0; font-size:20px; }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <header>
-      <h1>Welcome to</h1>
-      <h2>20nxskypqz Exam Review</h2>
-    </header>
+  <h1>Welcome to</h1>
+  <h2>20nxskypqz Exam Review</h2>
 
-    <section class="panel" id="panel">
-      <div class="left">
-        <label class="btn" for="file">Choose PDF</label>
-        <input id="file" type="file" accept="application/pdf" class="hide" />
-        <div id="drop" class="drop" tabindex="0" aria-label="Drop PDF here">
-          Drop PDF here or click “Choose PDF”
-        </div>
-      </div>
+  <div id="content">Loading text from PDF...</div>
 
-      <div class="controls">
-        <label for="scale">Zoom</label>
-        <input id="scale" type="range" min="0.8" max="2.0" step="0.1" value="1.2" />
-        <span id="scaleVal" class="small">120%</span>
-        <a id="openRaw" class="btn" target="_blank" rel="noopener">Open PDF</a>
-      </div>
-      <div id="status" class="small">No file loaded</div>
-    </section>
-
-    <div class="docTitle">สังคมศึกษาทุกเรื่อง ม.4_1-68</div>
-
-    <section id="viewer" aria-live="polite"></section>
-  </main>
-
-  <!-- PDF.js -->
   <script type="module">
     import * as pdfjsLib from 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.mjs';
     import 'https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.mjs';
 
-    const fileInput = document.getElementById('file');
-    const drop = document.getElementById('drop');
-    const viewer = document.getElementById('viewer');
-    const statusEl = document.getElementById('status');
-    const scaleInput = document.getElementById('scale');
-    const scaleVal = document.getElementById('scaleVal');
-    const openRaw = document.getElementById('openRaw');
+    // กำหนดไฟล์ PDF
+    const pdfPath = 'files/สังคมศึกษาทุกเรื่องม.4_1-68.pdf';
+    const contentDiv = document.getElementById('content');
 
-    // ไฟล์ PDF ที่จะโหลดอัตโนมัติ
-    const defaultPdf = 'files/สังคมศึกษาทุกเรื่องม.4_1-68.pdf';
-
-    const params = new URLSearchParams(location.search);
-    const paramFile = params.get('file');
-
-    let currentDoc = null;
-    let currentSrc = '';
-    let currentScale = parseFloat(scaleInput.value);
-
-    function setStatus(msg) { statusEl.textContent = msg; }
-    function clearViewer() { viewer.innerHTML = ''; }
-
-    async function renderPdf(src, scale=1.2) {
-      setStatus('Loading PDF…');
-      clearViewer();
-      currentScale = scale;
-      scaleVal.textContent = Math.round(scale*100) + '%';
-      currentSrc = src;
-      openRaw.href = src;
-
+    async function extractTextFromPDF(url) {
       try {
-        const loadingTask = pdfjsLib.getDocument(src);
-        const pdf = await loadingTask.promise;
-        currentDoc = pdf;
-        setStatus(`Loaded ${pdf.numPages} page(s). Rendering…`);
+        // โหลด PDF
+        const pdf = await pdfjsLib.getDocument(url).promise;
+        let fullText = '';
 
-        // แสดงทุกหน้าต่อกันเป็นเอกสารยาว
-        for (let p = 1; p <= pdf.numPages; p++) {
-          const page = await pdf.getPage(p);
-          const viewport = page.getViewport({ scale });
-
-          const canvas = document.createElement('canvas');
-          const context = canvas.getContext('2d', { alpha: false });
-          canvas.width = Math.floor(viewport.width);
-          canvas.height = Math.floor(viewport.height);
-
-          const renderTask = page.render({ canvasContext: context, viewport });
-          await renderTask.promise;
-
-          viewer.appendChild(canvas);
-          setStatus(`Rendered page ${p} / ${pdf.numPages}`);
+        // ดึงข้อความจากทุกหน้า
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items.map(item => item.str).join(' ');
+          fullText += pageText + '\n\n'; // ต่อข้อความทุกหน้า
         }
-        setStatus('Done.');
+
+        // แสดงข้อความทั้งหมด
+        contentDiv.textContent = fullText || 'ไม่พบข้อความในไฟล์ PDF';
       } catch (err) {
-        console.error(err);
-        setStatus('Failed to load/render PDF. Check the file path or try another PDF.');
+        contentDiv.innerHTML = '<div class="error">Error: โหลดข้อความจาก PDF ไม่ได้</div>';
+        console.error('PDF load error:', err);
       }
     }
 
-    fileInput.addEventListener('change', async (e) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      const blobUrl = URL.createObjectURL(file);
-      await renderPdf(blobUrl, parseFloat(scaleInput.value));
-    });
-
-    const stop = e => { e.preventDefault(); e.stopPropagation(); };
-    ['dragenter','dragover','dragleave','drop'].forEach(evt => {
-      drop.addEventListener(evt, stop, false);
-    });
-    ['dragenter','dragover'].forEach(evt => {
-      drop.addEventListener(evt, () => drop.classList.add('dragover'));
-    });
-    ['dragleave','drop'].forEach(evt => {
-      drop.addEventListener(evt, () => drop.classList.remove('dragover'));
-    });
-    drop.addEventListener('drop', (e) => {
-      const file = e.dataTransfer?.files?.[0];
-      if (file && file.type === 'application/pdf') {
-        const blobUrl = URL.createObjectURL(file);
-        renderPdf(blobUrl, parseFloat(scaleInput.value));
-      } else {
-        setStatus('Please drop a PDF file.');
-      }
-    });
-    drop.addEventListener('click', () => fileInput.click());
-
-    scaleInput.addEventListener('input', () => {
-      const scale = parseFloat(scaleInput.value);
-      scaleVal.textContent = Math.round(scale*100) + '%';
-    });
-    scaleInput.addEventListener('change', async () => {
-      if (currentDoc && currentSrc) renderPdf(currentSrc, parseFloat(scaleInput.value));
-    });
-
-    const initial = paramFile || defaultPdf;
-    if (initial) renderPdf(initial, currentScale);
+    // เรียกฟังก์ชันเพื่อดึงข้อความจาก PDF
+    extractTextFromPDF(pdfPath);
   </script>
 </body>
 </html>
