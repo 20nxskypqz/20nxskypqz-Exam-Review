@@ -5,269 +5,89 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>20nxskypqz Exam Review</title>
 
-  <!-- ฟอนต์ Niramit -->
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Material Symbols (Outlined) -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <style>
-    :root { --bg:#f9f9f9; --card:#fff; --ink:#111; --shadow:0 6px 24px rgba(0,0,0,.08); --muted:#666; }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; background: var(--bg); color: var(--ink);
-      font-family: 'Niramit', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      line-height: 1.8; padding: 20px;
-    }
-
-    /* หัวเว็บ (กึ่งกลาง) */
-    .site-title { text-align: center; margin: 0 0 10px 0; font-weight: 700; font-size: 28px; }
-    .site-sub  { text-align: center; margin: 0 0 10px 0; font-weight: 700; font-size: 22px; }
-
-    .toolbar {
-      max-width: 1100px; margin: 0 auto 12px;
-      display: flex; gap: 8px; justify-content: space-between; align-items: center; flex-wrap: wrap;
-    }
-    .btn {
-      appearance:none; border:1px solid #111; background:#111; color:#fff;
-      border-radius:999px; padding:8px 12px; font-weight:700; cursor:pointer;
-    }
-    .btn.alt { background:#fff; color:#111; }
-    .status { font-size:14px; color:var(--muted); }
-
-    #content {
-      max-width: 1100px; margin: 0 auto 24px; background: var(--card);
-      border-radius: 12px; box-shadow: var(--shadow); padding: 24px;
-    }
-
-    /* ---------- สไตล์ภายในเอกสาร ---------- */
-    /* หัวข้อในเอกสารชิดซ้าย */
-    #content h1, #content h2, #content h3 { text-align: left; }
-
-    #content h1 { font-size: 28px; font-weight: 700; margin: 18px 0 8px; }
-    #content h2 { font-size: 24px; font-weight: 700; margin: 16px 0 6px; }
-    #content h3 { font-size: 20px; font-weight: 700; margin: 14px 0 6px; }
-    #content p  { margin: 8px 0; }
-    #content strong { font-weight: 700; }
-    #content em { font-style: italic; }
-    #content ul, #content ol { padding-left: 1.4em; margin: 8px 0; }
-    #content li { margin: 4px 0; }
-
-    /* คั่นหมวดใหญ่ */
-    .major-section { margin: 28px 0 16px; }
-    .major-heading {
-      font-size: 26px; font-weight: 700; margin: 0 0 12px 0;
-      padding: 10px 14px; border-radius: 10px; background:#eef2f6;
-    }
-
-    /* คั่นไฟล์ย่อยในแต่ละหมวด */
-    .doc-section { margin: 24px 0; }
-    .doc-heading {
-      font-size: 22px; font-weight: 700; margin: 0 0 12px 0;
-      padding: 8px 12px; border-radius: 10px; background:#f4f4f4;
-    }
-
-    /* TOC */
-    .toc { max-width:1100px; margin: 12px auto 16px; display:flex; gap:16px; flex-wrap:wrap; }
-    .toc a {
-      text-decoration:none; color:#111; border:1px solid #ddd; border-radius:999px;
-      padding:6px 10px; background:#fff; font-weight:700;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="site-title">Welcome to</div>
-  <div class="site-sub">20nxskypqz Exam Review</div>
+  <!-- Header (full-bleed) -->
+  <header class="header full-bleed">
+    <button class="menu-toggle" aria-label="Open menu" type="button">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
 
-  <!-- TOC -->
-  <nav class="toc">
-    <a href="#soc">สังคมศึกษา ม.4_1-68</a>
-    <a href="#bio">ชีววิทยา ม.4_1-68</a>
-    <a href="#e31101">E31101 M.4_1-68</a>
-    <a href="#t31101">ท31101 M.4_1-68</a>
-  </nav>
-
-  <div class="toolbar">
-    <div class="status" id="status">Loading documents…</div>
-    <div style="display:flex; gap:8px;">
-      <button id="downloadHtml" class="btn alt">Download as HTML</button>
-      <button id="reload" class="btn">Reload</button>
+    <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
+      <div class="toggle-circle">
+        <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
+      </div>
     </div>
-  </div>
+  </header>
 
-  <div id="content">Preparing…</div>
+  <!-- Side Menu + Overlay -->
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <aside class="side-menu" id="sideMenu" aria-hidden="true">
+    <button class="close-menu" id="closeMenuBtn" aria-label="Close menu" type="button">
+      <span class="material-symbols-outlined">close</span>
+    </button>
 
-  <!-- Mammoth.js (DOCX → HTML ในเบราว์เซอร์) -->
+    <nav class="menu-content" aria-label="Exam Review Navigation">
+      <div class="menu-group">
+        <button class="menu-section-toggle" data-target="subjectsList">
+          <span>Subjects</span>
+          <span class="material-symbols-outlined">arrow_drop_down</span>
+        </button>
+        <ul class="menu-sublist" id="subjectsList">
+          <li><a href="#soc"><span class="bullet"></span>สังคมศึกษา ม.4_1-68</a></li>
+          <li><a href="#bio"><span class="bullet"></span>ชีววิทยา ม.4_1-68</a></li>
+          <li><a href="#e31101"><span class="bullet"></span>E31101 M.4_1-68</a></li>
+          <li><a href="#t31101"><span class="bullet"></span>ท31101 M.4_1-68</a></li>
+        </ul>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="content">
+    <section class="hero">
+      <h1 class="site-title">Welcome to</h1>
+      <h2 class="site-sub">20nxskypqz Exam Review!</h2>
+    </section>
+
+    <!-- TOC -->
+    <nav class="toc">
+      <a href="#soc">สังคมศึกษา ม.4_1-68</a>
+      <a href="#bio">ชีววิทยา ม.4_1-68</a>
+      <a href="#e31101">E31101 M.4_1-68</a>
+      <a href="#t31101">ท31101 M.4_1-68</a>
+    </nav>
+
+    <div class="toolbar">
+      <div class="status" id="status">Loading documents…</div>
+      <div class="toolbar-actions">
+        <button id="downloadHtml" class="btn btn-ghost">
+          <span class="material-symbols-outlined">download</span>
+          Download as HTML
+        </button>
+        <button id="reload" class="btn btn-primary">
+          <span class="material-symbols-outlined">refresh</span>
+          Reload
+        </button>
+      </div>
+    </div>
+
+    <div id="content" class="doc-container">Preparing…</div>
+  </main>
+
+  <!-- Footer (full-bleed) -->
+  <footer class="footer full-bleed">
+    &copy; 2025 20nxskypqz Exam Review
+  </footer>
+
+  <!-- Mammoth for DOCX → HTML -->
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
-  <script>
-    // ===== กลุ่มเอกสาร =====
-    const SOCIAL = {
-      id: 'soc',
-      title: 'สังคมศึกษา ม.4_1-68',
-      docs: [
-        { file: 'files/สังคมศึกษาทุกเรื่องม.4_1-68.docx', title: 'สังคมศึกษาทุกเรื่อง ม.4_1-68' }
-      ]
-    };
-
-    const BIO = {
-      id: 'bio',
-      title: 'ชีววิทยา ม.4_1-68',
-      docs: [
-        { file: 'files/การศึกษาชีววิทยา.docx',              title: 'การศึกษาชีววิทยา' },
-        { file: 'files/เคมีที่เป็นพื้นฐานของสิ่งมีชีวิต.docx', title: 'เคมีที่เป็นพื้นฐานของสิ่งมีชีวิต' },
-        { file: 'files/เซลล์และการทำงานของเซลล์.docx',       title: 'เซลล์และการทำงานของเซลล์' }
-      ]
-    };
-
-    const E31101 = {
-      id: 'e31101',
-      title: 'E31101 M.4_1-68',
-      docs: [
-        { file: 'files/E31101.docx', title: 'E31101' }
-      ]
-    };
-
-    const T31101 = {
-      id: 't31101',
-      title: 'ท31101 M.4_1-68',
-      docs: [
-        { file: 'files/ท31101.docx', title: 'ท31101' }
-      ]
-    };
-
-    const statusEl  = document.getElementById('status');
-    const contentEl = document.getElementById('content');
-    const reloadBtn = document.getElementById('reload');
-
-    async function loadArrayBuffer(url) {
-      // encodeURI เพื่อให้ไฟล์ชื่อไทยใช้งานได้บน GitHub Pages
-      const res = await fetch(encodeURI(url), { cache: 'no-store' });
-      if (!res.ok) throw new Error('โหลดไฟล์ไม่ได้: ' + url + ' [' + res.status + ']');
-      return await res.arrayBuffer();
-    }
-
-    // map สไตล์จาก Word → HTML (หัวข้อ/หนา/เอียง)
-    const options = {
-      styleMap: [
-        "p[style-name='Title'] => h1:fresh",
-        "p[style-name='Subtitle'] => h2:fresh",
-        "p[style-name='Heading 1'] => h1:fresh",
-        "p[style-name='Heading 2'] => h2:fresh",
-        "p[style-name='Heading 3'] => h3:fresh",
-        "b => strong",
-        "i => em"
-      ]
-    };
-
-    // กันกรณีรายการติดกัน: บังคับเว้นวรรคหลังเลขลำดับ/บูลเล็ต
-    function fixListSpacing(container) {
-      container.querySelectorAll('li').forEach(li => {
-        li.innerHTML = li.innerHTML
-          .replace(/^(\d+)\.\s?/, (_,m)=> m + '. ')
-          .replace(/^•\s?/, '• ');
-      });
-    }
-
-    function makeMajorSection(id, title) {
-      const wrap = document.createElement('section');
-      wrap.className = 'major-section';
-      wrap.id = id;
-
-      const h = document.createElement('div');
-      h.className = 'major-heading';
-      h.textContent = title;
-
-      wrap.appendChild(h);
-      return wrap;
-    }
-
-    async function renderGroup(group) {
-      const container = makeMajorSection(group.id, group.title);
-
-      for (const entry of group.docs) {
-        try {
-          const buf = await loadArrayBuffer(entry.file);
-          const { value: html, messages } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
-
-          const sec = document.createElement('section');
-          sec.className = 'doc-section';
-
-          const h = document.createElement('div');
-          h.className = 'doc-heading';
-          h.textContent = entry.title;
-          sec.appendChild(h);
-
-          const holder = document.createElement('div');
-          holder.innerHTML = html;
-          fixListSpacing(holder);
-
-          sec.appendChild(holder);
-          container.appendChild(sec);
-
-          if (messages && messages.length) console.log('Mammoth messages for', entry.file, messages);
-        } catch (e) {
-          console.error(e);
-          const err = document.createElement('div');
-          err.style.color = '#c00';
-          err.style.fontWeight = '700';
-          err.style.margin = '8px 0 16px';
-          err.textContent = 'โหลดเอกสารไม่ได้: ' + entry.file;
-          container.appendChild(err);
-        }
-      }
-
-      return container;
-    }
-
-    async function renderAll() {
-      try {
-        statusEl.textContent = 'Loading documents…';
-        contentEl.innerHTML = '';
-
-        // เรนเดอร์ทุกหมวด
-        const socNode    = await renderGroup(SOCIAL);
-        const bioNode    = await renderGroup(BIO);
-        const e31101Node = await renderGroup(E31101);
-        const t31101Node = await renderGroup(T31101);
-
-        contentEl.appendChild(socNode);
-        contentEl.appendChild(bioNode);
-        contentEl.appendChild(e31101Node);
-        contentEl.appendChild(t31101Node);
-
-        statusEl.textContent = 'Done.';
-      } catch (e) {
-        console.error(e);
-        statusEl.textContent = 'Error loading documents.';
-        contentEl.innerHTML = '<div style="color:#c00;font-weight:700">เกิดข้อผิดพลาดในการโหลดเอกสาร</div>';
-      }
-    }
-
-    // ปุ่ม Reload
-    reloadBtn.addEventListener('click', renderAll);
-
-    // ปุ่มดาวน์โหลด HTML ที่เรนเดอร์แล้ว
-    document.getElementById('downloadHtml').addEventListener('click', () => {
-      const blob = new Blob(
-        [
-          '<!doctype html><meta charset="utf-8">',
-          '<link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet">',
-          '<style>',
-          'body{font-family:Niramit,system-ui,-apple-system,Segoe UI,Arial,sans-serif;line-height:1.8;padding:24px;max-width:1100px;margin:0 auto}',
-          '#content h1{text-align:left;font-size:28px} #content h2{text-align:left;font-size:24px} #content h3{text-align:left;font-size:20px}',
-          '.major-heading{font-size:26px;font-weight:700;margin:0 0 12px 0;padding:10px 14px;border-radius:10px;background:#eef2f6}',
-          '.doc-heading{font-size:22px;font-weight:700;margin:0 0 12px 0;padding:8px 12px;border-radius:10px;background:#f4f4f4}',
-          '</style>',
-          contentEl.innerHTML
-        ],
-        { type: 'text/html;charset=utf-8' }
-      );
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'รวม_สังคมศึกษา+ชีววิทยา+E31101+ท31101_ม.4_1-68.html';
-      a.click();
-      URL.revokeObjectURL(url);
-    });
-
-    // เริ่มทำงาน
-    renderAll();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
