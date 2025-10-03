@@ -66,19 +66,16 @@ function initSideMenu(){
   if (closeBtn) closeBtn.addEventListener('click', closeMenu);
   if (overlay)  overlay.addEventListener('click', closeMenu);
 
-  // dropdowns inside side menu
+  // dropdowns inside side menu (ทุกระดับ)
   document.querySelectorAll('.menu-section-toggle').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const key = btn.getAttribute('data-menu-tier');
       if (!key) return;
       const tier = document.getElementById('menu-' + key);
-      const sub  = document.getElementById('menu-' + key); // primary
-      // primary-level: menu-<key>
       if (tier){
         const isHidden = tier.hasAttribute('hidden');
         if (isHidden) tier.removeAttribute('hidden'); else tier.setAttribute('hidden','');
       }
-      // child ULs use same id scheme already assigned per HTML above
       const caret = btn.querySelector('.material-symbols-outlined');
       if (caret) caret.style.transform = (tier && !tier.hasAttribute('hidden')) ? 'rotate(180deg)' : 'rotate(0deg)';
     });
@@ -87,7 +84,6 @@ function initSideMenu(){
 
 // -------------- root page dropdowns --------------
 function initRootDropdowns(){
-  // buttons with .tier-toggle
   document.querySelectorAll('.tier-toggle').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const id = btn.getAttribute('data-tier');
