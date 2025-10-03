@@ -1,3 +1,5 @@
+/* ExamReview-js-0310-[Complete] */
+
 // ====== Data groups (DOCX lists used on index page) ======
 const SOCIAL = {
   id: 'soc',
@@ -16,7 +18,16 @@ const BIO = {
   ]
 };
 const E31101 = { id:'e31101', title:'E31101 M.4_1-68', docs:[ { file:'files/E31101.docx', title:'E31101' } ] };
-const T31101 = { id:'t31101', title:'ท31101 M.4_1-68', docs:[ { file:'files/ท31101.docx', title:'ท31101' } ] };
+
+// >>> เปลี่ยนพาธสำหรับ ท31101 ให้เป็นโครงสร้างใหม่
+const T31101 = {
+  id: 't31101',
+  title: 'ท31101 M.4_1-68',
+  docs: [
+    { file: 'files/m.4/term.1/ท31101_midterm.docx', title: 'ท31101 (Midterm)' },
+    { file: 'files/m.4/term.1/ท31101_final.docx',   title: 'ท31101 (Final)' }
+  ]
+};
 
 // ====== DOM ======
 const statusEl   = document.getElementById('status');
