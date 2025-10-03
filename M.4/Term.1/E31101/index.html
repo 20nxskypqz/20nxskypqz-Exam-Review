@@ -1,91 +1,99 @@
-<!-- ExamReview-E31101-html-03102025-[Complete] -->
+<!-- E31101-HTML-03102025-[Complete] -->
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>E31101 • 20nxskypqz Exam Review</title>
+  <title>E31101 — 20nxskypqz Exam Review</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
+  <!-- Material Symbols (CDN) -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <link rel="stylesheet" href="../../styles.css" />
+  <!-- Niramit -->
+  <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
+
+  <!-- Global styles (Exam Review) -->
+  <link rel="stylesheet" href="/20nxskypqz-Exam-Review/styles.css" />
 </head>
 <body>
-  <div data-include="../../shared/header.html"></div>
-  <div data-include="../../shared/side-menu.html"></div>
+  <!-- shared header + side menu -->
+  <div data-include="/20nxskypqz-Exam-Review/shared/header.html"></div>
+  <div data-include="/20nxskypqz-Exam-Review/shared/side-menu.html"></div>
 
   <main class="content">
     <section class="hero">
-      <h1>อ31101</h1>
+      <h1 class="align-left" style="margin:.2em 0 .4em;">อ31101</h1>
     </section>
 
     <section class="section-card">
-      <h2 class="align-left">Midterm</h2>
-      <div class="card" id="midterm-holder">
-        <p style="margin:0;color:var(--muted)">—</p>
+      <h2 class="align-left" style="margin:0 0 8px;">Midterm</h2>
+      <div class="card" id="midterm-box">
+        <em>Coming soon.</em>
       </div>
     </section>
 
     <section class="section-card">
-      <h2 class="align-left">Final</h2>
-      <div class="card" id="final-holder">
-        กำลังโหลดเอกสาร…
-      </div>
+      <h2 class="align-left" style="margin:0 0 8px;">Final</h2>
+      <div class="card" id="final-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="final-box">Preparing…</div>
     </section>
   </main>
 
-  <div data-include="../../shared/footer.html"></div>
+  <!-- shared footer -->
+  <div data-include="/20nxskypqz-Exam-Review/shared/footer.html"></div>
 
-  <!-- Mammoth.js -->
+  <!-- Mammoth (DOCX → HTML) -->
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+
+  <!-- Global script -->
+  <script src="/20nxskypqz-Exam-Review/script.js"></script>
+
   <script>
-    async function includePartials() {
-      const nodes = Array.from(document.querySelectorAll('[data-include]'));
-      for (const node of nodes) {
-        const url = node.getAttribute('data-include');
-        const res = await fetch(url, { cache: 'no-store' });
-        const html = await res.text();
-        const temp = document.createElement('div'); temp.innerHTML = html.trim();
-        const frag = document.createDocumentFragment(); while (temp.firstChild) frag.appendChild(temp.firstChild);
-        node.replaceWith(frag);
+    (function () {
+      const finalStatus = document.getElementById('final-status');
+      const finalBox    = document.getElementById('final-box');
+      const fileUrl     = "/20nxskypqz-Exam-Review/files/m.4/term.1/อ31101_final.docx";
+
+      const options = {
+        styleMap: [
+          "p[style-name='Title'] => h1:fresh",
+          "p[style-name='Subtitle'] => h2:fresh",
+          "p[style-name='Heading 1'] => h1:fresh",
+          "p[style-name='Heading 2'] => h2:fresh",
+          "p[style-name='Heading 3'] => h3:fresh",
+          "b => strong",
+          "i => em"
+        ]
+      };
+
+      function fixListSpacing(container){
+        container.querySelectorAll('li').forEach(li=>{
+          li.innerHTML = li.innerHTML
+            .replace(/^(\d+)\.\s?/, (_,m)=> m + '. ')
+            .replace(/^•\s?/, '• ');
+        });
       }
-    }
 
-    const styleMap = [
-      "p[style-name='Title'] => h1:fresh",
-      "p[style-name='Subtitle'] => h2:fresh",
-      "p[style-name='Heading 1'] => h1:fresh",
-      "p[style-name='Heading 2'] => h2:fresh",
-      "p[style-name='Heading 3'] => h3:fresh",
-      "b => strong",
-      "i => em"
-    ];
-
-    async function loadArrayBuffer(url){
-      const res = await fetch(encodeURI(url), { cache: 'no-store' });
-      if(!res.ok) throw new Error('โหลดไฟล์ไม่ได้: '+url+' ['+res.status+']');
-      return await res.arrayBuffer();
-    }
-
-    async function renderFinal(){
-      const holder = document.getElementById('final-holder');
-      try{
-        const buf = await loadArrayBuffer('../../../files/m.4/term.1/อ31101_final.docx');
-        const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, { styleMap });
-        holder.innerHTML = html;
-      }catch(e){
-        console.error(e);
-        holder.innerHTML = '<div style="color:#c00;font-weight:700">โหลดเอกสารไม่ได้</div>';
+      async function loadArrayBuffer(url){
+        const res = await fetch(encodeURI(url), { cache: 'no-store' });
+        if(!res.ok) throw new Error('โหลดไฟล์ไม่ได้: ' + url + ' [' + res.status + ']');
+        return await res.arrayBuffer();
       }
-    }
 
-    document.addEventListener('DOMContentLoaded', async ()=>{
-      await includePartials();
-      await renderFinal();
-    });
+      (async () => {
+        try{
+          const buf = await loadArrayBuffer(fileUrl);
+          const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
+          finalBox.innerHTML = html;
+          fixListSpacing(finalBox);
+          finalStatus.textContent = 'Done.';
+        }catch(e){
+          console.error(e);
+          finalStatus.textContent = 'Error loading document.';
+          finalBox.innerHTML = '<div style="color:#c00;font-weight:700">เกิดข้อผิดพลาดในการโหลดเอกสาร</div>';
+        }
+      })();
+    })();
   </script>
-
-  <script src="../../script.js"></script>
 </body>
 </html>
