@@ -82,19 +82,19 @@ function initSideMenu(){
   });
 }
 
-// -------------- root page dropdowns --------------
+// -------------- root page dropdowns (แก้ให้ทำงานกับ data-drop / data-target) --------------
 function initRootDropdowns(){
-  document.querySelectorAll('.tier-toggle').forEach(btn=>{
+  document.querySelectorAll('[data-drop]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      const id = btn.getAttribute('data-tier');
-      if (!id) return;
-      const target = document.getElementById(id);
+      const key = btn.getAttribute('data-drop');
+      if (!key) return;
+      const target = document.querySelector(`[data-target="${key}"]`);
       if (!target) return;
       const isHidden = target.hasAttribute('hidden');
       if (isHidden) target.removeAttribute('hidden'); else target.setAttribute('hidden','');
 
       const caret = btn.querySelector('.material-symbols-outlined');
-      if (caret) caret.style.transform = (!isHidden)? 'rotate(0deg)' : 'rotate(180deg)';
+      if (caret) caret.style.transform = (!isHidden) ? 'rotate(0deg)' : 'rotate(180deg)';
     });
   });
 }
