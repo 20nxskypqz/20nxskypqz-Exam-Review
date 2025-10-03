@@ -1,89 +1,104 @@
-<!-- shared-side-menu-03102025-[Complete] -->
-<aside id="sideMenu" class="side-menu" aria-hidden="true">
-  <button class="close-menu" id="closeMenuBtn" aria-label="Close menu" type="button">
+<!-- ExamReview-SharedSideMenu-03102025-[Complete] -->
+<aside class="side-menu" aria-label="Side menu">
+  <button class="close-menu" aria-label="Close menu" type="button">
     <span class="material-symbols-outlined">close</span>
   </button>
-
-  <nav class="menu-group" aria-label="Exam Review navigation">
+  <div class="menu-group">
     <!-- M.4 -->
-    <button class="menu-section-toggle" data-menu-tier="m4">
+    <button class="menu-section-toggle" data-target="m4">
       <span>M.4</span>
-      <span class="material-symbols-outlined">arrow_drop_down</span>
+      <span class="material-symbols-outlined">arrow_right</span>
     </button>
-    <ul id="menu-m4" class="menu-sublist" hidden>
+    <ul class="menu-sublist" data-menu="m4" hidden>
       <li>
-        <button class="menu-section-toggle sub" data-menu-tier="m4t1">
+        <button class="menu-section-toggle" data-target="m4t1" style="width:100%;">
           <span>Term 1</span>
-          <span class="material-symbols-outlined">arrow_drop_down</span>
+          <span class="material-symbols-outlined">arrow_right</span>
         </button>
-        <ul id="menu-m4t1" class="menu-sublist" hidden>
-          <li><a href="/20nxskypqz-Exam-Review/M.4/Term.1/T31101/"><span class="material-symbols-outlined">description</span><span>ภาษาไทย 1 - ท31101</span></a></li>
-          <li><a href="/20nxskypqz-Exam-Review/M.4/Term.1/S31101/"><span class="material-symbols-outlined">description</span><span>สังคมศึกษา 1 - ส31101</span></a></li>
-          <li><a href="/20nxskypqz-Exam-Review/M.4/Term.1/E31101/"><span class="material-symbols-outlined">description</span><span>ภาษาอังกฤษ 1 - อ31101</span></a></li>
+        <ul class="menu-sublist" data-menu="m4t1" hidden>
+          <!-- เรียง: สังคม → อังกฤษ → ไทย -->
+          <li>
+            <a href="M.4/Term.1/S31101/">
+              <span class="material-symbols-outlined">school</span>
+              สังคมศึกษา 1 - ส31101
+            </a>
+          </li>
+          <li>
+            <a href="M.4/Term.1/E31101/">
+              <span class="material-symbols-outlined">translate</span>
+              ภาษาอังกฤษ 1 - อ31101
+            </a>
+          </li>
+          <li>
+            <a href="M.4/Term.1/T31101/">
+              <span class="material-symbols-outlined">menu_book</span>
+              ภาษาไทย 1 - ท31101
+            </a>
+          </li>
         </ul>
       </li>
       <li>
-        <button class="menu-section-toggle sub" data-menu-tier="m4t2">
+        <button class="menu-section-toggle" data-target="m4t2" style="width:100%;">
           <span>Term 2</span>
-          <span class="material-symbols-outlined">arrow_drop_down</span>
+          <span class="material-symbols-outlined">arrow_right</span>
         </button>
-        <ul id="menu-m4t2" class="menu-sublist" hidden>
-          <li><a class="placeholder-link" href="javascript:void(0)"><span class="material-symbols-outlined">remove</span><span>-</span></a></li>
+        <ul class="menu-sublist" data-menu="m4t2" hidden>
+          <li><a class="placeholder-link">-</a></li>
         </ul>
       </li>
     </ul>
 
     <!-- M.5 -->
-    <button class="menu-section-toggle" data-menu-tier="m5">
+    <button class="menu-section-toggle" data-target="m5">
       <span>M.5</span>
-      <span class="material-symbols-outlined">arrow_drop_down</span>
+      <span class="material-symbols-outlined">arrow_right</span>
     </button>
-    <ul id="menu-m5" class="menu-sublist" hidden>
+    <ul class="menu-sublist" data-menu="m5" hidden>
       <li>
-        <button class="menu-section-toggle sub" data-menu-tier="m5t1">
+        <button class="menu-section-toggle" data-target="m5t1" style="width:100%;">
           <span>Term 1</span>
-          <span class="material-symbols-outlined">arrow_drop_down</span>
+          <span class="material-symbols-outlined">arrow_right</span>
         </button>
-        <ul id="menu-m5t1" class="menu-sublist" hidden>
-          <li><a class="placeholder-link" href="javascript:void(0)"><span class="material-symbols-outlined">remove</span><span>-</span></a></li>
+        <ul class="menu-sublist" data-menu="m5t1" hidden>
+          <li><a class="placeholder-link">-</a></li>
         </ul>
       </li>
       <li>
-        <button class="menu-section-toggle sub" data-menu-tier="m5t2">
+        <button class="menu-section-toggle" data-target="m5t2" style="width:100%;">
           <span>Term 2</span>
-          <span class="material-symbols-outlined">arrow_drop_down</span>
+          <span class="material-symbols-outlined">arrow_right</span>
         </button>
-        <ul id="menu-m5t2" class="menu-sublist" hidden>
-          <li><a class="placeholder-link" href="javascript:void(0)"><span class="material-symbols-outlined">remove</span><span>-</span></a></li>
+        <ul class="menu-sublist" data-menu="m5t2" hidden>
+          <li><a class="placeholder-link">-</a></li>
         </ul>
       </li>
     </ul>
 
     <!-- M.6 -->
-    <button class="menu-section-toggle" data-menu-tier="m6">
+    <button class="menu-section-toggle" data-target="m6">
       <span>M.6</span>
-      <span class="material-symbols-outlined">arrow_drop_down</span>
+      <span class="material-symbols-outlined">arrow_right</span>
     </button>
-    <ul id="menu-m6" class="menu-sublist" hidden>
+    <ul class="menu-sublist" data-menu="m6" hidden>
       <li>
-        <button class="menu-section-toggle sub" data-menu-tier="m6t1">
+        <button class="menu-section-toggle" data-target="m6t1" style="width:100%;">
           <span>Term 1</span>
-          <span class="material-symbols-outlined">arrow_drop_down</span>
+          <span class="material-symbols-outlined">arrow_right</span>
         </button>
-        <ul id="menu-m6t1" class="menu-sublist" hidden>
-          <li><a class="placeholder-link" href="javascript:void(0)"><span class="material-symbols-outlined">remove</span><span>-</span></a></li>
+        <ul class="menu-sublist" data-menu="m6t1" hidden>
+          <li><a class="placeholder-link">-</a></li>
         </ul>
       </li>
       <li>
-        <button class="menu-section-toggle sub" data-menu-tier="m6t2">
+        <button class="menu-section-toggle" data-target="m6t2" style="width:100%;">
           <span>Term 2</span>
-          <span class="material-symbols-outlined">arrow_drop_down</span>
+          <span class="material-symbols-outlined">arrow_right</span>
         </button>
-        <ul id="menu-m6t2" class="menu-sublist" hidden>
-          <li><a class="placeholder-link" href="javascript:void(0)"><span class="material-symbols-outlined">remove</span><span>-</span></a></li>
+        <ul class="menu-sublist" data-menu="m6t2" hidden>
+          <li><a class="placeholder-link">-</a></li>
         </ul>
       </li>
     </ul>
-  </nav>
+  </div>
 </aside>
-<div id="menuOverlay" class="menu-overlay"></div>
+<div class="menu-overlay" aria-hidden="true"></div>
