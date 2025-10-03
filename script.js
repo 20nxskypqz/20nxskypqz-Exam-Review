@@ -1,127 +1,112 @@
-/* ExamReview-js-0310-[Complete] */
+// ExamReview-script-03102025-[Complete]
 
-/* -------- include loader (like 20nxskypqz) -------- */
-async function includePartials() {
+// -------------- include partials (header/side-menu/footer) --------------
+async function includePartialsIfAny() {
   const nodes = Array.from(document.querySelectorAll('[data-include]'));
+  if (nodes.length === 0) return;
   for (const node of nodes) {
     const url = node.getAttribute('data-include');
-    try {
+    try{
       const res = await fetch(url, { cache: 'no-store' });
       const html = await res.text();
-      // inject and replace the placeholder itself
-      const temp = document.createElement('div');
-      temp.innerHTML = html.trim();
+      const temp = document.createElement('div'); temp.innerHTML = html.trim();
       const frag = document.createDocumentFragment();
       while (temp.firstChild) frag.appendChild(temp.firstChild);
       node.replaceWith(frag);
-    } catch (e) {
+    }catch(e){
       console.error('Include failed:', url, e);
     }
   }
 }
 
-/* -------- behaviours (wired after includes) -------- */
-function wireMenuOpenClose() {
-  const menuBtn   = document.querySelector('.menu-toggle');
-  const sideMenu  = document.getElementById('sideMenu');
-  const closeMenu = document.getElementById('closeMenuBtn');
-  const menuOv    = document.getElementById('menuOverlay');
+// -------------- dark mode manual toggle --------------
+function applyDarkModeClass(isDark){
+  document.body.classList.toggle('dark-mode', !!isDark);
+  const icon = document.getElementById('mode-icon');
+  if (icon) icon.textContent = isDark ? 'dark_mode' : 'light_mode';
+}
+function initDarkMode(){
+  const saved = localStorage.getItem('er.dark');
+  const isDark = saved === '1';
+  applyDarkModeClass(isDark);
 
-  function openMenu(){
+  const toggle = document.getElementById('mode-toggle');
+  if (toggle){
+    const handler = ()=>{
+      const nowDark = !document.body.classList.contains('dark-mode');
+      applyDarkModeClass(nowDark);
+      localStorage.setItem('er.dark', nowDark ? '1' : '0');
+    };
+    toggle.addEventListener('click', handler);
+    toggle.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); handler(); }});
+  }
+}
+
+// -------------- side menu open/close + nested dropdowns --------------
+function initSideMenu(){
+  const sideMenu   = document.getElementById('sideMenu');
+  const overlay    = document.getElementById('menuOverlay');
+  const closeBtn   = document.getElementById('closeMenuBtn');
+  const menuBtn    = document.querySelector('.menu-toggle');
+
+  const openMenu = ()=>{
+    if (!sideMenu || !overlay) return;
     sideMenu.classList.add('open');
+    overlay.classList.add('visible');
     sideMenu.setAttribute('aria-hidden','false');
-    menuOv.classList.add('visible');
-  }
-  function closeMenuFn(){
+  };
+  const closeMenu = ()=>{
+    if (!sideMenu || !overlay) return;
     sideMenu.classList.remove('open');
+    overlay.classList.remove('visible');
     sideMenu.setAttribute('aria-hidden','true');
-    menuOv.classList.remove('visible');
-  }
+  };
 
-  if(menuBtn)   menuBtn.addEventListener('click', openMenu);
-  if(closeMenu) closeMenu.addEventListener('click', closeMenuFn);
-  if(menuOv)    menuOv.addEventListener('click', closeMenuFn);
-}
+  if (menuBtn)  menuBtn.addEventListener('click', openMenu);
+  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+  if (overlay)  overlay.addEventListener('click', closeMenu);
 
-function wireDarkModeToggle() {
-  const modeToggle = document.getElementById('mode-toggle');
-  const modeIcon   = document.getElementById('mode-icon');
-
-  function applyModeIcon(){
-    const isDark = document.body.classList.contains('dark-mode');
-    if(modeIcon) modeIcon.textContent = isDark ? 'dark_mode' : 'light_mode';
-  }
-  function toggleMode(){
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('examReviewMode', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-    applyModeIcon();
-  }
-
-  if(modeToggle){
-    modeToggle.addEventListener('click', toggleMode);
-    modeToggle.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') toggleMode(); });
-  }
-  const saved = localStorage.getItem('examReviewMode');
-  if(saved === 'dark') document.body.classList.add('dark-mode');
-  applyModeIcon();
-}
-
-function wireTierToggles(scope=document){
-  // root page dropdowns
-  const tierButtons = scope.querySelectorAll('.tier-toggle');
-  tierButtons.forEach(btn=>{
-    const targetId = btn.getAttribute('data-tier');
-    const target   = document.getElementById(targetId);
-    const icon     = btn.querySelector('.material-symbols-outlined');
-    if(!target) return;
-
+  // dropdowns inside side menu
+  document.querySelectorAll('.menu-section-toggle').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      const willOpen = target.hasAttribute('hidden');
-      if(willOpen){
-        target.removeAttribute('hidden');
-        btn.setAttribute('aria-expanded','true');
-        icon && icon.classList.add('rot-180');
-      }else{
-        target.setAttribute('hidden','');
-        btn.setAttribute('aria-expanded','false');
-        icon && icon.classList.remove('rot-180');
+      const key = btn.getAttribute('data-menu-tier');
+      if (!key) return;
+      const tier = document.getElementById('menu-' + key);
+      const sub  = document.getElementById('menu-' + key); // primary
+      // primary-level: menu-<key>
+      if (tier){
+        const isHidden = tier.hasAttribute('hidden');
+        if (isHidden) tier.removeAttribute('hidden'); else tier.setAttribute('hidden','');
       }
-    });
-  });
-
-  // side menu cascades
-  const menuToggles = scope.querySelectorAll('.menu-section-toggle');
-  menuToggles.forEach(btn=>{
-    const key  = btn.getAttribute('data-menu-tier');
-    const icon = btn.querySelector('.caret');
-    let target = null;
-
-    if(key){
-      target = document.getElementById(key.startsWith('m') ? `menu-${key}` : key);
-      if(!target) target = btn.nextElementSibling;
-    } else {
-      target = btn.nextElementSibling;
-    }
-    if(!target) return;
-
-    btn.addEventListener('click', ()=>{
-      const willOpen = target.hasAttribute('hidden');
-      if(willOpen){
-        target.removeAttribute('hidden');
-        icon && icon.classList.add('rot-180');
-      }else{
-        target.setAttribute('hidden','');
-        icon && icon.classList.remove('rot-180');
-      }
+      // child ULs use same id scheme already assigned per HTML above
+      const caret = btn.querySelector('.material-symbols-outlined');
+      if (caret) caret.style.transform = (tier && !tier.hasAttribute('hidden')) ? 'rotate(180deg)' : 'rotate(0deg)';
     });
   });
 }
 
-/* -------- boot -------- */
-document.addEventListener('DOMContentLoaded', async () => {
-  await includePartials();
-  // after parts are in DOM, wire behaviours
-  wireMenuOpenClose();
-  wireDarkModeToggle();
-  wireTierToggles(document);
+// -------------- root page dropdowns --------------
+function initRootDropdowns(){
+  // buttons with .tier-toggle
+  document.querySelectorAll('.tier-toggle').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.getAttribute('data-tier');
+      if (!id) return;
+      const target = document.getElementById(id);
+      if (!target) return;
+      const isHidden = target.hasAttribute('hidden');
+      if (isHidden) target.removeAttribute('hidden'); else target.setAttribute('hidden','');
+
+      const caret = btn.querySelector('.material-symbols-outlined');
+      if (caret) caret.style.transform = (!isHidden)? 'rotate(0deg)' : 'rotate(180deg)';
+    });
+  });
+}
+
+// -------------- init all --------------
+document.addEventListener('DOMContentLoaded', async ()=>{
+  await includePartialsIfAny();
+  initDarkMode();
+  initSideMenu();
+  initRootDropdowns();
 });
