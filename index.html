@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Header (full-bleed) -->
+  <!-- Header -->
   <header class="header full-bleed">
     <button class="menu-toggle" aria-label="Open menu" type="button">
       <span class="material-symbols-outlined">menu</span>
@@ -26,7 +26,7 @@
     </div>
   </header>
 
-  <!-- Side Menu + Overlay -->
+  <!-- Side Menu -->
   <div class="menu-overlay" id="menuOverlay"></div>
   <aside class="side-menu" id="sideMenu" aria-hidden="true">
     <button class="close-menu" id="closeMenuBtn" aria-label="Close menu" type="button">
@@ -34,22 +34,38 @@
     </button>
 
     <nav class="menu-content" aria-label="Exam Review Navigation">
+      <!-- หัวข้อกลุ่มระดับชั้น/เทอม (เป็นหัวข้อเฉยๆ ยังไม่ลิงก์) -->
       <div class="menu-group">
-        <button class="menu-section-toggle" data-target="subjectsList">
-          <span>Subjects</span>
-          <span class="material-symbols-outlined">arrow_drop_down</span>
-        </button>
-        <ul class="menu-sublist" id="subjectsList">
-          <li><a href="#soc"><span class="bullet"></span>สังคมศึกษา ม.4_1-68</a></li>
-          <li><a href="#bio"><span class="bullet"></span>ชีววิทยา ม.4_1-68</a></li>
-          <li><a href="#e31101"><span class="bullet"></span>E31101 M.4_1-68</a></li>
-          <li><a href="#t31101"><span class="bullet"></span>ท31101 M.4_1-68</a></li>
+        <div class="menu-label">M.4</div>
+        <div class="menu-sublabel">Term 1</div>
+        <div class="menu-sublabel">Term 2</div>
+      </div>
+      <div class="menu-group">
+        <div class="menu-label">M.5</div>
+        <div class="menu-sublabel">Term 1</div>
+        <div class="menu-sublabel">Term 2</div>
+      </div>
+      <div class="menu-group">
+        <div class="menu-label">M.6</div>
+        <div class="menu-sublabel">Term 1</div>
+        <div class="menu-sublabel">Term 2</div>
+      </div>
+
+      <!-- หมวดวิชาที่มีอยู่ (ลิงก์ภายในหน้านี้) -->
+      <div class="menu-divider"></div>
+      <div class="menu-group">
+        <div class="menu-label small">Subjects</div>
+        <ul class="menu-sublist">
+          <li><a href="#soc">สังคมศึกษา ม.4_1-68</a></li>
+          <li><a href="#bio">ชีววิทยา ม.4_1-68</a></li>
+          <li><a href="#e31101">E31101 M.4_1-68</a></li>
+          <li><a href="#t31101">ท31101 M.4_1-68</a></li>
         </ul>
       </div>
     </nav>
   </aside>
 
-  <!-- Main Content -->
+  <!-- Main -->
   <main class="content">
     <section class="hero">
       <h1 class="site-title">Welcome to</h1>
@@ -64,6 +80,7 @@
       <a href="#t31101">ท31101 M.4_1-68</a>
     </nav>
 
+    <!-- Toolbar -->
     <div class="toolbar">
       <div class="status" id="status">Loading documents…</div>
       <div class="toolbar-actions">
@@ -78,10 +95,11 @@
       </div>
     </div>
 
+    <!-- Rendered documents -->
     <div id="content" class="doc-container">Preparing…</div>
   </main>
 
-  <!-- Footer (full-bleed) -->
+  <!-- Footer -->
   <footer class="footer full-bleed">
     &copy; 2025 20nxskypqz Exam Review
   </footer>
