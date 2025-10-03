@@ -1,49 +1,73 @@
 /* ExamReview-js-0310-[Complete] */
 
-// ====== Side menu open/close ======
-const menuBtn   = document.querySelector('.menu-toggle');
-const sideMenu  = document.getElementById('sideMenu');
-const closeMenu = document.getElementById('closeMenuBtn');
-const menuOv    = document.getElementById('menuOverlay');
+/* -------- include loader (like 20nxskypqz) -------- */
+async function includePartials() {
+  const nodes = Array.from(document.querySelectorAll('[data-include]'));
+  for (const node of nodes) {
+    const url = node.getAttribute('data-include');
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      const html = await res.text();
+      // inject and replace the placeholder itself
+      const temp = document.createElement('div');
+      temp.innerHTML = html.trim();
+      const frag = document.createDocumentFragment();
+      while (temp.firstChild) frag.appendChild(temp.firstChild);
+      node.replaceWith(frag);
+    } catch (e) {
+      console.error('Include failed:', url, e);
+    }
+  }
+}
 
-function openMenu(){
-  sideMenu.classList.add('open');
-  sideMenu.setAttribute('aria-hidden','false');
-  menuOv.classList.add('visible');
-}
-function closeMenuFn(){
-  sideMenu.classList.remove('open');
-  sideMenu.setAttribute('aria-hidden','true');
-  menuOv.classList.remove('visible');
-}
-menuBtn.addEventListener('click', openMenu);
-closeMenu.addEventListener('click', closeMenuFn);
-menuOv.addEventListener('click', closeMenuFn);
+/* -------- behaviours (wired after includes) -------- */
+function wireMenuOpenClose() {
+  const menuBtn   = document.querySelector('.menu-toggle');
+  const sideMenu  = document.getElementById('sideMenu');
+  const closeMenu = document.getElementById('closeMenuBtn');
+  const menuOv    = document.getElementById('menuOverlay');
 
-// ====== Dark mode ======
-const modeToggle = document.getElementById('mode-toggle');
-const modeIcon   = document.getElementById('mode-icon');
+  function openMenu(){
+    sideMenu.classList.add('open');
+    sideMenu.setAttribute('aria-hidden','false');
+    menuOv.classList.add('visible');
+  }
+  function closeMenuFn(){
+    sideMenu.classList.remove('open');
+    sideMenu.setAttribute('aria-hidden','true');
+    menuOv.classList.remove('visible');
+  }
 
-function applyModeIcon(){
-  const isDark = document.body.classList.contains('dark-mode');
-  modeIcon.textContent = isDark ? 'dark_mode' : 'light_mode';
+  if(menuBtn)   menuBtn.addEventListener('click', openMenu);
+  if(closeMenu) closeMenu.addEventListener('click', closeMenuFn);
+  if(menuOv)    menuOv.addEventListener('click', closeMenuFn);
 }
-function toggleMode(){
-  document.body.classList.toggle('dark-mode');
-  localStorage.setItem('examReviewMode', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-  applyModeIcon();
-}
-modeToggle.addEventListener('click', toggleMode);
-modeToggle.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') toggleMode(); });
-(function initMode(){
+
+function wireDarkModeToggle() {
+  const modeToggle = document.getElementById('mode-toggle');
+  const modeIcon   = document.getElementById('mode-icon');
+
+  function applyModeIcon(){
+    const isDark = document.body.classList.contains('dark-mode');
+    if(modeIcon) modeIcon.textContent = isDark ? 'dark_mode' : 'light_mode';
+  }
+  function toggleMode(){
+    document.body.classList.toggle('dark-mode');
+    localStorage.setItem('examReviewMode', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    applyModeIcon();
+  }
+
+  if(modeToggle){
+    modeToggle.addEventListener('click', toggleMode);
+    modeToggle.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') toggleMode(); });
+  }
   const saved = localStorage.getItem('examReviewMode');
   if(saved === 'dark') document.body.classList.add('dark-mode');
   applyModeIcon();
-})();
+}
 
-// ====== Root page hierarchical toggles ======
 function wireTierToggles(scope=document){
-  // Buttons that control show/hide by data-tier (targets by id)
+  // root page dropdowns
   const tierButtons = scope.querySelectorAll('.tier-toggle');
   tierButtons.forEach(btn=>{
     const targetId = btn.getAttribute('data-tier');
@@ -65,19 +89,17 @@ function wireTierToggles(scope=document){
     });
   });
 
-  // In side menu: .menu-section-toggle toggles next tier or specific id by data-menu-tier
+  // side menu cascades
   const menuToggles = scope.querySelectorAll('.menu-section-toggle');
   menuToggles.forEach(btn=>{
-    const key = btn.getAttribute('data-menu-tier');
+    const key  = btn.getAttribute('data-menu-tier');
     const icon = btn.querySelector('.caret');
     let target = null;
 
     if(key){
-      // find matching id (menu-*)
       target = document.getElementById(key.startsWith('m') ? `menu-${key}` : key);
-      // fallback: nextElementSibling for nested UL
       if(!target) target = btn.nextElementSibling;
-    }else{
+    } else {
       target = btn.nextElementSibling;
     }
     if(!target) return;
@@ -95,6 +117,11 @@ function wireTierToggles(scope=document){
   });
 }
 
-document.addEventListener('DOMContentLoaded', ()=>{
+/* -------- boot -------- */
+document.addEventListener('DOMContentLoaded', async () => {
+  await includePartials();
+  // after parts are in DOM, wire behaviours
+  wireMenuOpenClose();
+  wireDarkModeToggle();
   wireTierToggles(document);
 });
