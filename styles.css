@@ -166,7 +166,5 @@ body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); 
 .card ul, .card ol{ padding-left:1.4em; margin:8px 0; }
 .card li{ margin:4px 0; }
 
-/* ปรับ responsive ของเมนูด้านข้าง */
-@media (max-width: 480px){
-  .side-menu{ left:12px; right:12px; width:auto; }
-}
+/* ยกเลิกการขยายเมนูเต็มหน้าบนจอเล็ก — คงความกว้างเดิมเสมอ */
+/* (ลบ media query เดิมที่ทำให้ width:auto บนจอ <=480px) */
