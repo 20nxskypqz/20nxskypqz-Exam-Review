@@ -152,8 +152,12 @@ body.dark-mode .root-link-list a{ color:#e5e7eb; background:#172026; }
   box-shadow:0 3px 8px rgba(0,0,0,.25);
   transition:transform .25s; font-size:20px; color:#111;
 }
+/* ✅ ปรับให้ดวงจันทร์ (โหมดมืด) เป็นโทนเข้ม */
 body.dark-mode .toggle-container{ background:#1d2227; border-color:#3a424a; }
-body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); color:#e5e7eb; }
+body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); color:#111; }
+body.dark-mode #mode-icon{
+  font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 40;
+}
 
 /* สไตล์เนื้อหา DOCX ที่ Mammoth แปลง (ให้อ่านง่าย) */
 .card h1, .card h2, .card h3{ text-align:left; }
@@ -166,5 +170,7 @@ body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); 
 .card ul, .card ol{ padding-left:1.4em; margin:8px 0; }
 .card li{ margin:4px 0; }
 
-/* ยกเลิกการขยายเมนูเต็มหน้าบนจอเล็ก — คงความกว้างเดิมเสมอ */
-/* (ลบ media query เดิมที่ทำให้ width:auto บนจอ <=480px) */
+/* ปรับ responsive ของเมนูด้านข้าง */
+@media (max-width: 480px){
+  .side-menu{ left:12px; right:12px; width:auto; }
+}
