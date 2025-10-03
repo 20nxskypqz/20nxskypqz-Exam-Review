@@ -1,4 +1,4 @@
-// ====== Data groups (DOCX lists) ======
+// ====== Data groups (DOCX lists used on index page) ======
 const SOCIAL = {
   id: 'soc',
   title: 'สังคมศึกษา ม.4_1-68',
@@ -6,7 +6,6 @@ const SOCIAL = {
     { file: 'files/สังคมศึกษาทุกเรื่องม.4_1-68.docx', title: 'สังคมศึกษาทุกเรื่อง ม.4_1-68' }
   ]
 };
-
 const BIO = {
   id: 'bio',
   title: 'ชีววิทยา ม.4_1-68',
@@ -16,22 +15,8 @@ const BIO = {
     { file: 'files/เซลล์และการทำงานของเซลล์.docx',       title: 'เซลล์และการทำงานของเซลล์' }
   ]
 };
-
-const E31101 = {
-  id: 'e31101',
-  title: 'E31101 M.4_1-68',
-  docs: [
-    { file: 'files/E31101.docx', title: 'E31101' }
-  ]
-};
-
-const T31101 = {
-  id: 't31101',
-  title: 'ท31101 M.4_1-68',
-  docs: [
-    { file: 'files/ท31101.docx', title: 'ท31101' }
-  ]
-};
+const E31101 = { id:'e31101', title:'E31101 M.4_1-68', docs:[ { file:'files/E31101.docx', title:'E31101' } ] };
+const T31101 = { id:'t31101', title:'ท31101 M.4_1-68', docs:[ { file:'files/ท31101.docx', title:'ท31101' } ] };
 
 // ====== DOM ======
 const statusEl   = document.getElementById('status');
@@ -172,7 +157,7 @@ dlHtmlBtn.addEventListener('click', () => {
   URL.revokeObjectURL(url);
 });
 
-// ====== Side menu logic ======
+// ====== Side menu ======
 function openMenu(){
   sideMenu.classList.add('open');
   sideMenu.setAttribute('aria-hidden','false');
@@ -187,17 +172,7 @@ menuBtn.addEventListener('click', openMenu);
 closeMenu.addEventListener('click', closeMenuFn);
 menuOv.addEventListener('click', closeMenuFn);
 
-// Dropdown inside side menu
-document.querySelectorAll('.menu-section-toggle').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const target = document.getElementById(btn.dataset.target);
-    if (!target) return;
-    const isHidden = getComputedStyle(target).display === 'none';
-    target.style.display = isHidden ? 'block' : 'none';
-  });
-});
-
-// ====== Dark mode toggle ======
+// ====== Dark mode ======
 function applyModeIcon(){
   const isDark = document.body.classList.contains('dark-mode');
   modeIcon.textContent = isDark ? 'dark_mode' : 'light_mode';
@@ -210,12 +185,11 @@ function toggleMode(){
 modeToggle.addEventListener('click', toggleMode);
 modeToggle.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') toggleMode(); });
 
-// Restore saved mode
 (function initMode(){
   const saved = localStorage.getItem('examReviewMode');
   if(saved === 'dark') document.body.classList.add('dark-mode');
   applyModeIcon();
 })();
 
-// ====== Init ======
+// Init
 document.addEventListener('DOMContentLoaded', renderAll);
