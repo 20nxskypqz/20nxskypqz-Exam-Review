@@ -1,108 +1,103 @@
-// ExamReview-script-03102025-[Complete]
+// ExamReview-JS-03102025-[Complete]
 
-// -------------- include partials (header/side-menu/footer) --------------
-async function includePartialsIfAny() {
-  const nodes = Array.from(document.querySelectorAll('[data-include]'));
-  if (nodes.length === 0) return;
+// ---------- Simple include loader (relative paths for Project Pages) ----------
+async function includePartials() {
+  const nodes = document.querySelectorAll('[data-include]');
   for (const node of nodes) {
-    const url = node.getAttribute('data-include');
-    try{
-      const res = await fetch(url, { cache: 'no-store' });
+    const src = node.getAttribute('data-include');
+    try {
+      const res = await fetch(src, { cache: 'no-store' });
+      if (!res.ok) throw new Error(src + ' [' + res.status + ']');
       const html = await res.text();
-      const temp = document.createElement('div'); temp.innerHTML = html.trim();
-      const frag = document.createDocumentFragment();
-      while (temp.firstChild) frag.appendChild(temp.firstChild);
-      node.replaceWith(frag);
-    }catch(e){
-      console.error('Include failed:', url, e);
+      const wrap = document.createElement('div');
+      wrap.innerHTML = html;
+      // replace node with fetched content
+      while (wrap.firstChild) node.parentNode.insertBefore(wrap.firstChild, node);
+      node.remove();
+    } catch (e) {
+      console.error('Include failed:', e);
     }
   }
 }
 
-// -------------- dark mode manual toggle --------------
-function applyDarkModeClass(isDark){
-  document.body.classList.toggle('dark-mode', !!isDark);
-  const icon = document.getElementById('mode-icon');
-  if (icon) icon.textContent = isDark ? 'dark_mode' : 'light_mode';
-}
-function initDarkMode(){
-  const saved = localStorage.getItem('er.dark');
-  const isDark = saved === '1';
-  applyDarkModeClass(isDark);
+// ---------- Wire shared UI after includes injected ----------
+function wireSharedUI() {
+  // menu open/close
+  const menu = document.querySelector('.side-menu');
+  const overlay = document.querySelector('.menu-overlay');
+  const openBtns = document.querySelectorAll('.menu-toggle');
+  const closeBtn = document.querySelector('.close-menu');
 
-  const toggle = document.getElementById('mode-toggle');
-  if (toggle){
-    const handler = ()=>{
-      const nowDark = !document.body.classList.contains('dark-mode');
-      applyDarkModeClass(nowDark);
-      localStorage.setItem('er.dark', nowDark ? '1' : '0');
-    };
-    toggle.addEventListener('click', handler);
-    toggle.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); handler(); }});
+  function openMenu() {
+    if (menu) menu.classList.add('open');
+    if (overlay) overlay.classList.add('visible');
+  }
+  function closeMenu() {
+    if (menu) menu.classList.remove('open');
+    if (overlay) overlay.classList.remove('visible');
+  }
+
+  openBtns.forEach(b => b.addEventListener('click', openMenu));
+  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+  if (overlay) overlay.addEventListener('click', closeMenu);
+
+  // side menu section toggles
+  document.querySelectorAll('.menu-section-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-target');
+      const list = document.querySelector(`.menu-sublist[data-menu="${target}"]`);
+      if (!list) return;
+      const icon = btn.querySelector('.material-symbols-outlined');
+      const nowHidden = list.hasAttribute('hidden');
+      if (nowHidden) {
+        list.removeAttribute('hidden');
+        if (icon) icon.textContent = 'arrow_drop_down'; // opened
+      } else {
+        list.setAttribute('hidden', '');
+        if (icon) icon.textContent = 'arrow_right'; // collapsed
+      }
+    });
+  });
+
+  // manual dark mode toggle
+  const modeToggle = document.getElementById('mode-toggle');
+  const modeIcon = document.getElementById('mode-icon');
+  if (modeToggle) {
+    modeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      if (modeIcon) {
+        // switch icon
+        const dark = document.body.classList.contains('dark-mode');
+        modeIcon.textContent = dark ? 'dark_mode' : 'light_mode';
+      }
+    });
   }
 }
 
-// -------------- side menu open/close + nested dropdowns --------------
-function initSideMenu(){
-  const sideMenu   = document.getElementById('sideMenu');
-  const overlay    = document.getElementById('menuOverlay');
-  const closeBtn   = document.getElementById('closeMenuBtn');
-  const menuBtn    = document.querySelector('.menu-toggle');
-
-  const openMenu = ()=>{
-    if (!sideMenu || !overlay) return;
-    sideMenu.classList.add('open');
-    overlay.classList.add('visible');
-    sideMenu.setAttribute('aria-hidden','false');
-  };
-  const closeMenu = ()=>{
-    if (!sideMenu || !overlay) return;
-    sideMenu.classList.remove('open');
-    overlay.classList.remove('visible');
-    sideMenu.setAttribute('aria-hidden','true');
-  };
-
-  if (menuBtn)  menuBtn.addEventListener('click', openMenu);
-  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-  if (overlay)  overlay.addEventListener('click', closeMenu);
-
-  // dropdowns inside side menu (ทุกระดับ)
-  document.querySelectorAll('.menu-section-toggle').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const key = btn.getAttribute('data-menu-tier');
-      if (!key) return;
-      const tier = document.getElementById('menu-' + key);
-      if (tier){
-        const isHidden = tier.hasAttribute('hidden');
-        if (isHidden) tier.removeAttribute('hidden'); else tier.setAttribute('hidden','');
+// ---------- Root page collapsibles (M/Term) ----------
+function wireRootDropdowns() {
+  // Tier 1/2 dropdowns by data-drop / data-target
+  document.querySelectorAll('[data-drop]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.getAttribute('data-drop');
+      const body = document.querySelector(`[data-target="${key}"]`);
+      if (!body) return;
+      const icon = btn.querySelector('.material-symbols-outlined');
+      const nowHidden = body.hasAttribute('hidden');
+      if (nowHidden) {
+        body.removeAttribute('hidden');
+        if (icon) icon.textContent = 'arrow_drop_down';
+      } else {
+        body.setAttribute('hidden', '');
+        if (icon) icon.textContent = 'arrow_right';
       }
-      const caret = btn.querySelector('.material-symbols-outlined');
-      if (caret) caret.style.transform = (tier && !tier.hasAttribute('hidden')) ? 'rotate(180deg)' : 'rotate(0deg)';
     });
   });
 }
 
-// -------------- root page dropdowns --------------
-function initRootDropdowns(){
-  document.querySelectorAll('.tier-toggle').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const id = btn.getAttribute('data-tier');
-      if (!id) return;
-      const target = document.getElementById(id);
-      if (!target) return;
-      const isHidden = target.hasAttribute('hidden');
-      if (isHidden) target.removeAttribute('hidden'); else target.setAttribute('hidden','');
-
-      const caret = btn.querySelector('.material-symbols-outlined');
-      if (caret) caret.style.transform = (!isHidden)? 'rotate(0deg)' : 'rotate(180deg)';
-    });
-  });
-}
-
-// -------------- init all --------------
-document.addEventListener('DOMContentLoaded', async ()=>{
-  await includePartialsIfAny();
-  initDarkMode();
-  initSideMenu();
-  initRootDropdowns();
-});
+// ---------- Boot ----------
+(async function init() {
+  await includePartials();
+  wireSharedUI();
+  wireRootDropdowns();
+})();
