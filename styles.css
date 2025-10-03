@@ -63,13 +63,14 @@ body.dark-mode .header,
 body.dark-mode .footer{ background:var(--grad-dark); }
 body.dark-mode a{ color:#d1defa; }
 
-/* Material Symbols (กัน system font ทับ) */
+/* Material Symbols (กัน system font ทับ และให้แอนิเมชันหมุนลูกศรลื่น) */
 .material-symbols-outlined{
   font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 40;
   font-family:'Material Symbols Outlined' !important;
   font-style:normal; font-weight:normal; line-height:1; display:inline-block;
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
   vertical-align:middle;
+  transition: transform .2s ease; /* ลูกศรหมุนลื่น */
 }
 
 /* ปุ่มไอคอนทั่วไประดับ root */
@@ -109,17 +110,24 @@ body.dark-mode .root-link-list a{ color:#e5e7eb; background:#172026; }
   background:none; border:none; color:inherit; cursor:pointer; font-size:24px; display:flex; align-items:center;
 }
 
-/* สไลด์เมนู */
+/* สไลด์เมนู (ความกว้างคงที่ — ไม่เต็มหน้าจอ) */
 .side-menu{
-  position:fixed; top:20px; left:20px; bottom:20px; width:300px;
+  position:fixed; top:20px; left:20px; bottom:20px;
+  width:280px; /* ความกว้างคงที่ */
   background:#222; color:#fff; border-radius:12px; padding:60px 0 12px;
-  box-shadow: var(--shadow); transform:translateX(-120%); transition:transform .25s ease; z-index:1000;
+  box-shadow: var(--shadow);
+  transform:translateX(-120%);
+  transition:transform .25s ease;
+  z-index:1000;
 }
 .side-menu.open{ transform:translateX(0); }
 .close-menu{ position:absolute; top:12px; right:12px; color:#fff; }
+
+/* ฉากหลังเมนู */
 .menu-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; z-index:900; }
 .menu-overlay.visible{ display:block; }
 
+/* เนื้อหาในเมนู */
 .menu-group{ padding:0 8px 12px; }
 .menu-section-toggle{
   width:100%; background:transparent; border:none; color:#fff;
@@ -152,12 +160,9 @@ body.dark-mode .root-link-list a{ color:#e5e7eb; background:#172026; }
   box-shadow:0 3px 8px rgba(0,0,0,.25);
   transition:transform .25s; font-size:20px; color:#111;
 }
-/* ✅ ปรับให้ดวงจันทร์ (โหมดมืด) เป็นโทนเข้ม */
+/* เปลี่ยนตำแหน่งปุ่มตอนโหมดมืด */
 body.dark-mode .toggle-container{ background:#1d2227; border-color:#3a424a; }
-body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); color:#111; }
-body.dark-mode #mode-icon{
-  font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 40;
-}
+body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); color:#e5e7eb; }
 
 /* สไตล์เนื้อหา DOCX ที่ Mammoth แปลง (ให้อ่านง่าย) */
 .card h1, .card h2, .card h3{ text-align:left; }
@@ -170,7 +175,11 @@ body.dark-mode #mode-icon{
 .card ul, .card ol{ padding-left:1.4em; margin:8px 0; }
 .card li{ margin:4px 0; }
 
-/* ปรับ responsive ของเมนูด้านข้าง */
+/* ปรับ responsive ของเมนูด้านข้าง (มือถือก็ยังคงกว้าง 280px) */
 @media (max-width: 480px){
-  .side-menu{ left:12px; right:12px; width:auto; }
+  .side-menu{
+    width:280px;   /* คงที่ ไม่ขยายเต็มจอ */
+    left:12px;
+    right:auto;    /* ไม่ให้ยืดเต็มขวา */
+  }
 }
