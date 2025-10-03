@@ -1,3 +1,4 @@
+<!-- ExamReview-html-0310-[Complete] -->
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -6,16 +7,15 @@
   <title>20nxskypqz Exam Review</title>
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet">
-  <!-- Material Symbols (Outlined) -->
+  <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <!-- Header -->
   <header class="header full-bleed">
-    <button class="menu-toggle" aria-label="Open menu" type="button">
+    <button class="menu-toggle" aria-label="Toggle navigation" type="button">
       <span class="material-symbols-outlined">menu</span>
     </button>
 
@@ -34,33 +34,85 @@
     </button>
 
     <nav class="menu-content" aria-label="Exam Review Navigation">
-      <!-- หัวข้อกลุ่มระดับชั้น/เทอม (เป็นหัวข้อเฉยๆ ยังไม่ลิงก์) -->
+      <!-- M.4 -->
       <div class="menu-group">
-        <div class="menu-label">M.4</div>
-        <div class="menu-sublabel">Term 1</div>
-        <div class="menu-sublabel">Term 2</div>
-      </div>
-      <div class="menu-group">
-        <div class="menu-label">M.5</div>
-        <div class="menu-sublabel">Term 1</div>
-        <div class="menu-sublabel">Term 2</div>
-      </div>
-      <div class="menu-group">
-        <div class="menu-label">M.6</div>
-        <div class="menu-sublabel">Term 1</div>
-        <div class="menu-sublabel">Term 2</div>
+        <button class="menu-section-toggle" data-menu-tier="m4">
+          <span class="menu-label">M.4</span>
+          <span class="material-symbols-outlined caret" aria-hidden="true">arrow_drop_down</span>
+        </button>
+        <div class="menu-tier" id="menu-m4" hidden>
+          <button class="menu-section-toggle sub" data-menu-tier="m4-t1">
+            <span class="menu-label">Term 1</span>
+            <span class="material-symbols-outlined caret" aria-hidden="true">arrow_drop_down</span>
+          </button>
+          <ul class="menu-sublist" id="menu-m4-t1" hidden>
+            <li><a href="./M.4/Term.1/ท31101/">ท31101</a></li>
+            <li><a href="./M.4/Term.1/E31101/">E31101</a></li>
+            <li><a href="./M.4/Term.1/ชีววิทยา/">ชีววิทยา</a></li>
+            <li><a href="./M.4/Term.1/สังคมศึกษา/">สังคมศึกษา</a></li>
+          </ul>
+
+          <button class="menu-section-toggle sub" data-menu-tier="m4-t2">
+            <span class="menu-label">Term 2</span>
+            <span class="material-symbols-outlined caret" aria-hidden="true">arrow_drop_down</span>
+          </button>
+          <ul class="menu-sublist" id="menu-m4-t2" hidden>
+            <li><a href="./M.4/Term.2/ท31101/">ท31101</a></li>
+            <li><a href="./M.4/Term.2/E31101/">E31101</a></li>
+            <li><a href="./M.4/Term.2/ชีววิทยา/">ชีววิทยา</a></li>
+            <li><a href="./M.4/Term.2/สังคมศึกษา/">สังคมศึกษา</a></li>
+          </ul>
+        </div>
       </div>
 
-      <!-- หมวดวิชาที่มีอยู่ (ลิงก์ภายในหน้านี้) -->
-      <div class="menu-divider"></div>
+      <!-- M.5 -->
       <div class="menu-group">
-        <div class="menu-label small">Subjects</div>
-        <ul class="menu-sublist">
-          <li><a href="#soc">สังคมศึกษา ม.4_1-68</a></li>
-          <li><a href="#bio">ชีววิทยา ม.4_1-68</a></li>
-          <li><a href="#e31101">E31101 M.4_1-68</a></li>
-          <li><a href="#t31101">ท31101 M.4_1-68</a></li>
-        </ul>
+        <button class="menu-section-toggle" data-menu-tier="m5">
+          <span class="menu-label">M.5</span>
+          <span class="material-symbols-outlined caret" aria-hidden="true">arrow_drop_down</span>
+        </button>
+        <div class="menu-tier" id="menu-m5" hidden>
+          <button class="menu-section-toggle sub" data-menu-tier="m5-t1">
+            <span class="menu-label">Term 1</span>
+            <span class="material-symbols-outlined caret" aria-hidden="true">arrow_drop_down</span>
+          </button>
+          <ul class="menu-sublist" id="menu-m5-t1" hidden>
+            <li><a href="./M.5/Term.1/ตัวอย่างวิชา/">ตัวอย่างวิชา</a></li>
+          </ul>
+
+          <button class="menu-section-toggle sub" data-menu-tier="m5-t2">
+            <span class="menu-label">Term 2</span>
+            <span class="material-symbols-outlined caret" aria-hidden="true">arrow_drop_down</span>
+          </button>
+          <ul class="menu-sublist" id="menu-m5-t2" hidden>
+            <li><a href="./M.5/Term.2/ตัวอย่างวิชา/">ตัวอย่างวิชา</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- M.6 -->
+      <div class="menu-group">
+        <button class="menu-section-toggle" data-menu-tier="m6">
+          <span class="menu-label">M.6</span>
+          <span class="material-symbols-outlined caret" aria-hidden="true">arrow_drop_down</span>
+        </button>
+        <div class="menu-tier" id="menu-m6" hidden>
+          <button class="menu-section-toggle sub" data-menu-tier="m6-t1">
+            <span class="menu-label">Term 1</span>
+            <span class="material-symbols-outlined caret" aria-hidden="true">arrow_drop_down</span>
+          </button>
+          <ul class="menu-sublist" id="menu-m6-t1" hidden>
+            <li><a href="./M.6/Term.1/ตัวอย่างวิชา/">ตัวอย่างวิชา</a></li>
+          </ul>
+
+          <button class="menu-section-toggle sub" data-menu-tier="m6-t2">
+            <span class="menu-label">Term 2</span>
+            <span class="material-symbols-outlined caret" aria-hidden="true">arrow_drop_down</span>
+          </button>
+          <ul class="menu-sublist" id="menu-m6-t2" hidden>
+            <li><a href="./M.6/Term.2/ตัวอย่างวิชา/">ตัวอย่างวิชา</a></li>
+          </ul>
+        </div>
       </div>
     </nav>
   </aside>
@@ -68,35 +120,124 @@
   <!-- Main -->
   <main class="content">
     <section class="hero">
-      <h1 class="site-title">Welcome to</h1>
-      <h2 class="site-sub">20nxskypqz Exam Review!</h2>
+      <h1 class="hero-title">Welcome to 20nxskypqz Exam Review!</h1>
     </section>
 
-    <!-- TOC -->
-    <nav class="toc">
-      <a href="#soc">สังคมศึกษา ม.4_1-68</a>
-      <a href="#bio">ชีววิทยา ม.4_1-68</a>
-      <a href="#e31101">E31101 M.4_1-68</a>
-      <a href="#t31101">ท31101 M.4_1-68</a>
-    </nav>
+    <!-- Root page hierarchical dropdowns -->
+    <section class="drop-wrap">
+      <!-- M.4 -->
+      <div class="section-card">
+        <div class="section-header-row">
+          <h2 class="align-left">M.4</h2>
+          <button class="icon-btn tier-toggle" data-tier="root-m4" aria-expanded="false" aria-controls="root-m4">
+            <span class="material-symbols-outlined">arrow_drop_down</span>
+          </button>
+        </div>
+        <div class="tier-body" id="root-m4" hidden>
+          <!-- Term 1 -->
+          <div class="subcard">
+            <div class="section-header-row">
+              <h3 class="align-left">Term 1</h3>
+              <button class="icon-btn tier-toggle" data-tier="root-m4-t1" aria-expanded="false" aria-controls="root-m4-t1">
+                <span class="material-symbols-outlined">arrow_drop_down</span>
+              </button>
+            </div>
+            <ul class="root-link-list" id="root-m4-t1" hidden>
+              <li><a href="./M.4/Term.1/ท31101/">ท31101</a></li>
+              <li><a href="./M.4/Term.1/E31101/">E31101</a></li>
+              <li><a href="./M.4/Term.1/ชีววิทยา/">ชีววิทยา</a></li>
+              <li><a href="./M.4/Term.1/สังคมศึกษา/">สังคมศึกษา</a></li>
+            </ul>
+          </div>
 
-    <!-- Toolbar -->
-    <div class="toolbar">
-      <div class="status" id="status">Loading documents…</div>
-      <div class="toolbar-actions">
-        <button id="downloadHtml" class="btn btn-ghost">
-          <span class="material-symbols-outlined">download</span>
-          Download as HTML
-        </button>
-        <button id="reload" class="btn btn-primary">
-          <span class="material-symbols-outlined">refresh</span>
-          Reload
-        </button>
+          <!-- Term 2 -->
+          <div class="subcard">
+            <div class="section-header-row">
+              <h3 class="align-left">Term 2</h3>
+              <button class="icon-btn tier-toggle" data-tier="root-m4-t2" aria-expanded="false" aria-controls="root-m4-t2">
+                <span class="material-symbols-outlined">arrow_drop_down</span>
+              </button>
+            </div>
+            <ul class="root-link-list" id="root-m4-t2" hidden>
+              <li><a href="./M.4/Term.2/ท31101/">ท31101</a></li>
+              <li><a href="./M.4/Term.2/E31101/">E31101</a></li>
+              <li><a href="./M.4/Term.2/ชีววิทยา/">ชีววิทยา</a></li>
+              <li><a href="./M.4/Term.2/สังคมศึกษา/">สังคมศึกษา</a></li>
+            </ul>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Rendered documents -->
-    <div id="content" class="doc-container">Preparing…</div>
+      <!-- M.5 -->
+      <div class="section-card">
+        <div class="section-header-row">
+          <h2 class="align-left">M.5</h2>
+          <button class="icon-btn tier-toggle" data-tier="root-m5" aria-expanded="false" aria-controls="root-m5">
+            <span class="material-symbols-outlined">arrow_drop_down</span>
+          </button>
+        </div>
+        <div class="tier-body" id="root-m5" hidden>
+          <div class="subcard">
+            <div class="section-header-row">
+              <h3 class="align-left">Term 1</h3>
+              <button class="icon-btn tier-toggle" data-tier="root-m5-t1" aria-expanded="false" aria-controls="root-m5-t1">
+                <span class="material-symbols-outlined">arrow_drop_down</span>
+              </button>
+            </div>
+            <ul class="root-link-list" id="root-m5-t1" hidden>
+              <li><a href="./M.5/Term.1/ตัวอย่างวิชา/">ตัวอย่างวิชา</a></li>
+            </ul>
+          </div>
+
+          <div class="subcard">
+            <div class="section-header-row">
+              <h3 class="align-left">Term 2</h3>
+              <button class="icon-btn tier-toggle" data-tier="root-m5-t2" aria-expanded="false" aria-controls="root-m5-t2">
+                <span class="material-symbols-outlined">arrow_drop_down</span>
+              </button>
+            </div>
+            <ul class="root-link-list" id="root-m5-t2" hidden>
+              <li><a href="./M.5/Term.2/ตัวอย่างวิชา/">ตัวอย่างวิชา</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- M.6 -->
+      <div class="section-card">
+        <div class="section-header-row">
+          <h2 class="align-left">M.6</h2>
+          <button class="icon-btn tier-toggle" data-tier="root-m6" aria-expanded="false" aria-controls="root-m6">
+            <span class="material-symbols-outlined">arrow_drop_down</span>
+          </button>
+        </div>
+        <div class="tier-body" id="root-m6" hidden>
+          <div class="subcard">
+            <div class="section-header-row">
+              <h3 class="align-left">Term 1</h3>
+              <button class="icon-btn tier-toggle" data-tier="root-m6-t1" aria-expanded="false" aria-controls="root-m6-t1">
+                <span class="material-symbols-outlined">arrow_drop_down</span>
+              </button>
+            </div>
+            <ul class="root-link-list" id="root-m6-t1" hidden>
+              <li><a href="./M.6/Term.1/ตัวอย่างวิชา/">ตัวอย่างวิชา</a></li>
+            </ul>
+          </div>
+
+          <div class="subcard">
+            <div class="section-header-row">
+              <h3 class="align-left">Term 2</h3>
+              <button class="icon-btn tier-toggle" data-tier="root-m6-t2" aria-expanded="false" aria-controls="root-m6-t2">
+                <span class="material-symbols-outlined">arrow_drop_down</span>
+              </button>
+            </div>
+            <ul class="root-link-list" id="root-m6-t2" hidden>
+              <li><a href="./M.6/Term.2/ตัวอย่างวิชา/">ตัวอย่างวิชา</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Footer -->
@@ -104,8 +245,6 @@
     &copy; 2025 20nxskypqz Exam Review
   </footer>
 
-  <!-- Mammoth for DOCX → HTML -->
-  <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
-  <script src="script.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>
