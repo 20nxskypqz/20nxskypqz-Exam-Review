@@ -1,172 +1,154 @@
-<!-- ExamReview-root-HTML-03102025-[Complete] -->
-<!DOCTYPE html>
+<!-- ExamReview-HTML-03102025-[Complete] -->
+<!doctype html>
 <html lang="th">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>20nxskypqz Exam Review</title>
 
-  <!-- Material Symbols (CDN) -->
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
+  <!-- Material Symbols (Outlined) -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <!-- Niramit -->
-  <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
-
-  <!-- Global styles for Exam Review -->
-  <link rel="stylesheet" href="/20nxskypqz-Exam-Review/styles.css" />
+  <!-- Styles for this site -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-
-  <!-- shared header / side menu / footer -->
-  <div data-include="/20nxskypqz-Exam-Review/shared/header.html"></div>
-  <div data-include="/20nxskypqz-Exam-Review/shared/side-menu.html"></div>
+  <!-- include shared header / side-menu / footer (ใช้พาธสัมพัทธ์สำหรับ Project Pages) -->
+  <div data-include="shared/header.html"></div>
+  <div data-include="shared/side-menu.html"></div>
 
   <main class="content">
     <section class="hero">
       <h1 class="hero-title">Welcome to</h1>
-      <h2 class="hero-title subline">20nxskypqz Exam Review!</h2>
+      <h2 class="subline">20nxskypqz Exam Review!</h2>
     </section>
 
-    <!-- Root sections -->
+    <!-- โครง root: M.4 / M.5 / M.6 -->
+    <!-- M.4 -->
     <section class="section-card">
       <div class="drop-wrap">
         <div class="section-header-row">
           <h2 class="align-left" style="margin:0;">M.4</h2>
-          <button class="icon-btn tier-toggle" data-tier="tier-m4" aria-label="Toggle M.4">
+          <button class="icon-btn" data-drop="m4">
             <span class="material-symbols-outlined">arrow_drop_down</span>
           </button>
         </div>
-        <div id="tier-m4" class="tier-body" hidden>
+        <div class="tier-body" data-target="m4" hidden>
+          <!-- Term 1 -->
           <div class="subcard">
             <div class="section-header-row">
               <h3 class="align-left" style="margin:0;">Term 1</h3>
-              <button class="icon-btn tier-toggle" data-tier="tier-m4-t1" aria-label="Toggle M.4 T1">
+              <button class="icon-btn" data-drop="m4t1">
                 <span class="material-symbols-outlined">arrow_drop_down</span>
               </button>
             </div>
-            <ul id="tier-m4-t1" class="root-link-list" hidden>
+            <ul class="root-link-list" data-target="m4t1" hidden>
+              <!-- เรียงลิงก์: สังคม → อังกฤษ → ไทย -->
               <li>
-                <a href="/20nxskypqz-Exam-Review/M.4/Term.1/T31101/">
-                  <span class="material-symbols-outlined">description</span>
-                  <span>ภาษาไทย 1 - ท31101</span>
+                <a href="M.4/Term.1/S31101/" title="สังคมศึกษา 1 - ส31101">
+                  <span class="material-symbols-outlined">school</span>
+                  สังคมศึกษา 1 - ส31101
                 </a>
               </li>
               <li>
-                <a href="/20nxskypqz-Exam-Review/M.4/Term.1/S31101/">
-                  <span class="material-symbols-outlined">description</span>
-                  <span>สังคมศึกษา 1 - ส31101</span>
+                <a href="M.4/Term.1/E31101/" title="ภาษาอังกฤษ 1 - อ31101">
+                  <span class="material-symbols-outlined">translate</span>
+                  ภาษาอังกฤษ 1 - อ31101
                 </a>
               </li>
               <li>
-                <a href="/20nxskypqz-Exam-Review/M.4/Term.1/E31101/">
-                  <span class="material-symbols-outlined">description</span>
-                  <span>ภาษาอังกฤษ 1 - อ31101</span>
+                <a href="M.4/Term.1/T31101/" title="ภาษาไทย 1 - ท31101">
+                  <span class="material-symbols-outlined">menu_book</span>
+                  ภาษาไทย 1 - ท31101
                 </a>
               </li>
             </ul>
           </div>
 
+          <!-- Term 2 (ยังไม่ใช้ แสดงตัวคั่น '-') -->
           <div class="subcard">
             <div class="section-header-row">
               <h3 class="align-left" style="margin:0;">Term 2</h3>
-              <button class="icon-btn tier-toggle" data-tier="tier-m4-t2" aria-label="Toggle M.4 T2">
+              <button class="icon-btn" data-drop="m4t2">
                 <span class="material-symbols-outlined">arrow_drop_down</span>
               </button>
             </div>
-            <ul id="tier-m4-t2" class="root-link-list" hidden>
-              <li>
-                <a class="placeholder-link" href="javascript:void(0)">
-                  <span class="material-symbols-outlined">remove</span><span>-</span>
-                </a>
-              </li>
+            <ul class="root-link-list" data-target="m4t2" hidden>
+              <li><a class="placeholder-link">-</a></li>
             </ul>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- M.5 -->
     <section class="section-card">
       <div class="drop-wrap">
         <div class="section-header-row">
           <h2 class="align-left" style="margin:0;">M.5</h2>
-          <button class="icon-btn tier-toggle" data-tier="tier-m5" aria-label="Toggle M.5">
+          <button class="icon-btn" data-drop="m5">
             <span class="material-symbols-outlined">arrow_drop_down</span>
           </button>
         </div>
-        <div id="tier-m5" class="tier-body" hidden>
+        <div class="tier-body" data-target="m5" hidden>
           <div class="subcard">
             <div class="section-header-row">
               <h3 class="align-left" style="margin:0;">Term 1</h3>
-              <button class="icon-btn tier-toggle" data-tier="tier-m5-t1" aria-label="Toggle M.5 T1">
+              <button class="icon-btn" data-drop="m5t1">
                 <span class="material-symbols-outlined">arrow_drop_down</span>
               </button>
             </div>
-            <ul id="tier-m5-t1" class="root-link-list" hidden>
-              <li>
-                <a class="placeholder-link" href="javascript:void(0)">
-                  <span class="material-symbols-outlined">remove</span><span>-</span>
-                </a>
-              </li>
+            <ul class="root-link-list" data-target="m5t1" hidden>
+              <li><a class="placeholder-link">-</a></li>
             </ul>
           </div>
-
           <div class="subcard">
             <div class="section-header-row">
               <h3 class="align-left" style="margin:0;">Term 2</h3>
-              <button class="icon-btn tier-toggle" data-tier="tier-m5-t2" aria-label="Toggle M.5 T2">
+              <button class="icon-btn" data-drop="m5t2">
                 <span class="material-symbols-outlined">arrow_drop_down</span>
               </button>
             </div>
-            <ul id="tier-m5-t2" class="root-link-list" hidden>
-              <li>
-                <a class="placeholder-link" href="javascript:void(0)">
-                  <span class="material-symbols-outlined">remove</span><span>-</span>
-                </a>
-              </li>
+            <ul class="root-link-list" data-target="m5t2" hidden>
+              <li><a class="placeholder-link">-</a></li>
             </ul>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- M.6 -->
     <section class="section-card">
       <div class="drop-wrap">
         <div class="section-header-row">
           <h2 class="align-left" style="margin:0;">M.6</h2>
-          <button class="icon-btn tier-toggle" data-tier="tier-m6" aria-label="Toggle M.6">
+          <button class="icon-btn" data-drop="m6">
             <span class="material-symbols-outlined">arrow_drop_down</span>
           </button>
         </div>
-        <div id="tier-m6" class="tier-body" hidden>
+        <div class="tier-body" data-target="m6" hidden>
           <div class="subcard">
             <div class="section-header-row">
               <h3 class="align-left" style="margin:0;">Term 1</h3>
-              <button class="icon-btn tier-toggle" data-tier="tier-m6-t1" aria-label="Toggle M.6 T1">
+              <button class="icon-btn" data-drop="m6t1">
                 <span class="material-symbols-outlined">arrow_drop_down</span>
               </button>
             </div>
-            <ul id="tier-m6-t1" class="root-link-list" hidden>
-              <li>
-                <a class="placeholder-link" href="javascript:void(0)">
-                  <span class="material-symbols-outlined">remove</span><span>-</span>
-                </a>
-              </li>
+            <ul class="root-link-list" data-target="m6t1" hidden>
+              <li><a class="placeholder-link">-</a></li>
             </ul>
           </div>
-
           <div class="subcard">
             <div class="section-header-row">
               <h3 class="align-left" style="margin:0;">Term 2</h3>
-              <button class="icon-btn tier-toggle" data-tier="tier-m6-t2" aria-label="Toggle M.6 T2">
+              <button class="icon-btn" data-drop="m6t2">
                 <span class="material-symbols-outlined">arrow_drop_down</span>
               </button>
             </div>
-            <ul id="tier-m6-t2" class="root-link-list" hidden>
-              <li>
-                <a class="placeholder-link" href="javascript:void(0)">
-                  <span class="material-symbols-outlined">remove</span><span>-</span>
-                </a>
-              </li>
+            <ul class="root-link-list" data-target="m6t2" hidden>
+              <li><a class="placeholder-link">-</a></li>
             </ul>
           </div>
         </div>
@@ -174,9 +156,8 @@
     </section>
   </main>
 
-  <div data-include="/20nxskypqz-Exam-Review/shared/footer.html"></div>
+  <div data-include="shared/footer.html"></div>
 
-  <!-- Global script -->
-  <script src="/20nxskypqz-Exam-Review/script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
