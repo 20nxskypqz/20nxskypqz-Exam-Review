@@ -1,27 +1,103 @@
-/* ExamReview-styles-03102025-[Complete] */
-/* …(บล็อคด้านบนคงเดิมทั้งหมด)… */
-
-/* ปรับกล่อง section ให้รองรับโหมดมืด (ข้อกำหนด: M.4/M.5/M.6) */
-.section-card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:12px 14px; margin:12px 0; }
-.subcard{ background:transparent; border-radius:10px; padding:8px 10px; margin:10px 0; }
-body.dark-mode .section-card{ background:#131a20; color:#e5e7eb; }
-body.dark-mode .subcard{ background:#0f1418; color:#e5e7eb; }
-
-/* ทำให้ placeholder “-” จัดแนวเหมือนลิงก์วิชา ทั้งในเมนูและหน้า root */
-.placeholder-link{
-  display:flex; gap:8px; align-items:center; padding:8px 18px;
-  color:#bbb; text-decoration:none; border-radius:8px;
-  white-space:normal; word-break:break-word;
+/* ExamReview-CSS-03102025-[Complete] — content-only (no header/footer/side-menu rules) */
+:root{
+  --bg:#f9f9f9; 
+  --card:#fff; 
+  --ink:#111; 
+  --muted:#666;
+  --shadow:0 6px 24px rgba(0,0,0,.08);
+  --page-max:1100px;
 }
-.placeholder-link .material-symbols-outlined{ opacity:.75; }
 
-/* ระยะย่อหน้า submenu ให้สอดคล้องทุกที่ */
-.menu-section-toggle.sub{ padding-left:18px; font-weight:700; }
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
 
-/* ข้อความ Welcome: บรรทัดที่สอง 28px ตามสั่ง */
-.hero-title .subline{ font-size:28px; }
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'Niramit', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  line-height:1.8;
+  display:flex; flex-direction:column;
+  min-height:100vh; min-height:100svh;
+}
 
-/* root link list สีใน dark mode */
-body.dark-mode .root-link-list a{ color:#e5e7eb; }
+/* include placeholders */
+[data-include]{ display:contents; }
 
-/* (ที่เหลือคงเดิมทั้งหมด) */
+/* Type scale (center by default) */
+h1{ font-size:32px; margin:.2em 0 .4em; text-align:center; }
+h2{ font-size:28px; margin:.8em 0 .4em; text-align:center; }
+h3{ font-size:24px; margin:.8em 0 .4em; text-align:center; }
+h4{ font-size:20px; margin:.6em 0 .3em; text-align:center; }
+p,li{ font-size:16px; }
+.align-left{ text-align:left !important; }
+
+/* Content container */
+.content{ width:100%; max-width:var(--page-max); margin:16px auto; padding:0 20px; }
+
+/* Cards / sections */
+.card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:12px 0; }
+.section-card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:16px 0; }
+.subcard{ background:var(--card); border-radius:10px; box-shadow:var(--shadow); padding:12px; margin:12px 0; }
+
+/* Dark mode only for page content */
+body.dark-mode{ background:#0f1418; color:#e5e7eb; }
+body.dark-mode .card,
+body.dark-mode .section-card,
+body.dark-mode .subcard{ background:#172026; color:#e5e7eb; }
+body.dark-mode a{ color:#d1defa; }
+
+/* Material Symbols base (avoid system-font override) */
+.material-symbols-outlined{
+  font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 40;
+  font-family:'Material Symbols Outlined' !important;
+  font-style:normal; font-weight:normal; line-height:1; display:inline-block;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  vertical-align:middle;
+}
+
+/* Icon button used inside page content (e.g., root dropdown triangle) */
+.icon-btn{
+  background:transparent; border:none; padding:6px; margin:0;
+  cursor:pointer; display:inline-flex; align-items:center; line-height:1; border-radius:8px; color:inherit;
+}
+.icon-btn:hover{ background:rgba(0,0,0,.06); }
+body.dark-mode .icon-btn:hover{ background:rgba(255,255,255,.08); }
+.icon-btn .material-symbols-outlined{ font-size:32px; }
+
+/* Root page: section stacks (M.x / Term.x / subject links) */
+.hero{ margin:8px 0 16px; }
+.hero-title{ margin:.2em 0 .2em; }
+.subline{ font-size:28px; margin-top:.1em; }
+
+.drop-wrap{ margin:8px 0 16px; }
+.section-header-row{ display:flex; align-items:center; gap:10px; }
+.tier-body{ margin-top:10px; }
+
+.root-link-list{ list-style:none; padding:0; margin:10px 0 0; }
+.root-link-list li{ margin:8px 0; }
+.root-link-list a{
+  display:inline-flex; align-items:center; gap:8px;
+  text-decoration:none; color:#000; background:var(--card);
+  border-radius:10px; padding:10px 12px; box-shadow:var(--shadow);
+  white-space:normal; word-break:break-word; font-size:18px;
+}
+.root-link-list a .material-symbols-outlined{ font-size:22px; }
+body.dark-mode .root-link-list a{ color:#e5e7eb; background:#172026; }
+
+/* Placeholder “-” items in lists */
+.placeholder-link{ opacity:.75; cursor:default; }
+
+/* Readability for Mammoth-rendered DOCX inside .card */
+.card h1, .card h2, .card h3{ text-align:left; }
+.card h1{ font-size:28px; margin:18px 0 8px; }
+.card h2{ font-size:24px; margin:16px 0 6px; }
+.card h3{ font-size:20px; margin:14px 0 6px; }
+.card p{ margin:8px 0; }
+.card strong{ font-weight:700; }
+.card em{ font-style:italic; }
+.card ul, .card ol{ padding-left:1.4em; margin:8px 0; }
+.card li{ margin:4px 0; }
+
+/* Mobile tweak for long lists */
+@media (max-width: 480px){
+  .content{ padding:0 16px; }
+}
