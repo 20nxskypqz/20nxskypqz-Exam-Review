@@ -11,9 +11,9 @@
   --grad-light: linear-gradient(90deg, #e63946, #ff9f1c);
   --grad-dark:  linear-gradient(90deg,#0b1929,#1f2937);
 
-  /* สีไอคอนโหมด */
-  --mode-sun-color:#f59e0b;   /* ส้มเข้ม */
-  --mode-moon-color:#f59e0b;  /* โทนเข้มเช่นกัน (ให้ชัดเท่ากัน) */
+  /* สีไอคอนโหมด (ตั้งเป็น "ดำ" ทั้งคู่) */
+  --mode-sun-color:#111;
+  --mode-moon-color:#111;
 }
 
 *{ box-sizing:border-box; }
@@ -165,12 +165,12 @@ body.dark-mode .root-link-list a{ color:#e5e7eb; background:#172026; }
   transition:transform .25s; font-size:20px;
 }
 
-/* สีไอคอนในปุ่มสลับโหมด (เข้ม/ชัดทั้งสองโหมด) */
+/* สีไอคอนในปุ่มสลับโหมด (ดำทั้งสองโหมด) */
 #mode-toggle .toggle-circle .material-symbols-outlined{
-  color: var(--mode-sun-color);         /* light mode = ดวงอาทิตย์ส้มเข้ม */
+  color: var(--mode-sun-color);
 }
 body.dark-mode #mode-toggle .toggle-circle .material-symbols-outlined{
-  color: var(--mode-moon-color);        /* dark mode = ดวงจันทร์โทนเข้มชัด */
+  color: var(--mode-moon-color);
 }
 
 /* ตำแหน่งปุ่มตอนโหมดมืด */
