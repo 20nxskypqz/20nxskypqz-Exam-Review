@@ -1,55 +1,89 @@
-// Ramkhamhaeng-JS-03102025-[Complete]
+// Ramkhamhaeng-JS-08102025-01
 
-// ----- Dark mode (standalone) -----
-function applyDarkMode(isDark){
+// include partials (side menu)
+async function includePartialsIfAny() {
+  const nodes = Array.from(document.querySelectorAll('[data-include]'));
+  for (const node of nodes) {
+    const url = node.getAttribute('data-include');
+    try{
+      const res  = await fetch(url, { cache:'no-store' });
+      const html = await res.text();
+      const wrap = document.createElement('div'); wrap.innerHTML = html.trim();
+      const frag = document.createDocumentFragment();
+      while (wrap.firstChild) frag.appendChild(wrap.firstChild);
+      node.replaceWith(frag);
+    }catch(e){
+      console.error('Include failed:', url, e);
+    }
+  }
+}
+
+// dark mode
+function applyDarkModeClass(isDark){
   document.body.classList.toggle('dark-mode', !!isDark);
   const icon = document.getElementById('mode-icon');
   if (icon) icon.textContent = isDark ? 'dark_mode' : 'light_mode';
 }
-
 function initDarkMode(){
-  const saved = localStorage.getItem('ram.root.dark');
+  const saved = localStorage.getItem('ram.dark');
   const isDark = saved === '1';
-  applyDarkMode(isDark);
+  applyDarkModeClass(isDark);
 
   const toggle = document.getElementById('mode-toggle');
   if (toggle){
     const handler = ()=>{
       const nowDark = !document.body.classList.contains('dark-mode');
-      applyDarkMode(nowDark);
-      localStorage.setItem('ram.root.dark', nowDark ? '1' : '0');
+      applyDarkModeClass(nowDark);
+      localStorage.setItem('ram.dark', nowDark ? '1' : '0');
     };
     toggle.addEventListener('click', handler);
-    toggle.addEventListener('keydown', (e)=>{
-      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); handler(); }
-    });
+    toggle.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); handler(); }});
   }
 }
 
-// ----- Root dropdown (caret down when closed, up when opened) -----
-function initRootDropdowns(){
-  document.querySelectorAll('.tier-toggle').forEach(btn=>{
+// side menu
+function initSideMenu(){
+  const sideMenu = document.getElementById('sideMenu');
+  const overlay  = document.getElementById('menuOverlay');
+  const closeBtn = document.getElementById('closeMenuBtn');
+  const menuBtn  = document.querySelector('.menu-toggle');
+
+  const openMenu = ()=>{
+    if (!sideMenu || !overlay) return;
+    sideMenu.classList.add('open');
+    overlay.classList.add('visible');
+    sideMenu.setAttribute('aria-hidden','false');
+  };
+  const closeMenu = ()=>{
+    if (!sideMenu || !overlay) return;
+    sideMenu.classList.remove('open');
+    overlay.classList.remove('visible');
+    sideMenu.setAttribute('aria-hidden','true');
+  };
+
+  if (menuBtn)  menuBtn.addEventListener('click', openMenu);
+  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+  if (overlay)  overlay.addEventListener('click', closeMenu);
+
+  // dropdowns inside side menu
+  document.querySelectorAll('.menu-section-toggle').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      const id = btn.getAttribute('data-tier');
-      const target = document.getElementById(id);
-      if (!target) return;
+      const key = btn.getAttribute('data-menu-tier');
+      if (!key) return;
+      const tier = document.getElementById('menu-' + key);
+      if (!tier) return;
+      const isHidden = tier.hasAttribute('hidden');
+      if (isHidden) tier.removeAttribute('hidden'); else tier.setAttribute('hidden','');
 
-      const willShow = target.hasAttribute('hidden');
-      if (willShow) target.removeAttribute('hidden'); else target.setAttribute('hidden','');
-
-      // caret icon rotate
-      const caret = btn.querySelector('.caret');
-      if (caret){
-        caret.style.transform = willShow ? 'rotate(180deg)' : 'rotate(0deg)';
-      }
-
-      // aria-expanded
-      btn.setAttribute('aria-expanded', willShow ? 'true' : 'false');
+      const caret = btn.querySelector('.material-symbols-outlined');
+      if (caret) caret.style.transform = (tier && !tier.hasAttribute('hidden')) ? 'rotate(180deg)' : 'rotate(0deg)';
     });
   });
 }
 
-document.addEventListener('DOMContentLoaded', ()=>{
+// init
+document.addEventListener('DOMContentLoaded', async ()=>{
+  await includePartialsIfAny();
   initDarkMode();
-  initRootDropdowns();
+  initSideMenu();
 });
