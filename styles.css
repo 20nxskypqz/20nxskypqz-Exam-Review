@@ -1,15 +1,18 @@
-/* ExamReview-CSS-08102025-10 */
+/* ExamReview-CSS-08102025-08 — Full stylesheet (Material Symbols via CDN) */
 :root{
-  --bg:#f9f9f9; 
-  --card:#fff; 
-  --ink:#111; 
+  --bg:#f9f9f9;
+  --card:#fff;
+  --ink:#111;
   --muted:#666;
   --shadow:0 6px 24px rgba(0,0,0,.08);
   --page-max:1100px;
 
-  /* แถบหัว/ท้าย */
+  /* Header/Footer gradients */
   --grad-light: linear-gradient(90deg, #e63946, #ff9f1c);
   --grad-dark:  linear-gradient(90deg,#0b1929,#1f2937);
+
+  /* Side menu width */
+  --side-w:280px;
 }
 
 *{ box-sizing:border-box; }
@@ -23,10 +26,10 @@ body{
   min-height:100vh; min-height:100svh;
 }
 
-/* ใช้กับชิ้นส่วน include */
+/* Include placeholders */
 [data-include]{ display:contents; }
 
-/* ระดับหัวเรื่อง (ศูนย์กลางค่าเริ่มต้น) */
+/* Type scale */
 h1{ font-size:32px; margin:.2em 0 .4em; text-align:center; }
 h2{ font-size:28px; margin:.8em 0 .4em; text-align:center; }
 h3{ font-size:24px; margin:.8em 0 .4em; text-align:center; }
@@ -34,27 +37,27 @@ h4{ font-size:20px; margin:.6em 0 .3em; text-align:center; }
 p,li{ font-size:16px; }
 .align-left{ text-align:left !important; }
 
-/* พื้นที่คอนเทนต์ */
+/* Content container */
 .content{ width:100%; max-width:var(--page-max); margin:16px auto; padding:0 20px; }
 
-/* การ์ด/กล่อง */
+/* Cards */
 .card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:12px 0; }
 .section-card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:16px 0; }
 .subcard{ background:var(--card); border-radius:10px; box-shadow:var(--shadow); padding:12px; margin:12px 0; }
 
-/* หัว/ท้ายเต็มจอ (full-bleed) */
+/* Full-bleed header/footer */
 .full-bleed{ position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; }
 .header, .footer{ color:#fff; padding:10px 16px; box-shadow:var(--shadow); border-radius:0; }
 .header{
   background:var(--grad-light);
   display:flex; justify-content:space-between; align-items:center;
 }
-.footer{ 
-  background:var(--grad-light); 
-  margin-top:auto; text-align:center; 
+.footer{
+  background:var(--grad-light);
+  margin-top:auto; text-align:center;
 }
 
-/* โหมดมืด */
+/* Dark mode */
 body.dark-mode{ background:#0f1418; color:#e5e7eb; }
 body.dark-mode .card,
 body.dark-mode .section-card,
@@ -63,7 +66,7 @@ body.dark-mode .header,
 body.dark-mode .footer{ background:var(--grad-dark); }
 body.dark-mode a{ color:#d1defa; }
 
-/* Material Symbols */
+/* Material Symbols (prevent system-font override) */
 .material-symbols-outlined{
   font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 40;
   font-family:'Material Symbols Outlined' !important;
@@ -72,26 +75,24 @@ body.dark-mode a{ color:#d1defa; }
   vertical-align:middle;
 }
 
-/* ปุ่มไอคอนทั่วไประดับ root */
+/* Icon button */
 .icon-btn{
   background:transparent; border:none; padding:6px; margin:0;
   cursor:pointer; display:inline-flex; align-items:center; line-height:1; border-radius:8px; color:inherit;
 }
 .icon-btn:hover{ background:rgba(0,0,0,.06); }
 body.dark-mode .icon-btn:hover{ background:rgba(255,255,255,.08); }
-.icon-btn .material-symbols-outlined{ font-size:32px; }
+.icon-btn .material-symbols-outlined{ font-size:32px; transition:transform .2s ease; }
 
-/* ฮีโร่ของหน้า root */
+/* Hero */
 .hero{ margin:8px 0 16px; }
 .hero-title{ margin:.2em 0 .2em; }
 .subline{ font-size:28px; margin-top:.1em; }
 
-/* กลุ่มหัวข้อบนหน้า root (M.x / Term.x) */
+/* Root collapsible sections (M.x / Term.x) */
 .drop-wrap{ margin:8px 0 16px; }
 .section-header-row{ display:flex; align-items:center; gap:10px; }
 .tier-body{ margin-top:10px; }
-
-/* รายการลิงก์วิชาในหน้า root */
 .root-link-list{ list-style:none; padding:0; margin:10px 0 0; }
 .root-link-list li{ margin:8px 0; }
 .root-link-list a{
@@ -100,40 +101,24 @@ body.dark-mode .icon-btn:hover{ background:rgba(255,255,255,.08); }
   border-radius:10px; padding:10px 12px; box-shadow:var(--shadow);
   white-space:normal; word-break:break-word; font-size:18px;
 }
-.root-link-list a .material-symbols-outlined{ font-size:22px; }
 body.dark-mode .root-link-list a{ color:#e5e7eb; background:#172026; }
+.root-link-list a .material-symbols-outlined{ font-size:22px; }
 
-/* ลิงก์ placeholder “-” */
+/* Placeholder “-” link */
 .placeholder-link{ opacity:.75; cursor:default; }
 
-/* ===== Secret Page (ตัวหนังสือสีดำ + เปลี่ยนสีตามโหมด) ===== */
-.secret-link{
-  display:inline-block;
-  color:#000;
-  text-decoration:none;
-  font-weight:700;
-  font-size:20px;
-}
-.secret-link:hover{ text-decoration:underline; }
-body.dark-mode .secret-link{ color:#e5e7eb; }
-
-/* ปุ่มเมนู/ปิดเมนู */
+/* Menu buttons */
 .menu-toggle, .close-menu{
   background:none; border:none; color:inherit; cursor:pointer; font-size:24px; display:flex; align-items:center;
 }
 
-/* --- Side menu (fixed width) --- */
+/* Side menu (fixed width, NOT fullscreen) */
 .side-menu{
-  position:fixed; top:20px; left:20px; bottom:20px;
-  width:300px; max-width:300px;
+  position:fixed; top:20px; left:20px; bottom:20px; width:var(--side-w);
   background:#222; color:#fff; border-radius:12px; padding:60px 0 12px;
-  box-shadow: var(--shadow);
-  transform:translateX(-120%);
-  transition:transform .25s ease;
-  z-index:1000;
+  box-shadow:var(--shadow); transform:translateX(-120%); transition:transform .25s ease; z-index:1000;
 }
 .side-menu.open{ transform:translateX(0); }
-
 .close-menu{ position:absolute; top:12px; right:12px; color:#fff; }
 .menu-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; z-index:900; }
 .menu-overlay.visible{ display:block; }
@@ -145,7 +130,7 @@ body.dark-mode .secret-link{ color:#e5e7eb; }
   font-weight:800; font-size:16px; padding:10px 14px; cursor:pointer; border-radius:8px;
 }
 .menu-section-toggle:hover{ background:rgba(255,255,255,.08); }
-.menu-section-toggle .material-symbols-outlined{ font-size:24px; }
+.menu-section-toggle .material-symbols-outlined{ font-size:24px; transition:transform .2s ease; }
 
 .menu-sublist{ list-style:none; margin:6px 0 8px; padding:0; }
 .menu-sublist li a{
@@ -155,7 +140,7 @@ body.dark-mode .secret-link{ color:#e5e7eb; }
 }
 .menu-sublist li a:hover{ background:rgba(255,255,255,.08); }
 
-/* แคปซูลสลับโหมด (manual) */
+/* Dark-mode toggle capsule */
 .toggle-container{
   --w:84px; --h:36px; --pad:3px;
   width:var(--w); height:var(--h); border-radius:999px; padding:var(--pad);
@@ -168,12 +153,33 @@ body.dark-mode .secret-link{ color:#e5e7eb; }
   border-radius:999px; background:#fff;
   display:flex; align-items:center; justify-content:center;
   box-shadow:0 3px 8px rgba(0,0,0,.25);
-  transition:transform .25s; font-size:20px; color:#111; /* sun/moon สีดำ */
+  transition:transform .25s; font-size:20px; color:#111;
 }
 body.dark-mode .toggle-container{ background:#1d2227; border-color:#3a424a; }
-body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); color:#111; }
+body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); color:#e5e7eb; }
 
-/* สไตล์เนื้อหา DOCX ที่ Mammoth แปลง */
+/* Secret Page link — black in light, light in dark */
+.secret-link{
+  font-weight:700;
+  font-size:20px;
+  text-decoration:none;
+  color:#000 !important;
+}
+.secret-link:link,
+.secret-link:visited,
+.secret-link:hover,
+.secret-link:active{
+  color:#000 !important;
+}
+body.dark-mode .secret-link,
+body.dark-mode .secret-link:link,
+body.dark-mode .secret-link:visited,
+body.dark-mode .secret-link:hover,
+body.dark-mode .secret-link:active{
+  color:#e5e7eb !important;
+}
+
+/* Mammoth-rendered content inside .card (subjects) */
 .card h1, .card h2, .card h3{ text-align:left; }
 .card h1{ font-size:28px; margin:18px 0 8px; }
 .card h2{ font-size:24px; margin:16px 0 6px; }
@@ -184,10 +190,7 @@ body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); 
 .card ul, .card ol{ padding-left:1.4em; margin:8px 0; }
 .card li{ margin:4px 0; }
 
-/* Responsive: ไม่ให้ side-menu เต็มจอ */
+/* Responsive: keep side menu compact on very small screens */
 @media (max-width: 480px){
-  .side-menu{
-    left:12px; right:auto;
-    width:280px !important; max-width:280px !important;
-  }
+  .side-menu{ left:12px; right:12px; width:auto; }
 }
