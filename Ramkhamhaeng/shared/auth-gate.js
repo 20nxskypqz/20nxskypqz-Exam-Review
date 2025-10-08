@@ -1,120 +1,107 @@
-<!-- AuthGate-JS-08102025-01 -->
-<script>
-// ====== CONFIG ======
-const AUTH_PASSWORD = '140425'; // รหัสผ่าน
-const BASE = '/20nxskypqz-Exam-Review/Ramkhamhaeng/';
-const HTML_URL = BASE + 'shared/auth-gate.html';
-const CSS_URL  = BASE + 'shared/auth-gate.css';
+/* AuthGate-JS-08102025-02 */
+// แสดงป๊อปอัปถามรหัส และโหลดคอนเทนต์จาก <template id="protected-tpl"> เมื่อใส่ถูก
 
-// ====== Utilities ======
-function ensureCssInjected(href) {
-  const exists = [...document.styleSheets].some(s => s.href && s.href.includes(href));
-  if (!exists) {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = href;
-    document.head.appendChild(link);
+(function () {
+  const PASS = '140425'; // รหัสผ่านตามที่กำหนด
+  const ROOT_ID = 'protected-root';
+  const TPL_ID  = 'protected-tpl';
+
+  // สไตล์ป๊อปอัป (ขาวล้วนทั้งหน้าตามที่ขอ)
+  const style = document.createElement('style');
+  style.textContent = `
+    .rk-auth-overlay{
+      position:fixed; inset:0; background:#ffffff; z-index:9999;
+      display:flex; align-items:center; justify-content:center; padding:20px;
+      font-family: 'Niramit', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+    }
+    .rk-auth-card{
+      width:100%; max-width:420px; background:#fff; border-radius:14px;
+      box-shadow:0 6px 24px rgba(0,0,0,.12); padding:22px;
+    }
+    .rk-auth-title{ margin:0 0 8px; font-size:22px; font-weight:700; color:#111; text-align:center; }
+    .rk-auth-sub{ margin:0 0 14px; font-size:14px; color:#666; text-align:center; }
+    .rk-auth-input{
+      width:100%; padding:12px 14px; font-size:16px; border:1px solid #d0d7de; border-radius:10px;
+      outline:none;
+    }
+    .rk-auth-input:focus{ border-color:#4f46e5; box-shadow:0 0 0 3px rgba(79,70,229,.15); }
+    .rk-auth-error{ min-height:18px; color:#c00; font-weight:700; font-size:13px; margin:8px 0 0; text-align:center; }
+    .rk-auth-btn{
+      width:100%; margin-top:12px; background:#111; color:#fff; border:0; border-radius:999px;
+      padding:10px 14px; font-weight:800; cursor:pointer;
+    }
+  `;
+  document.head.appendChild(style);
+
+  function mountOverlay() {
+    const overlay = document.createElement('div');
+    overlay.className = 'rk-auth-overlay';
+    overlay.innerHTML = `
+      <div class="rk-auth-card">
+        <h2 class="rk-auth-title">ต้องใช้รหัสผ่าน</h2>
+        <p class="rk-auth-sub">หน้านี้เป็นเนื้อหาส่วนตัว<br/>กรุณาใส่รหัสผ่านเพื่อเข้าถึง</p>
+        <input type="password" class="rk-auth-input" id="rk-pass" inputmode="numeric" pattern="[0-9]*" placeholder="กรอกรหัสผ่านที่นี่" />
+        <div class="rk-auth-error" id="rk-err"></div>
+        <button class="rk-auth-btn" id="rk-submit">เข้าสู่ระบบ</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    return overlay;
   }
-}
 
-async function ensureOverlayInjected() {
-  if (document.getElementById('auth-overlay')) return;
-  try {
-    const res = await fetch(HTML_URL, { cache: 'no-store' });
-    const html = await res.text();
-    const wrap = document.createElement('div');
-    wrap.innerHTML = html.trim();
-    document.body.appendChild(wrap.firstElementChild);
-  } catch (e) {
-    console.error('Load auth overlay failed:', e);
+  function unlock() {
+    // ใส่คอนเทนต์จริงจาก template
+    const tpl = document.getElementById(TPL_ID);
+    const root = document.getElementById(ROOT_ID);
+    if (tpl && root) {
+      const clone = tpl.content.cloneNode(true);
+      root.appendChild(clone);
+
+      // include ชิ้นส่วน (สไลด์เมนู)
+      if (typeof includePartialsIfAny === 'function') {
+        includePartialsIfAny().then(() => {
+          // init โหมดมืด/เมนู หลัง include เสร็จ
+          if (typeof initDarkMode === 'function') initDarkMode();
+          if (typeof initSideMenu === 'function') initSideMenu();
+        });
+      }
+      else {
+        // เผื่อไม่มี script.js
+        if (typeof initDarkMode === 'function') initDarkMode();
+        if (typeof initSideMenu === 'function') initSideMenu();
+      }
+    }
   }
-}
 
-// คอนเทนต์ที่จะป้องกัน
-function getProtectedTargets() {
-  const tpl = document.getElementById('protected-tpl');
-  const root = document.getElementById('protected-root');
-  if (tpl && root) {
-    return { mode: 'template', tpl, root };
+  function attachLogic(overlay) {
+    const input  = overlay.querySelector('#rk-pass');
+    const submit = overlay.querySelector('#rk-submit');
+    const err    = overlay.querySelector('#rk-err');
+
+    const tryLogin = () => {
+      if (input.value === PASS) {
+        overlay.remove();        // เอาป๊อปอัปออก
+        unlock();                // โหลดคอนเทนต์จริง
+      } else {
+        err.textContent = 'รหัสผ่านไม่ถูกต้อง ลองใหม่อีกครั้ง';
+        input.value = '';
+        input.focus();
+      }
+    };
+
+    submit.addEventListener('click', tryLogin);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') tryLogin();
+      err.textContent = '';
+    });
+
+    // โฟกัสอัตโนมัติ
+    setTimeout(() => input.focus(), 0);
   }
-  // fallback: ซ่อน main ทั้งก้อน
-  const main = document.querySelector('main') || document.body;
-  return { mode: 'fallback', main };
-}
 
-function hideProtected(targets) {
-  if (targets.mode === 'template') {
-    targets.root.innerHTML = ''; // ว่างไว้ก่อน
-  } else {
-    targets.main.style.display = 'none';
-  }
-}
-
-function revealProtected(targets) {
-  if (targets.mode === 'template') {
-    const clone = targets.tpl.content.cloneNode(true);
-    targets.root.innerHTML = '';
-    targets.root.appendChild(clone);
-  } else {
-    targets.main.style.display = '';
-  }
-}
-
-// ====== Auth flow ======
-function bindAuthHandlers(targets) {
-  const overlay = document.getElementById('auth-overlay');
-  const input   = document.getElementById('auth-pass');
-  const btn     = document.getElementById('auth-submit');
-  const errEl   = document.getElementById('auth-error');
-
-  if (!overlay || !input || !btn) return;
-
-  const ok = () => {
-    // fade out
-    overlay.classList.add('auth-fade');
-    overlay.style.opacity = '0';
-    setTimeout(() => { overlay.remove(); }, 350);
-    revealProtected(targets);
-  };
-
-  const fail = () => {
-    errEl.textContent = 'รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง';
-    input.classList.add('auth-input-error');
-    input.value = '';
-    input.focus();
-  };
-
-  const check = () => {
-    errEl.textContent = '';
-    input.classList.remove('auth-input-error');
-    const v = input.value.trim();
-    if (v === AUTH_PASSWORD) ok(); else fail();
-  };
-
-  btn.addEventListener('click', check);
-  input.addEventListener('keydown', (e) => {
-    errEl.textContent = '';
-    input.classList.remove('auth-input-error');
-    if (e.key === 'Enter') check();
+  // เริ่มทำงาน: แสดงหน้าว่าง + ป๊อปอัป
+  document.addEventListener('DOMContentLoaded', () => {
+    const overlay = mountOverlay();
+    attachLogic(overlay);
   });
-
-  // autofocus
-  setTimeout(() => input.focus(), 50);
-}
-
-// ====== Boot ======
-document.addEventListener('DOMContentLoaded', async () => {
-  // 1) ใส่ CSS ให้แน่ใจว่ามี
-  ensureCssInjected(CSS_URL);
-
-  // 2) เลือกคอนเทนต์ที่จะป้องกันและ "ซ่อน" ไว้ก่อน
-  const targets = getProtectedTargets();
-  hideProtected(targets);
-
-  // 3) ดึง/ใส่ overlay ถ้ายังไม่มี
-  await ensureOverlayInjected();
-
-  // 4) ผูกอีเวนต์เช็คพาสแล้วค่อยโชว์คอนเทนต์
-  bindAuthHandlers(targets);
-});
-</script>
+})();
