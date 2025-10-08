@@ -12,10 +12,23 @@
 
   <!-- Local styles/scripts (reuse ภายในโฟลเดอร์นี้) -->
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Gate-first: ซ่อนคอนเทนต์ทั้งหมดไว้ก่อน จนกว่าจะปลดล็อก -->
+  <style>
+    html.pw-lock .gate-hide{ visibility:hidden !important; }
+    html.pw-lock body{ overflow:hidden; }
+  </style>
+  <script>
+    // ใส่ class ตั้งแต่ต้นเพื่อตัดโอกาสเห็นหน้าเนื้อหาแวบๆ
+    document.documentElement.classList.add('pw-lock');
+  </script>
 </head>
 <body>
+  <!-- Password Gate (โหลดก่อนชิ้นส่วนอื่น) -->
+  <div data-include="shared/password-gate.html"></div>
+
   <!-- Header (inline) -->
-  <header class="header full-bleed">
+  <header class="header full-bleed gate-hide">
     <button class="menu-toggle" aria-label="Toggle navigation" type="button">
       <span class="material-symbols-outlined">menu</span>
     </button>
@@ -28,13 +41,10 @@
   </header>
 
   <!-- Side menu (include เฉพาะเมนู) -->
-  <div data-include="shared/side-menu.html"></div>
+  <div class="gate-hide" data-include="shared/side-menu.html"></div>
 
-  <!-- Password Gate (include เฉพาะฟีเจอร์รหัส) -->
-  <div data-include="shared/password-gate.html"></div>
-
-  <main class="content">
-    <!-- หัวเรื่องอยู่นอกกล่อง + กึ่งกลาง -->
+  <main class="content gate-hide">
+    <!-- หัวเรื่องอยู่นอกกล่อง -->
     <section class="hero">
       <h2 class="hero-title">Ramkhamhaeng</h2>
     </section>
@@ -47,7 +57,7 @@
   </main>
 
   <!-- Footer (inline) -->
-  <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
+  <footer class="footer full-bleed gate-hide">&copy; 2025 20nxskypqz Exam Review</footer>
 
   <script src="script.js"></script>
 </body>
