@@ -1,0 +1,66 @@
+<!-- Ramkhamhaeng-HTML-03102025-[Complete] -->
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ramkhamhaeng</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
+  <!-- Material Symbols (Outlined) -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+  <!-- Local styles (standalone for this page) -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Header (standalone) -->
+  <header class="header full-bleed">
+    <button class="menu-toggle" aria-label="Menu" type="button">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+
+    <!-- Dark mode capsule -->
+    <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
+      <div class="toggle-circle">
+        <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="content">
+    <section class="hero">
+      <h1 class="hero-title">Ramkhamhaeng</h1>
+      <p class="muted" style="text-align:center;margin:.2em 0 0;">Root page for Ramkhamhaeng courses</p>
+    </section>
+
+    <!-- เหมือนหน้า root ของเว็บหลัก แต่มีหัวข้อใหญ่เดียว: RAM1131 -->
+    <section class="section-card">
+      <div class="drop-wrap">
+        <div class="section-header-row">
+          <h2 class="align-left" style="margin:0;">RAM1131</h2>
+          <button class="icon-btn tier-toggle" data-tier="tier-ram1131" aria-expanded="false" aria-controls="tier-ram1131">
+            <span class="material-symbols-outlined caret">arrow_drop_down</span>
+          </button>
+        </div>
+
+        <ul id="tier-ram1131" class="root-link-list" hidden>
+          <li>
+            <a href="RAM1131/">
+              RAM1131
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer (standalone) -->
+  <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
+
+  <!-- Local script (standalone) -->
+  <script src="script.js"></script>
+</body>
+</html>
