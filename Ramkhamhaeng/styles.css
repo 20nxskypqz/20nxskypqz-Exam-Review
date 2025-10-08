@@ -5,7 +5,7 @@
   --ink:#111; 
   --muted:#666;
   --shadow:0 6px 24px rgba(0,0,0,.08);
-  --page-max:1100px;
+  --page-max:900px;
 
   --grad-light: linear-gradient(90deg, #e63946, #ff9f1c);
   --grad-dark:  linear-gradient(90deg,#0b1929,#1f2937);
@@ -13,7 +13,6 @@
 
 *{ box-sizing:border-box; }
 html,body{ height:100%; }
-
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:'Niramit', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
@@ -24,33 +23,40 @@ body{
 
 [data-include]{ display:contents; }
 
+/* Typography */
 h1{ font-size:32px; margin:.2em 0 .4em; text-align:center; }
 h2{ font-size:28px; margin:.8em 0 .4em; text-align:center; }
 h3{ font-size:24px; margin:.8em 0 .4em; text-align:center; }
 h4{ font-size:20px; margin:.6em 0 .3em; text-align:center; }
 p,li{ font-size:16px; }
-.align-left{ text-align:left !important; }
+.center-24{ font-size:24px; text-align:center; }
 
+/* Content container */
 .content{ width:100%; max-width:var(--page-max); margin:16px auto; padding:0 20px; }
 
+/* Cards */
 .card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:12px 0; }
 .section-card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:16px 0; }
 
-/* full-bleed header/footer */
+/* Header/Footer */
 .full-bleed{ position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; }
 .header, .footer{ color:#fff; padding:10px 16px; box-shadow:var(--shadow); border-radius:0; }
-.header{ background:var(--grad-light); display:flex; justify-content:space-between; align-items:center; }
+.header{
+  background:var(--grad-light);
+  display:flex; justify-content:space-between; align-items:center;
+}
 .footer{ background:var(--grad-light); margin-top:auto; text-align:center; }
 
-/* dark mode */
-body.dark-mode{ background:#0f1418; color:#e5e7eb; }
-body.dark-mode .card,
-body.dark-mode .section-card{ background:#172026; color:#e5e7eb; }
-body.dark-mode .header, 
-body.dark-mode .footer{ background:var(--grad-dark); }
-body.dark-mode a{ color:#d1defa; }
+/* Material Symbols (force font) */
+.material-symbols-outlined{
+  font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 40;
+  font-family:'Material Symbols Outlined' !important;
+  font-style:normal; font-weight:normal; line-height:1; display:inline-block;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  vertical-align:middle;
+}
 
-/* toggle capsule */
+/* Toggle (capsule) — sun/moon both black */
 .toggle-container{
   --w:84px; --h:36px; --pad:3px;
   width:var(--w); height:var(--h); border-radius:999px; padding:var(--pad);
@@ -63,19 +69,19 @@ body.dark-mode a{ color:#d1defa; }
   border-radius:999px; background:#fff;
   display:flex; align-items:center; justify-content:center;
   box-shadow:0 3px 8px rgba(0,0,0,.25);
-  transition:transform .25s; font-size:20px; color:#111;
+  transition:transform .25s; font-size:20px;
 }
-body.dark-mode .toggle-container{ background:#1d2227; border-color:#3a424a; }
-body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); color:#e5e7eb; }
+.toggle-circle .material-symbols-outlined{ color:#000; }      /* sun/moon = black */
+body.dark-mode .toggle-circle .material-symbols-outlined{ color:#000; }
 
-/* menu buttons (3-bar / close) — สีขาว */
+/* Menu buttons (white) */
 .menu-toggle, .close-menu{
   background:none; border:none; color:#fff; cursor:pointer; font-size:24px; display:flex; align-items:center;
 }
 
-/* SIDE MENU — fixed width (ไม่ใหญ่เต็มจอ) */
+/* Side menu (fixed width; not fullscreen) */
 .side-menu{
-  position:fixed; top:20px; left:20px; bottom:20px; width:300px; /* คงที่ */
+  position:fixed; top:20px; left:20px; bottom:20px; width:300px;
   background:#222; color:#fff; border-radius:12px; padding:60px 0 12px;
   box-shadow: var(--shadow); transform:translateX(-120%); transition:transform .25s ease; z-index:1000;
 }
@@ -83,30 +89,29 @@ body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); 
 .close-menu{ position:absolute; top:12px; right:12px; color:#fff; }
 .menu-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; z-index:900; }
 .menu-overlay.visible{ display:block; }
-
 .menu-group{ padding:0 8px 12px; }
-.menu-section-toggle{
-  width:100%; background:transparent; border:none; color:#fff;
-  display:flex; align-items:center; justify-content:space-between;
-  font-weight:800; font-size:16px; padding:10px 14px; cursor:pointer; border-radius:8px;
-}
-.menu-section-toggle:hover{ background:rgba(255,255,255,.08); }
 .menu-sublist{ list-style:none; margin:6px 0 8px; padding:0; }
-.menu-sublist li a{
-  display:flex; gap:8px; align-items:center; padding:8px 18px;
-  color:#fff; text-decoration:none; border-radius:8px;
-  white-space:normal; word-break:break-word;
+.menu-link{
+  display:block; padding:10px 14px; color:#fff; text-decoration:none; border-radius:8px;
 }
-.menu-sublist li a:hover{ background:rgba(255,255,255,.08); }
+.menu-link:hover{ background:rgba(255,255,255,.08); }
 
-/* ====== จุดที่สั่งให้แก้: กล่องชื่อวิชา + สีในโหมดมืด ====== */
-.ram-card{ background:var(--card); color:var(--ink); }
-body.dark-mode .ram-card{ background:#172026; color:#e5e7eb; }
+/* Root link card */
+.root-link-card{ display:block; width:100%; padding:12px 14px; text-decoration:none; }
+.ram-course-link-card{ background:var(--card); border-radius:10px; box-shadow:var(--shadow); }
+.ram-course-title{ font-size:24px; font-weight:700; color:#111; margin:0; text-align:center; }
 
-.ram-title{
-  font-size:24px; font-weight:700; color:#111; text-align:left;
+/* Dark mode */
+body.dark-mode{ background:#0f1418; color:#e5e7eb; }
+body.dark-mode .card,
+body.dark-mode .section-card{ background:#172026; color:#e5e7eb; }
+body.dark-mode .header, 
+body.dark-mode .footer{ background:var(--grad-dark); }
+
+/* <<< เปลี่ยนสีหัวเรื่อง RAM1131 ตามโหมดมืด >>> */
+body.dark-mode .ram-course-title{ color:#fff; }
+
+/* Responsive side menu for very small screens (still not fullscreen) */
+@media (max-width: 480px){
+  .side-menu{ left:12px; right:12px; width:auto; max-width:320px; }
 }
-body.dark-mode .ram-title{ color:#fff; }
-
-/* สัญลักษณ์ sun/moon ให้เป็น “สีดำ” ทั้งสองโหมด */
-.icon-sun, .icon-moon{ color:#000 !important; fill:#000 !important; }
