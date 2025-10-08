@@ -1,37 +1,15 @@
-<!-- Ramkhamhaeng-HTML-08102025-03 -->
-<!doctype html>
-<html lang="th">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Ramkhamhaeng — 20nxskypqz Exam Review</title>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-
-  <!-- Local styles/scripts (reuse ภายในโฟลเดอร์นี้) -->
-  <link rel="stylesheet" href="styles.css" />
-</head>
+<!-- เพิ่ม include เกต + ใส่ id ให้คอนเทนต์ และเรียกใช้ JS ของเกต -->
 <body>
-  <!-- Header (inline) -->
-  <header class="header full-bleed">
-    <button class="menu-toggle" aria-label="Toggle navigation" type="button">
-      <span class="material-symbols-outlined">menu</span>
-    </button>
+  <!-- header เดิม ... -->
 
-    <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
-      <div class="toggle-circle">
-        <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
-      </div>
-    </div>
-  </header>
+  <!-- ใส่เกต (อยู่ก่อนคอนเทนต์ เพื่อให้ทับทั้งหน้า) -->
+  <div data-include="shared/password-gate.html"></div>
 
-  <!-- Side menu (include เฉพาะเมนู) -->
+  <!-- side-menu เดิม -->
   <div data-include="shared/side-menu.html"></div>
 
-  <main class="content">
-    <!-- หัวเรื่องอยู่นอกกล่อง + กึ่งกลาง -->
+  <!-- ใส่ id="private-content" และซ่อนด้วย hidden (เกตจะปลดให้เมื่อรหัสถูก) -->
+  <main id="private-content" hidden class="content">
     <section class="hero">
       <h2 class="hero-title">Ramkhamhaeng</h2>
     </section>
@@ -43,9 +21,10 @@
     </section>
   </main>
 
-  <!-- Footer (inline) -->
-  <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
+  <!-- footer เดิม ... -->
 
+  <!-- script หลักของหน้า -->
   <script src="script.js"></script>
+  <!-- script ของเกต (ต้องอยู่ท้ายสุด เพื่อให้จับ element หลัง include ได้) -->
+  <script src="shared/password-gate.js"></script>
 </body>
-</html>
