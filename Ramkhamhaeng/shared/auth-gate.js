@@ -1,4 +1,4 @@
-/* AuthGate-JS-08102025-02 */
+/* AuthGate-JS-08102025-03 */
 // แสดงป๊อปอัปถามรหัส และโหลดคอนเทนต์จาก <template id="protected-tpl"> เมื่อใส่ถูก
 
 (function () {
@@ -6,7 +6,7 @@
   const ROOT_ID = 'protected-root';
   const TPL_ID  = 'protected-tpl';
 
-  // สไตล์ป๊อปอัป (ขาวล้วนทั้งหน้าตามที่ขอ)
+  // สไตล์ป๊อปอัป (ใช้คลาส .rk-auth- เฉพาะ, ไม่ทับสไตล์หลักของเว็บ)
   const style = document.createElement('style');
   style.textContent = `
     .rk-auth-overlay{
@@ -39,7 +39,10 @@
     overlay.innerHTML = `
       <div class="rk-auth-card">
         <h2 class="rk-auth-title">ต้องใช้รหัสผ่าน</h2>
-        <p class="rk-auth-sub">หน้านี้เป็นเนื้อหาส่วนตัว<br/>กรุณาใส่รหัสผ่านเพื่อเข้าถึง</p>
+        <p class="rk-auth-sub">
+          เนื่องจากหน้านี้มีเนื้อหาที่ละเอียดอ่อนและเป็นความลับ<br/>
+          กรุณาใส่รหัสผ่านเพื่อเข้าใช้งาน
+        </p>
         <input type="password" class="rk-auth-input" id="rk-pass" inputmode="numeric" pattern="[0-9]*" placeholder="กรอกรหัสผ่านที่นี่" />
         <div class="rk-auth-error" id="rk-err"></div>
         <button class="rk-auth-btn" id="rk-submit">เข้าสู่ระบบ</button>
@@ -57,16 +60,13 @@
       const clone = tpl.content.cloneNode(true);
       root.appendChild(clone);
 
-      // include ชิ้นส่วน (สไลด์เมนู)
+      // include ชิ้นส่วน (สไลด์เมนู) แล้วค่อย init โหมด/เมนู
       if (typeof includePartialsIfAny === 'function') {
         includePartialsIfAny().then(() => {
-          // init โหมดมืด/เมนู หลัง include เสร็จ
           if (typeof initDarkMode === 'function') initDarkMode();
           if (typeof initSideMenu === 'function') initSideMenu();
         });
-      }
-      else {
-        // เผื่อไม่มี script.js
+      } else {
         if (typeof initDarkMode === 'function') initDarkMode();
         if (typeof initSideMenu === 'function') initSideMenu();
       }
@@ -99,7 +99,7 @@
     setTimeout(() => input.focus(), 0);
   }
 
-  // เริ่มทำงาน: แสดงหน้าว่าง + ป๊อปอัป
+  // เริ่มทำงาน: แสดงหน้าว่าง + ป๊อปอัป (ก่อนโหลดคอนเทนต์)
   document.addEventListener('DOMContentLoaded', () => {
     const overlay = mountOverlay();
     attachLogic(overlay);
