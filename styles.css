@@ -1,4 +1,4 @@
-/* ExamReview-CSS-08102025-02 — Full stylesheet (lock side-menu width, moon icon black in dark mode) */
+/* ExamReview-CSS-08102025-12 */
 :root{
   --bg:#f9f9f9; 
   --card:#fff; 
@@ -6,15 +6,11 @@
   --muted:#666;
   --shadow:0 6px 24px rgba(0,0,0,.08);
   --page-max:1100px;
-
-  /* แถบหัว/ท้าย */
   --grad-light: linear-gradient(90deg, #e63946, #ff9f1c);
   --grad-dark:  linear-gradient(90deg,#0b1929,#1f2937);
 }
-
 *{ box-sizing:border-box; }
 html,body{ height:100%; }
-
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:'Niramit', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
@@ -22,11 +18,9 @@ body{
   display:flex; flex-direction:column;
   min-height:100vh; min-height:100svh;
 }
-
-/* ใช้กับชิ้นส่วน include */
 [data-include]{ display:contents; }
 
-/* ระดับหัวเรื่อง (ศูนย์กลางค่าเริ่มต้น) */
+/* Headings */
 h1{ font-size:32px; margin:.2em 0 .4em; text-align:center; }
 h2{ font-size:28px; margin:.8em 0 .4em; text-align:center; }
 h3{ font-size:24px; margin:.8em 0 .4em; text-align:center; }
@@ -34,27 +28,21 @@ h4{ font-size:20px; margin:.6em 0 .3em; text-align:center; }
 p,li{ font-size:16px; }
 .align-left{ text-align:left !important; }
 
-/* พื้นที่คอนเทนต์ */
+/* Content area */
 .content{ width:100%; max-width:var(--page-max); margin:16px auto; padding:0 20px; }
 
-/* การ์ด/กล่อง */
+/* Cards */
 .card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:12px 0; }
 .section-card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:16px 0; }
 .subcard{ background:var(--card); border-radius:10px; box-shadow:var(--shadow); padding:12px; margin:12px 0; }
 
-/* หัว/ท้ายเต็มจอ (full-bleed) */
+/* Full-bleed header/footer */
 .full-bleed{ position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; }
 .header, .footer{ color:#fff; padding:10px 16px; box-shadow:var(--shadow); border-radius:0; }
-.header{
-  background:var(--grad-light);
-  display:flex; justify-content:space-between; align-items:center;
-}
-.footer{ 
-  background:var(--grad-light); 
-  margin-top:auto; text-align:center; 
-}
+.header{ background:var(--grad-light); display:flex; justify-content:space-between; align-items:center; }
+.footer{ background:var(--grad-light); margin-top:auto; text-align:center; }
 
-/* โหมดมืด */
+/* Dark mode */
 body.dark-mode{ background:#0f1418; color:#e5e7eb; }
 body.dark-mode .card,
 body.dark-mode .section-card,
@@ -63,7 +51,7 @@ body.dark-mode .header,
 body.dark-mode .footer{ background:var(--grad-dark); }
 body.dark-mode a{ color:#d1defa; }
 
-/* Material Symbols (กัน system font ทับ) */
+/* Material Symbols */
 .material-symbols-outlined{
   font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 40;
   font-family:'Material Symbols Outlined' !important;
@@ -72,47 +60,46 @@ body.dark-mode a{ color:#d1defa; }
   vertical-align:middle;
 }
 
-/* ปุ่มไอคอนทั่วไประดับ root */
-.icon-btn{
-  background:transparent; border:none; padding:6px; margin:0;
-  cursor:pointer; display:inline-flex; align-items:center; line-height:1; border-radius:8px; color:inherit;
-}
-.icon-btn:hover{ background:rgba(0,0,0,.06); }
-body.dark-mode .icon-btn:hover{ background:rgba(255,255,255,.08); }
-.icon-btn .material-symbols-outlined{ font-size:32px; }
+/* Plain link that adapts to theme (ใช้กับ Secret Page) */
+.link-plain{ color:#000; text-decoration:none; }
+body.dark-mode .link-plain{ color:#e5e7eb; }
 
-/* ฮีโร่ของหน้า root */
+/* Root UI */
 .hero{ margin:8px 0 16px; }
 .hero-title{ margin:.2em 0 .2em; }
 .subline{ font-size:28px; margin-top:.1em; }
 
-/* กลุ่มหัวข้อบนหน้า root (M.x / Term.x) */
 .drop-wrap{ margin:8px 0 16px; }
 .section-header-row{ display:flex; align-items:center; gap:10px; }
 .tier-body{ margin-top:10px; }
 .root-link-list{ list-style:none; padding:0; margin:10px 0 0; }
 .root-link-list li{ margin:8px 0; }
 .root-link-list a{
-  display:inline-flex; align-items:center; gap:8px;
+  display:inline-block;
   text-decoration:none; color:#000; background:var(--card);
   border-radius:10px; padding:10px 12px; box-shadow:var(--shadow);
   white-space:normal; word-break:break-word; font-size:18px;
 }
-.root-link-list a .material-symbols-outlined{ font-size:22px; }
 body.dark-mode .root-link-list a{ color:#e5e7eb; background:#172026; }
 
-/* ลิงก์ placeholder “-” */
-.placeholder-link{ opacity:.75; cursor:default; }
+/* Icon buttons */
+.icon-btn{
+  background:transparent; border:none; padding:6px; margin:0;
+  cursor:pointer; display:inline-flex; align-items:center; line-height:1; border-radius:8px; color:inherit;
+  transition:background .2s ease, transform .2s ease;
+}
+.icon-btn:hover{ background:rgba(0,0,0,.06); }
+body.dark-mode .icon-btn:hover{ background:rgba(255,255,255,.08); }
+.icon-btn .material-symbols-outlined{ font-size:32px; transition:transform .2s ease; }
 
-/* ปุ่มเมนู/ปิดเมนู */
+/* Menu buttons (header) */
 .menu-toggle, .close-menu{
   background:none; border:none; color:inherit; cursor:pointer; font-size:24px; display:flex; align-items:center;
 }
 
-/* สไลด์เมนู (ล็อกความกว้างคงที่ทุกหน้าจอ) */
+/* Side menu (ค่ามาตรฐานที่เคยใช้) */
 .side-menu{
-  position:fixed; top:20px; left:20px; bottom:20px;
-  width:300px; /* << คงที่ */
+  position:fixed; top:20px; left:20px; bottom:20px; width:300px;
   background:#222; color:#fff; border-radius:12px; padding:60px 0 12px;
   box-shadow: var(--shadow); transform:translateX(-120%); transition:transform .25s ease; z-index:1000;
 }
@@ -128,7 +115,8 @@ body.dark-mode .root-link-list a{ color:#e5e7eb; background:#172026; }
   font-weight:800; font-size:16px; padding:10px 14px; cursor:pointer; border-radius:8px;
 }
 .menu-section-toggle:hover{ background:rgba(255,255,255,.08); }
-.menu-section-toggle .material-symbols-outlined{ font-size:24px; }
+.menu-section-toggle .material-symbols-outlined{ font-size:24px; transition:transform .2s ease; }
+
 .menu-sublist{ list-style:none; margin:6px 0 8px; padding:0; }
 .menu-sublist li a{
   display:flex; gap:8px; align-items:center; padding:8px 18px;
@@ -137,7 +125,7 @@ body.dark-mode .root-link-list a{ color:#e5e7eb; background:#172026; }
 }
 .menu-sublist li a:hover{ background:rgba(255,255,255,.08); }
 
-/* แคปซูลสลับโหมด (manual) */
+/* Dark-mode toggle capsule */
 .toggle-container{
   --w:84px; --h:36px; --pad:3px;
   width:var(--w); height:var(--h); border-radius:999px; padding:var(--pad);
@@ -150,24 +138,12 @@ body.dark-mode .root-link-list a{ color:#e5e7eb; background:#172026; }
   border-radius:999px; background:#fff;
   display:flex; align-items:center; justify-content:center;
   box-shadow:0 3px 8px rgba(0,0,0,.25);
-  transition:transform .25s; font-size:20px; color:#111; /* light mode icon = ดำ */
+  transition:transform .25s; font-size:20px; color:#111;
 }
-/* โหมดมืด: ให้ไอคอน (moon) เป็น “สีดำ” และสไลด์ไปขวา */
 body.dark-mode .toggle-container{ background:#1d2227; border-color:#3a424a; }
-body.dark-mode .toggle-circle{
-  transform:translateX(calc(var(--w) - var(--h)));
-  color:#111; /* moon เป็นสีดำ */
+body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); color:#e5e7eb; }
+
+/* Responsive for side menu */
+@media (max-width: 480px){
+  .side-menu{ left:12px; right:12px; width:auto; }
 }
-
-/* สไตล์เนื้อหา DOCX ที่ Mammoth แปลง (ให้อ่านง่าย) */
-.card h1, .card h2, .card h3{ text-align:left; }
-.card h1{ font-size:28px; margin:18px 0 8px; }
-.card h2{ font-size:24px; margin:16px 0 6px; }
-.card h3{ font-size:20px; margin:14px 0 6px; }
-.card p{ margin:8px 0; }
-.card strong{ font-weight:700; }
-.card em{ font-style:italic; }
-.card ul, .card ol{ padding-left:1.4em; margin:8px 0; }
-.card li{ margin:4px 0; }
-
-/* (ลบ media ที่ขยายเมนูเต็มจอบนจอเล็ก) */
