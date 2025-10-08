@@ -1,4 +1,4 @@
-/* ExamReview-CSS-08102025-09 */
+/* ExamReview-CSS-08102025-10 */
 :root{
   --bg:#f9f9f9; 
   --card:#fff; 
@@ -63,7 +63,7 @@ body.dark-mode .header,
 body.dark-mode .footer{ background:var(--grad-dark); }
 body.dark-mode a{ color:#d1defa; }
 
-/* Material Symbols (กัน system font ทับ) */
+/* Material Symbols */
 .material-symbols-outlined{
   font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 40;
   font-family:'Material Symbols Outlined' !important;
@@ -106,12 +106,23 @@ body.dark-mode .root-link-list a{ color:#e5e7eb; background:#172026; }
 /* ลิงก์ placeholder “-” */
 .placeholder-link{ opacity:.75; cursor:default; }
 
+/* ===== Secret Page (ตัวหนังสือสีดำ + เปลี่ยนสีตามโหมด) ===== */
+.secret-link{
+  display:inline-block;
+  color:#000;
+  text-decoration:none;
+  font-weight:700;
+  font-size:20px;
+}
+.secret-link:hover{ text-decoration:underline; }
+body.dark-mode .secret-link{ color:#e5e7eb; }
+
 /* ปุ่มเมนู/ปิดเมนู */
 .menu-toggle, .close-menu{
   background:none; border:none; color:inherit; cursor:pointer; font-size:24px; display:flex; align-items:center;
 }
 
-/* --- Side menu (fixed width, not full-screen on mobile) --- */
+/* --- Side menu (fixed width) --- */
 .side-menu{
   position:fixed; top:20px; left:20px; bottom:20px;
   width:300px; max-width:300px;
@@ -157,12 +168,12 @@ body.dark-mode .root-link-list a{ color:#e5e7eb; background:#172026; }
   border-radius:999px; background:#fff;
   display:flex; align-items:center; justify-content:center;
   box-shadow:0 3px 8px rgba(0,0,0,.25);
-  transition:transform .25s; font-size:20px; color:#111; /* ไอคอน sun/moon สีดำ */
+  transition:transform .25s; font-size:20px; color:#111; /* sun/moon สีดำ */
 }
 body.dark-mode .toggle-container{ background:#1d2227; border-color:#3a424a; }
-body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); color:#111; } /* คงให้ไอคอนสีดำ */
+body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); color:#111; }
 
-/* สไตล์เนื้อหา DOCX ที่ Mammoth แปลง (ให้อ่านง่าย) */
+/* สไตล์เนื้อหา DOCX ที่ Mammoth แปลง */
 .card h1, .card h2, .card h3{ text-align:left; }
 .card h1{ font-size:28px; margin:18px 0 8px; }
 .card h2{ font-size:24px; margin:16px 0 6px; }
