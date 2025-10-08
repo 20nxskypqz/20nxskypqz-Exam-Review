@@ -1,4 +1,4 @@
-<!-- RAM1131-HTML-03102025-[Complete] -->
+<!-- RAM1131-HTML-08102025-01 -->
 <!doctype html>
 <html lang="th">
 <head>
@@ -6,22 +6,20 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>RAM1131 — Ramkhamhaeng</title>
 
-  <!-- Fonts -->
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
-  <!-- Material Symbols (Outlined) -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <!-- Reuse parent CSS -->
+  <!-- Local (section) assets -->
   <link rel="stylesheet" href="../styles.css" />
 </head>
 <body>
-  <!-- Header (standalone) -->
+  <!-- Header (inline, มีปุ่ม 3 ขีด) -->
   <header class="header full-bleed">
-    <button class="menu-toggle" aria-label="Menu" type="button">
+    <button class="menu-toggle" aria-label="Toggle navigation" type="button">
       <span class="material-symbols-outlined">menu</span>
     </button>
 
-    <!-- Dark mode capsule -->
     <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
       <div class="toggle-circle">
         <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
@@ -29,24 +27,26 @@
     </div>
   </header>
 
-  <!-- Content -->
+  <!-- Side menu (shared include for Ramkhamhaeng only) -->
+  <div data-include="../shared/side-menu.html"></div>
+
   <main class="content">
     <section class="hero">
       <h1 class="hero-title">RAM1131</h1>
-      <p class="muted">Ramkhamhaeng • Standalone page</p>
+      <h2 class="subline">General Psychology</h2>
     </section>
 
-    <div class="card">
-      <p style="margin:0; text-align:center; color:var(--muted);">
-        (Placeholder) This page is reserved for RAM1131 content.
-      </p>
-    </div>
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">Content</h2>
+      <div class="card">
+        <em>Materials will be added here.</em>
+      </div>
+    </section>
   </main>
 
-  <!-- Footer -->
+  <!-- Footer (inline) -->
   <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
 
-  <!-- Reuse parent JS -->
   <script src="../script.js"></script>
 </body>
 </html>
