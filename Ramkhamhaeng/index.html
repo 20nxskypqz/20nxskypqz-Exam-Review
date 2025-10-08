@@ -1,4 +1,4 @@
-<!-- Ramkhamhaeng-HTML-08102025-01 -->
+<!-- Ramkhamhaeng-HTML-08102025-02 -->
 <!doctype html>
 <html lang="th">
 <head>
@@ -10,13 +10,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <!-- Site styles (Ramkhamhaeng local) -->
-  <link rel="stylesheet" href="/Ramkhamhaeng/styles.css" />
+  <!-- ใช้พาธสัมพัทธ์ (สำหรับ GitHub Project Pages) -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- shared header + side menu (Ramkhamhaeng local includes) -->
-  <div data-include="/Ramkhamhaeng/shared/header.html"></div>
-  <div data-include="/Ramkhamhaeng/shared/side-menu.html"></div>
+  <!-- include (ใช้พาธสัมพัทธ์) -->
+  <div data-include="shared/header.html"></div>
+  <div data-include="shared/side-menu.html"></div>
 
   <main class="content">
     <section class="hero">
@@ -24,12 +24,12 @@
       <h2 class="subline">Ramkhamhaeng</h2>
     </section>
 
-    <!-- รายวิชา (ลิงก์กดไปได้เลย) -->
+    <!-- ลิสต์รายวิชา -->
     <section class="section-card">
       <h2 class="align-left" style="margin:0 0 8px;">Courses</h2>
       <ul class="root-link-list" style="margin-top:10px;">
         <li>
-          <a href="/Ramkhamhaeng/RAM1131/">
+          <a href="RAM1131/">
             RAM1131 - ทักษะการเข้าใจดิจิทัล
           </a>
         </li>
@@ -37,9 +37,9 @@
     </section>
   </main>
 
-  <div data-include="/Ramkhamhaeng/shared/footer.html"></div>
+  <div data-include="shared/footer.html"></div>
 
-  <!-- Local script (Ramkhamhaeng) -->
-  <script src="/Ramkhamhaeng/script.js"></script>
+  <!-- ใช้พาธสัมพัทธ์ -->
+  <script src="script.js"></script>
 </body>
 </html>
