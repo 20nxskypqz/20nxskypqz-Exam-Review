@@ -1,164 +1,51 @@
-<!-- RK-HTML-08102025-05 -->
+<!-- Ramkhamhaeng-HTML-08102025-03 -->
 <!doctype html>
 <html lang="th">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Ramkhamhaeng</title>
+  <title>Ramkhamhaeng — 20nxskypqz Exam Review</title>
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
-  <!-- Material Symbols (Outlined) -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <!-- Page styles (standalone for Ramkhamhaeng) -->
+  <!-- Local styles/scripts (reuse ภายในโฟลเดอร์นี้) -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- Header (inline) -->
+  <header class="header full-bleed">
+    <button class="menu-toggle" aria-label="Toggle navigation" type="button">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
 
-  <!-- ===== AUTH OVERLAY (แสดงก่อนเสมอ) ===== -->
-  <div id="rk-auth-overlay" class="auth-overlay" aria-modal="true" role="dialog">
-    <div class="auth-modal" role="document">
-      <h2 class="auth-title">ต้องใช้รหัสผ่าน</h2>
-      <p class="auth-desc">
-        เนื่องจากหน้านี้มีเนื้อหาที่ละเอียดอ่อนและเป็นความลับ<br>
-        กรุณาใส่รหัสผ่านเพื่อเข้าใช้งาน
-      </p>
-
-      <input
-        id="rk-auth-input"
-        class="auth-input"
-        type="password"
-        inputmode="numeric"
-        pattern="[0-9]*"
-        placeholder="กรอกรหัสผ่านที่นี่"
-        aria-label="กรอกรหัสผ่านที่นี่"
-      />
-
-      <label class="auth-remember">
-        <input type="checkbox" id="rk-auth-remember" />
-        จำรหัสผ่านชั่วคราว
-      </label>
-
-      <p id="rk-auth-error" class="auth-error" aria-live="polite"></p>
-
-      <button id="rk-auth-submit" class="auth-btn" type="button">เข้าสู่ระบบ</button>
-    </div>
-  </div>
-  <!-- ===== /AUTH OVERLAY ===== -->
-
-  <!-- แอปจริงทั้งหมด “ซ่อน” ไว้ก่อน จนกว่าจะยืนยันรหัสผ่าน -->
-  <div id="rk-app" style="display:none">
-    <!-- Header -->
-    <header class="header full-bleed">
-      <!-- 3 ขีด -->
-      <button class="menu-toggle" aria-label="Toggle navigation" type="button">
-        <span class="material-symbols-outlined">menu</span>
-      </button>
-
-      <!-- toggle capsule -->
-      <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
-        <div class="toggle-circle">
-          <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
-        </div>
+    <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
+      <div class="toggle-circle">
+        <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <main class="content">
-      <!-- ชื่อหน้า/วิชา: สีดำ 24px (ชิดซ้ายตามที่เคยสั่งไว้ก่อนหน้า) -->
-      <h1 class="course-title align-left">RAM1131 – ทักษะการเข้าใจดิจิทัล</h1>
+  <!-- Side menu (include เฉพาะเมนู) -->
+  <div data-include="shared/side-menu.html"></div>
 
-      <!-- กล่องลิงก์ไปวิชา (ตัวอย่าง 1 รายการ) -->
-      <section class="card">
-        <ul class="menu-sublist" style="margin:0">
-          <li>
-            <a href="/20nxskypqz-Exam-Review/Ramkhamhaeng/RAM1131/">
-              RAM1131 – ทักษะการเข้าใจดิจิทัล
-            </a>
-          </li>
-        </ul>
-      </section>
-    </main>
+  <main class="content">
+    <!-- หัวเรื่องอยู่นอกกล่อง + กึ่งกลาง -->
+    <section class="hero">
+      <h2 class="hero-title">Ramkhamhaeng</h2>
+    </section>
 
-    <!-- Footer (ต้องติดขอบล่างจริง) -->
-    <footer class="footer full-bleed">
-      &copy; 2025 20nxskypqz Exam Review
-    </footer>
-  </div>
+    <section class="section-card">
+      <a class="card link-card" href="RAM1131/">
+        <div class="card-title align-left">RAM1131 – ทักษะการเข้าใจดิจิทัล</div>
+      </a>
+    </section>
+  </main>
 
-  <!-- Page script (เฉพาะ Ramkhamhaeng) -->
-  <script>
-    // RK-SCRIPT-08102025-05
+  <!-- Footer (inline) -->
+  <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
 
-    // ---------- Theme toggle ----------
-    function applyDarkModeClass(isDark){
-      document.body.classList.toggle('dark-mode', !!isDark);
-      const icon = document.getElementById('mode-icon');
-      if (icon) icon.textContent = isDark ? 'dark_mode' : 'light_mode';
-    }
-    function initDarkMode(){
-      const saved = localStorage.getItem('rk.dark');
-      const isDark = saved === '1';
-      applyDarkModeClass(isDark);
-
-      const toggle = document.getElementById('mode-toggle');
-      if (toggle){
-        const handler = ()=>{
-          const nowDark = !document.body.classList.contains('dark-mode');
-          applyDarkModeClass(nowDark);
-          localStorage.setItem('rk.dark', nowDark ? '1' : '0');
-        };
-        toggle.addEventListener('click', handler);
-        toggle.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); handler(); }});
-      }
-    }
-
-    // ---------- Auth overlay ----------
-    (function(){
-      const PASSWORD = '140425'; // ตามที่กำหนดไว้
-      const overlay  = document.getElementById('rk-auth-overlay');
-      const app      = document.getElementById('rk-app');
-      const input    = document.getElementById('rk-auth-input');
-      const submit   = document.getElementById('rk-auth-submit');
-      const errorEl  = document.getElementById('rk-auth-error');
-      const remember = document.getElementById('rk-auth-remember');
-
-      function unlock(persist){
-        // ถ้าเลือก "จำรหัสผ่านชั่วคราว" ค่อยจำใน sessionStorage
-        if (persist) sessionStorage.setItem('rk.auth', '1');
-        overlay.style.display = 'none';
-        app.style.display = 'block';
-      }
-
-      function tryAuth(){
-        const v = input.value.trim();
-        if (v === PASSWORD){
-          unlock(!!remember.checked);
-        }else{
-          errorEl.textContent = 'รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง';
-          input.value = '';
-          input.focus();
-        }
-      }
-
-      // หากมี session อยู่แล้ว ให้ผ่านทันที
-      if (sessionStorage.getItem('rk.auth') === '1'){
-        overlay.style.display = 'none';
-        app.style.display = 'block';
-      }else{
-        overlay.style.display = 'grid'; // ให้แสดง overlay
-        app.style.display = 'none';
-      }
-
-      submit.addEventListener('click', tryAuth);
-      input.addEventListener('keydown', e=>{
-        if (e.key === 'Enter'){ tryAuth(); }
-        if (errorEl.textContent) errorEl.textContent = '';
-      });
-    })();
-
-    // ---------- init all ----------
-    document.addEventListener('DOMContentLoaded', initDarkMode);
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
