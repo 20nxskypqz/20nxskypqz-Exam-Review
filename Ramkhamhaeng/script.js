@@ -1,25 +1,24 @@
-// Ramkhamhaeng-JS-08102025-04
+// Ramkhamhaeng-JS-08102025-06
 
 // ---------- include partials ----------
 async function includePartialsIfAny() {
   const nodes = Array.from(document.querySelectorAll('[data-include]'));
-  if (nodes.length === 0) return;
   for (const node of nodes) {
     const url = node.getAttribute('data-include');
-    try{
+    try {
       const res = await fetch(url, { cache: 'no-store' });
       const html = await res.text();
-      const tmp = document.createElement('div'); tmp.innerHTML = html.trim();
+      const temp = document.createElement('div'); temp.innerHTML = html.trim();
       const frag = document.createDocumentFragment();
-      while (tmp.firstChild) frag.appendChild(tmp.firstChild);
+      while (temp.firstChild) frag.appendChild(temp.firstChild);
       node.replaceWith(frag);
-    }catch(e){
+    } catch (e) {
       console.error('Include failed:', url, e);
     }
   }
 }
 
-// ---------- dark mode (manual) ----------
+// ---------- dark mode ----------
 function applyDarkModeClass(isDark){
   document.body.classList.toggle('dark-mode', !!isDark);
   const icon = document.getElementById('mode-icon');
@@ -31,23 +30,56 @@ function initDarkMode(){
   applyDarkModeClass(isDark);
 
   const toggle = document.getElementById('mode-toggle');
+  const handler = ()=>{
+    const nowDark = !document.body.classList.contains('dark-mode');
+    applyDarkModeClass(nowDark);
+    localStorage.setItem('ram.dark', nowDark ? '1' : '0');
+  };
   if (toggle){
-    const handler = ()=>{
-      const nowDark = !document.body.classList.contains('dark-mode');
-      applyDarkModeClass(nowDark);
-      localStorage.setItem('ram.dark', nowDark ? '1' : '0');
-    };
     toggle.addEventListener('click', handler);
-    toggle.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); handler(); }});
+    toggle.addEventListener('keydown', e=>{
+      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); handler(); }
+    });
   }
 }
 
-// ---------- side menu (เฉพาะปุ่มเปิด/ปิด) ----------
+// ---------- password gate (from shared/password-gate.html) ----------
+function initPasswordGate(){
+  const overlay = document.getElementById('password-overlay');
+  const input   = document.getElementById('password-input');
+  const btn     = document.getElementById('submit-button');
+  const err     = document.getElementById('error-message');
+  if(!overlay || !input || !btn) {
+    // ไม่มีเกต -> ปลดล็อกทันที
+    document.documentElement.classList.remove('pw-lock');
+    return;
+  }
+  const CORRECT_PASSWORD = '140425';
+
+  const unlock = ()=>{
+    overlay.style.display = 'none';
+    document.documentElement.classList.remove('pw-lock');
+  };
+  const fail = ()=>{
+    err.textContent = 'รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง';
+    input.classList.add('border-red-500');
+    input.value = '';
+    input.focus();
+  };
+  const check = ()=> (input.value === CORRECT_PASSWORD) ? unlock() : fail();
+
+  btn.addEventListener('click', check);
+  input.addEventListener('keydown', e=>{
+    if(e.key === 'Enter') check();
+    err.textContent = '';
+    input.classList.remove('border-red-500');
+  });
+}
+
+// ---------- side menu (with event delegation) ----------
 function initSideMenu(){
   const sideMenu = document.getElementById('sideMenu');
   const overlay  = document.getElementById('menuOverlay');
-  const closeBtn = document.getElementById('closeMenuBtn');
-  const menuBtn  = document.querySelector('.menu-toggle');
 
   const openMenu = ()=>{
     if (!sideMenu || !overlay) return;
@@ -62,49 +94,37 @@ function initSideMenu(){
     sideMenu.setAttribute('aria-hidden','true');
   };
 
-  if (menuBtn)  menuBtn.addEventListener('click', openMenu);
-  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-  if (overlay)  overlay.addEventListener('click', closeMenu);
-}
-
-// ---------- password gate (ใหม่) ----------
-function initPasswordGate(){
-  const overlay = document.getElementById('password-overlay');
-  const input   = document.getElementById('password-input');
-  const btn     = document.getElementById('submit-button');
-  const err     = document.getElementById('error-message');
-
-  if (!overlay || !input || !btn) return; // ไม่มีเกต ไม่ต้องทำอะไร
-
-  const CORRECT = '140425';
-
-  const unlock = ()=>{
-    const val = input.value.trim();
-    if (val === CORRECT){
-      // ซ่อน overlay + ปลดล็อกทั้งหน้า
-      overlay.style.display = 'none';
-      document.documentElement.classList.remove('pw-lock');
-    }else{
-      err.textContent = 'รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง';
-      input.value = '';
-      input.focus();
+  // ใช้ event delegation เพื่อให้ทำงานเสมอ
+  document.addEventListener('click', (e)=>{
+    // เปิดเมนู
+    if (e.target.closest('.menu-toggle')) {
+      openMenu(); return;
     }
-  };
+    // ปิดเมนู
+    if (e.target.closest('#closeMenuBtn') || e.target.closest('#menuOverlay')) {
+      closeMenu(); return;
+    }
+    // สลับ dropdown ภายในเมนู
+    const btn = e.target.closest('.menu-section-toggle');
+    if (btn && btn.closest('#sideMenu')) {
+      const key = btn.getAttribute('data-menu-tier');
+      if (!key) return;
+      const tier = document.getElementById('menu-' + key);
+      if (!tier) return;
+      const willShow = tier.hasAttribute('hidden');
+      if (willShow) tier.removeAttribute('hidden'); else tier.setAttribute('hidden','');
 
-  btn.addEventListener('click', unlock);
-  input.addEventListener('keydown', (e)=>{
-    if (e.key === 'Enter') unlock();
-    else err.textContent = '';
+      // หมุนลูกศรลง (ปิด) / ขึ้น (เปิด)
+      const caret = btn.querySelector('.material-symbols-outlined');
+      if (caret) caret.style.transform = willShow ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
   });
-
-  // โฟกัสให้พร้อมกรอกทันที
-  setTimeout(()=> input.focus(), 0);
 }
 
-// ---------- init all ----------
+// ---------- init ----------
 document.addEventListener('DOMContentLoaded', async ()=>{
-  await includePartialsIfAny(); // ต้องรอให้ overlay ถูกรวมเข้ามาก่อน
-  initPasswordGate();           // แล้วค่อยผูกอีเวนต์ของปุ่ม/อินพุต
+  await includePartialsIfAny();   // ดึง side-menu มาก่อน
+  initPasswordGate();             // gate ก่อนใช้งาน
   initDarkMode();
-  initSideMenu();
+  initSideMenu();                 // เมนูพร้อมและใช้ delegation แล้ว
 });
