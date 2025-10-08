@@ -1,6 +1,6 @@
-// Ramkhamhaeng-JS-08102025-01
+// Ramkhamhaeng-JS-08102025-01 (path: /Ramkhamhaeng/script.js)
 
-// include side-menu (เฉพาะใน Ramkhamhaeng)
+// include only side-menu
 async function includePartialsIfAny(){
   const nodes = Array.from(document.querySelectorAll('[data-include]'));
   for (const node of nodes){
@@ -8,18 +8,16 @@ async function includePartialsIfAny(){
     try{
       const res = await fetch(url, { cache:'no-store' });
       const html = await res.text();
-      const temp = document.createElement('div'); temp.innerHTML = html.trim();
+      const tmp = document.createElement('div'); tmp.innerHTML = html.trim();
       const frag = document.createDocumentFragment();
-      while (temp.firstChild) frag.appendChild(temp.firstChild);
+      while (tmp.firstChild) frag.appendChild(tmp.firstChild);
       node.replaceWith(frag);
-    }catch(e){
-      console.error('Include failed:', url, e);
-    }
+    }catch(e){ console.error('Include failed:', url, e); }
   }
 }
 
-// โหมดมืด (manual)
-function applyDark(isDark){
+// dark mode
+function applyDarkModeClass(isDark){
   document.body.classList.toggle('dark-mode', !!isDark);
   const icon = document.getElementById('mode-icon');
   if (icon) icon.textContent = isDark ? 'dark_mode' : 'light_mode';
@@ -27,46 +25,51 @@ function applyDark(isDark){
 function initDarkMode(){
   const saved = localStorage.getItem('rk.dark');
   const isDark = saved === '1';
-  applyDark(isDark);
+  applyDarkModeClass(isDark);
+
   const toggle = document.getElementById('mode-toggle');
   if (toggle){
     const handler = ()=>{
       const nowDark = !document.body.classList.contains('dark-mode');
-      applyDark(nowDark);
+      applyDarkModeClass(nowDark);
       localStorage.setItem('rk.dark', nowDark ? '1' : '0');
     };
     toggle.addEventListener('click', handler);
-    toggle.addEventListener('keydown', e=>{
-      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); handler(); }
-    });
+    toggle.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); handler(); }});
   }
 }
 
-// สไลด์เมนู (ขนาดคงที่, ไม่เต็มจอ)
+// side menu open/close + dropdowns
 function initSideMenu(){
   const sideMenu = document.getElementById('sideMenu');
   const overlay  = document.getElementById('menuOverlay');
   const closeBtn = document.getElementById('closeMenuBtn');
   const menuBtn  = document.querySelector('.menu-toggle');
 
-  const openMenu = ()=>{
-    if(!sideMenu || !overlay) return;
-    sideMenu.classList.add('open');
-    overlay.classList.add('visible');
-    sideMenu.setAttribute('aria-hidden','false');
-  };
-  const closeMenu = ()=>{
-    if(!sideMenu || !overlay) return;
-    sideMenu.classList.remove('open');
-    overlay.classList.remove('visible');
-    sideMenu.setAttribute('aria-hidden','true');
-  };
+  const openMenu = ()=>{ if(!sideMenu||!overlay) return; sideMenu.classList.add('open'); overlay.classList.add('visible'); sideMenu.setAttribute('aria-hidden','false'); };
+  const closeMenu = ()=>{ if(!sideMenu||!overlay) return; sideMenu.classList.remove('open'); overlay.classList.remove('visible'); sideMenu.setAttribute('aria-hidden','true'); };
 
   if (menuBtn)  menuBtn.addEventListener('click', openMenu);
   if (closeBtn) closeBtn.addEventListener('click', closeMenu);
   if (overlay)  overlay.addEventListener('click', closeMenu);
+
+  // dropdown caret rotate
+  document.querySelectorAll('.menu-section-toggle').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const key = btn.getAttribute('data-menu-tier');
+      if (!key) return;
+      const tier = document.getElementById('menu-' + key);
+      if (tier){
+        const willOpen = tier.hasAttribute('hidden');
+        if (willOpen) tier.removeAttribute('hidden'); else tier.setAttribute('hidden','');
+        const caret = btn.querySelector('.material-symbols-outlined');
+        if (caret) caret.style.transform = willOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+      }
+    });
+  });
 }
 
+// init
 document.addEventListener('DOMContentLoaded', async ()=>{
   await includePartialsIfAny();
   initDarkMode();
