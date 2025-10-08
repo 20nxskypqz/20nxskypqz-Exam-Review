@@ -1,21 +1,16 @@
-<!-- AuthGate-HTML-08102025-01 -->
-<div id="auth-overlay" class="auth-overlay">
-  <div class="auth-modal">
-    <h2 class="auth-title">ต้องใช้รหัสผ่าน</h2>
-    <p class="auth-desc">
-      หน้านี้มีข้อมูลส่วนตัวและมีความละเอียดอ่อน<br>
-      กรุณาใส่รหัสผ่านเพื่อเข้าใช้งาน
-    </p>
-    <input
-      type="password"
-      id="auth-pass"
-      inputmode="numeric"
-      pattern="[0-9]*"
-      class="auth-input"
-      placeholder="กรอกรหัสผ่านที่นี่"
-      aria-label="ใส่รหัสผ่าน"
-    />
-    <div class="auth-error" id="auth-error" aria-live="polite"></div>
-    <button id="auth-submit" class="auth-btn" type="button">เข้าสู่ระบบ</button>
+<!-- password-gate-08102025-02 -->
+<link rel="stylesheet" href="shared/password-gate.css">
+
+<div id="password-overlay" class="pg-overlay" role="dialog" aria-modal="true" aria-labelledby="pg-title">
+  <div class="pg-dialog">
+    <h2 id="pg-title" class="pg-title">ต้องใช้รหัสผ่าน</h2>
+    <p class="pg-sub">หน้านี้มีข้อมูลที่เป็นความลับและมีความละเอียดอ่อน<br>กรุณาใส่รหัสผ่านเพื่อเข้าใช้งาน</p>
+
+    <input type="password" id="password-input" class="pg-input"
+           inputmode="numeric" pattern="[0-9]*" placeholder="กรอกรหัสผ่านที่นี่" />
+
+    <p id="error-message" class="pg-error"></p>
+
+    <button id="submit-button" class="pg-btn">เข้าสู่ระบบ</button>
   </div>
 </div>
