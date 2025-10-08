@@ -1,4 +1,4 @@
-/* ExamReview-CSS-08102025-01 */
+/* ExamReview-CSS-08102025-01 — Full stylesheet (moon icon black in dark mode) */
 :root{
   --bg:#f9f9f9; 
   --card:#fff; 
@@ -109,10 +109,9 @@ body.dark-mode .root-link-list a{ color:#e5e7eb; background:#172026; }
   background:none; border:none; color:inherit; cursor:pointer; font-size:24px; display:flex; align-items:center;
 }
 
-/* ===== Side menu (แก้ให้ความกว้างคงที่เสมอ) ===== */
+/* สไลด์เมนู */
 .side-menu{
-  position:fixed; top:20px; left:20px; bottom:20px;
-  width:300px; max-width:92vw; /* กันล้นจอเล็กมาก */
+  position:fixed; top:20px; left:20px; bottom:20px; width:300px;
   background:#222; color:#fff; border-radius:12px; padding:60px 0 12px;
   box-shadow: var(--shadow); transform:translateX(-120%); transition:transform .25s ease; z-index:1000;
 }
@@ -129,7 +128,6 @@ body.dark-mode .root-link-list a{ color:#e5e7eb; background:#172026; }
 }
 .menu-section-toggle:hover{ background:rgba(255,255,255,.08); }
 .menu-section-toggle .material-symbols-outlined{ font-size:24px; }
-
 .menu-sublist{ list-style:none; margin:6px 0 8px; padding:0; }
 .menu-sublist li a{
   display:flex; gap:8px; align-items:center; padding:8px 18px;
@@ -151,10 +149,14 @@ body.dark-mode .root-link-list a{ color:#e5e7eb; background:#172026; }
   border-radius:999px; background:#fff;
   display:flex; align-items:center; justify-content:center;
   box-shadow:0 3px 8px rgba(0,0,0,.25);
-  transition:transform .25s; font-size:20px; color:#111;
+  transition:transform .25s; font-size:20px; color:#111; /* light mode icon = ดำ */
 }
+/* โหมดมืด: ให้ไอคอน (moon) เป็น “สีดำ” และสไลด์ไปขวา */
 body.dark-mode .toggle-container{ background:#1d2227; border-color:#3a424a; }
-body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); color:#e5e7eb; }
+body.dark-mode .toggle-circle{
+  transform:translateX(calc(var(--w) - var(--h)));
+  color:#111; /* << moon เป็นสีดำ */
+}
 
 /* สไตล์เนื้อหา DOCX ที่ Mammoth แปลง (ให้อ่านง่าย) */
 .card h1, .card h2, .card h3{ text-align:left; }
@@ -167,9 +169,7 @@ body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); 
 .card ul, .card ol{ padding-left:1.4em; margin:8px 0; }
 .card li{ margin:4px 0; }
 
-/* (ลบกฎตอบสนองที่ทำให้เมนูเต็มจอบนจอเล็ก) */
-/* เดิม:
+/* ปรับ responsive ของเมนูด้านข้าง */
 @media (max-width: 480px){
   .side-menu{ left:12px; right:12px; width:auto; }
 }
-*/
