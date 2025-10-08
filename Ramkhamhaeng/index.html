@@ -1,4 +1,4 @@
-<!-- Ramkhamhaeng-HTML-08102025-02 -->
+<!-- Ramkhamhaeng-HTML-08102025-03 -->
 <!doctype html>
 <html lang="th">
 <head>
@@ -6,20 +6,23 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Ramkhamhaeng — 20nxskypqz Exam Review</title>
 
-  <!-- Fonts -->
+  <!-- ฟอนต์ + ไอคอน -->
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <!-- Local styles/scripts (reuse ภายในโฟลเดอร์นี้) -->
+  <!-- สไตล์เฉพาะของโฟลเดอร์ Ramkhamhaeng -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Header (inline) -->
+
+  <!-- ส่วนหัว (inline ในหน้านี้ ไม่ดึง shared header/footer ตามที่กำชับ) -->
   <header class="header full-bleed">
+    <!-- 3 ขีด -->
     <button class="menu-toggle" aria-label="Toggle navigation" type="button">
       <span class="material-symbols-outlined">menu</span>
     </button>
 
+    <!-- แคปซูลสลับโหมด -->
     <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
       <div class="toggle-circle">
         <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
@@ -27,32 +30,42 @@
     </div>
   </header>
 
-  <!-- Side menu (include เฉพาะเมนู) -->
+  <!-- include เฉพาะสไลด์เมนู (ตามที่กำหนดให้แยก shared เฉพาะเมนู) -->
   <div data-include="shared/side-menu.html"></div>
 
-  <!-- ที่ว่างสำหรับ mount หลังยืนยันรหัส -->
-  <main id="protected-root" class="content"></main>
+  <!-- จุดที่คอนเทนต์จริงจะถูกแสดงหลังผ่านรหัส -->
+  <div id="protected-root"></div>
 
-  <!-- เนื้อหาหลักถูกเก็บไว้ใน template และจะถูก mount หลังใส่รหัสถูกต้อง -->
+  <!-- คอนเทนต์จริงของหน้า: ย้ายทุกอย่างมาไว้ใน template นี้ -->
   <template id="protected-tpl">
-    <!-- หัวเรื่องอยู่นอกกล่อง + กึ่งกลาง -->
-    <section class="hero">
-      <h2 class="hero-title">Ramkhamhaeng</h2>
-    </section>
+    <main class="content">
+      <!-- หัวหน้าหน้า (อยู่นอกกล่อง, กึ่งกลาง) -->
+      <section class="hero">
+        <h1 class="hero-title">Ramkhamhaeng</h1>
+      </section>
 
-    <section class="section-card">
-      <a class="card link-card" href="RAM1131/">
-        <div class="card-title align-left">RAM1131 – ทักษะการเข้าใจดิจิทัล</div>
-      </a>
-    </section>
+      <!-- กล่องลิงก์ไปหน้า RAM1131 (กดเข้าได้เลย, ไม่ต้องมีลูกศร) -->
+      <section class="section-card">
+        <ul class="root-link-list">
+          <li>
+            <a href="/20nxskypqz-Exam-Review/Ramkhamhaeng/RAM1131/" title="RAM1131 – ทักษะการเข้าใจดิจิทัล">
+              RAM1131 – ทักษะการเข้าใจดิจิทัล
+            </a>
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <!-- ท้ายหน้า (inline ในหน้านี้ ไม่ดึง shared) -->
+    <footer class="footer full-bleed">
+      &copy; 2025 20nxskypqz Exam Review
+    </footer>
   </template>
 
-  <!-- Footer (inline) -->
-  <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
-
-  <!-- Site scripts -->
+  <!-- สคริปต์หลักของโฟลเดอร์ Ramkhamhaeng (รวม include [data-include], เมนู, โหมดมืด ฯลฯ) -->
   <script src="script.js"></script>
-  <!-- Password gate (from shared) -->
+
+  <!-- สคริปต์ Auth (วิธี B): ต้องวางท้ายสุด เพื่อแสดง popup และย้าย template เข้า DOM หลังยืนยันรหัส -->
   <script src="shared/auth-gate.js"></script>
 </body>
 </html>
