@@ -1,25 +1,26 @@
-<!-- RAM1131-HTML-08102025-02 -->
 <!doctype html>
 <html lang="th">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>RAM1131</title>
+  <title>RAM1131 — 20nxskypqz</title>
 
-  <!-- Fonts & Icons -->
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <!-- Local (section) assets -->
+  <!-- reuse CSS/JS จากโฟลเดอร์แม่ -->
   <link rel="stylesheet" href="../styles.css" />
 </head>
 <body>
-  <!-- Header (มีปุ่ม 3 ขีดสีขาว) -->
+  <!-- Header (inline แทนการ include) -->
   <header class="header full-bleed">
+    <!-- 3 ขีด -->
     <button class="menu-toggle" aria-label="Toggle navigation" type="button">
       <span class="material-symbols-outlined">menu</span>
     </button>
 
+    <!-- ปุ่มสลับโหมด (แคปซูล) -->
     <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
       <div class="toggle-circle">
         <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
@@ -27,24 +28,26 @@
     </div>
   </header>
 
-  <!-- Side menu (shared include for Ramkhamhaeng only) -->
+  <!-- ใช้เฉพาะ side-menu เป็น shared (อ้างพาธขึ้น 1 ระดับ) -->
   <div data-include="../shared/side-menu.html"></div>
 
   <main class="content">
-    <!-- hero ไม่มีข้อความตามสั่ง -->
-    <section class="hero"></section>
+    <section class="hero">
+      <h1 class="hero-title">RAM1131 - ทักษะการเข้าใจดิจิทัล</h1>
+    </section>
 
     <section class="section-card">
-      <h2 class="align-left" style="margin:0 0 8px;">Content</h2>
+      <h2 class="align-left" style="margin:0 0 8px;">รายละเอียดรายวิชา</h2>
       <div class="card">
-        <em>Materials will be added here.</em>
+        <p>Coming soon.</p>
       </div>
     </section>
   </main>
 
-  <!-- Footer -->
+  <!-- Footer (inline แทนการ include) -->
   <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
 
+  <!-- reuse script จากโฟลเดอร์แม่ -->
   <script src="../script.js"></script>
 </body>
 </html>
