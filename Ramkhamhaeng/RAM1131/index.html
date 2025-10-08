@@ -1,3 +1,4 @@
+<!-- RAM1131-HTML-08102025-03 -->
 <!doctype html>
 <html lang="th">
 <head>
@@ -13,14 +14,12 @@
   <link rel="stylesheet" href="../styles.css" />
 </head>
 <body>
-  <!-- Header (inline แทนการ include) -->
+  <!-- Header (inline) -->
   <header class="header full-bleed">
-    <!-- 3 ขีด -->
     <button class="menu-toggle" aria-label="Toggle navigation" type="button">
       <span class="material-symbols-outlined">menu</span>
     </button>
 
-    <!-- ปุ่มสลับโหมด (แคปซูล) -->
     <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
       <div class="toggle-circle">
         <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
@@ -28,23 +27,24 @@
     </div>
   </header>
 
-  <!-- ใช้เฉพาะ side-menu เป็น shared (อ้างพาธขึ้น 1 ระดับ) -->
+  <!-- ใช้เฉพาะ side-menu เป็น shared -->
   <div data-include="../shared/side-menu.html"></div>
 
   <main class="content">
     <section class="hero">
-      <h1 class="hero-title">RAM1131 - ทักษะการเข้าใจดิจิทัล</h1>
+      <!-- ตั้งหัวข้อขนาด 28px ตามสเกลไซต์ -->
+      <h2 class="subline" style="margin:.2em 0 .4em;">RAM1131 – ทักษะการเข้าใจดิจิทัล</h2>
     </section>
 
     <section class="section-card">
-      <h2 class="align-left" style="margin:0 0 8px;">รายละเอียดรายวิชา</h2>
+      <h3 class="align-left" style="margin:0 0 8px;">รายละเอียดรายวิชา</h3>
       <div class="card">
         <p>Coming soon.</p>
       </div>
     </section>
   </main>
 
-  <!-- Footer (inline แทนการ include) -->
+  <!-- Footer (inline) -->
   <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
 
   <!-- reuse script จากโฟลเดอร์แม่ -->
