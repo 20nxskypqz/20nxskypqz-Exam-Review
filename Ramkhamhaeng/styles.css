@@ -1,4 +1,4 @@
-/* Ramkhamhaeng-CSS-08102025-01 */
+/* Ramkhamhaeng-CSS-08102025-02 */
 :root{
   --bg:#f9f9f9; 
   --card:#fff; 
@@ -29,7 +29,6 @@ h2{ font-size:28px; margin:.8em 0 .4em; text-align:center; }
 h3{ font-size:24px; margin:.8em 0 .4em; text-align:center; }
 h4{ font-size:20px; margin:.6em 0 .3em; text-align:center; }
 p,li{ font-size:16px; }
-.center-24{ font-size:24px; text-align:center; }
 
 /* Content container */
 .content{ width:100%; max-width:var(--page-max); margin:16px auto; padding:0 20px; }
@@ -71,8 +70,10 @@ p,li{ font-size:16px; }
   box-shadow:0 3px 8px rgba(0,0,0,.25);
   transition:transform .25s; font-size:20px;
 }
-.toggle-circle .material-symbols-outlined{ color:#000; }      /* sun/moon = black */
+.toggle-circle .material-symbols-outlined{ color:#000; }
 body.dark-mode .toggle-circle .material-symbols-outlined{ color:#000; }
+/* <<< ขยับปุ่มไปทางขวาเมื่อเป็นโหมดมืด >>> */
+body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); }
 
 /* Menu buttons (white) */
 .menu-toggle, .close-menu{
@@ -99,7 +100,8 @@ body.dark-mode .toggle-circle .material-symbols-outlined{ color:#000; }
 /* Root link card */
 .root-link-card{ display:block; width:100%; padding:12px 14px; text-decoration:none; }
 .ram-course-link-card{ background:var(--card); border-radius:10px; box-shadow:var(--shadow); }
-.ram-course-title{ font-size:24px; font-weight:700; color:#111; margin:0; text-align:center; }
+/* <<< ชื่อคอร์ส: สีดำ + ชิดซ้าย (ทั้งสองโหมด) >>> */
+.ram-course-title{ font-size:24px; font-weight:700; color:#111; margin:0; text-align:left; }
 
 /* Dark mode */
 body.dark-mode{ background:#0f1418; color:#e5e7eb; }
@@ -107,9 +109,6 @@ body.dark-mode .card,
 body.dark-mode .section-card{ background:#172026; color:#e5e7eb; }
 body.dark-mode .header, 
 body.dark-mode .footer{ background:var(--grad-dark); }
-
-/* <<< เปลี่ยนสีหัวเรื่อง RAM1131 ตามโหมดมืด >>> */
-body.dark-mode .ram-course-title{ color:#fff; }
 
 /* Responsive side menu for very small screens (still not fullscreen) */
 @media (max-width: 480px){
