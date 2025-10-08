@@ -1,4 +1,4 @@
-<!-- Ramkhamhaeng-HTML-08102025-03 -->
+<!-- Ramkhamhaeng-HTML-08102025-02 -->
 <!doctype html>
 <html lang="th">
 <head>
@@ -30,7 +30,11 @@
   <!-- Side menu (include เฉพาะเมนู) -->
   <div data-include="shared/side-menu.html"></div>
 
-  <main class="content">
+  <!-- ที่ว่างสำหรับ mount หลังยืนยันรหัส -->
+  <main id="protected-root" class="content"></main>
+
+  <!-- เนื้อหาหลักถูกเก็บไว้ใน template และจะถูก mount หลังใส่รหัสถูกต้อง -->
+  <template id="protected-tpl">
     <!-- หัวเรื่องอยู่นอกกล่อง + กึ่งกลาง -->
     <section class="hero">
       <h2 class="hero-title">Ramkhamhaeng</h2>
@@ -41,11 +45,14 @@
         <div class="card-title align-left">RAM1131 – ทักษะการเข้าใจดิจิทัล</div>
       </a>
     </section>
-  </main>
+  </template>
 
   <!-- Footer (inline) -->
   <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
 
+  <!-- Site scripts -->
   <script src="script.js"></script>
+  <!-- Password gate (from shared) -->
+  <script src="shared/auth-gate.js"></script>
 </body>
 </html>
