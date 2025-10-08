@@ -1,6 +1,6 @@
-// ExamReview-script-03102025-[Complete]
+// ExamReview-JS-08102025-12
 
-// -------------- include partials (header/side-menu/footer) --------------
+// ---------- include partials ----------
 async function includePartialsIfAny() {
   const nodes = Array.from(document.querySelectorAll('[data-include]'));
   if (nodes.length === 0) return;
@@ -9,7 +9,8 @@ async function includePartialsIfAny() {
     try{
       const res = await fetch(url, { cache: 'no-store' });
       const html = await res.text();
-      const temp = document.createElement('div'); temp.innerHTML = html.trim();
+      const temp = document.createElement('div');
+      temp.innerHTML = html.trim();
       const frag = document.createDocumentFragment();
       while (temp.firstChild) frag.appendChild(temp.firstChild);
       node.replaceWith(frag);
@@ -19,7 +20,7 @@ async function includePartialsIfAny() {
   }
 }
 
-// -------------- dark mode manual toggle --------------
+// ---------- dark mode ----------
 function applyDarkModeClass(isDark){
   document.body.classList.toggle('dark-mode', !!isDark);
   const icon = document.getElementById('mode-icon');
@@ -42,7 +43,7 @@ function initDarkMode(){
   }
 }
 
-// -------------- side menu open/close + nested dropdowns --------------
+// ---------- side menu ----------
 function initSideMenu(){
   const sideMenu   = document.getElementById('sideMenu');
   const overlay    = document.getElementById('menuOverlay');
@@ -66,7 +67,7 @@ function initSideMenu(){
   if (closeBtn) closeBtn.addEventListener('click', closeMenu);
   if (overlay)  overlay.addEventListener('click', closeMenu);
 
-  // dropdowns inside side menu (ทุกระดับ)
+  // dropdowns in side menu
   document.querySelectorAll('.menu-section-toggle').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const key = btn.getAttribute('data-menu-tier');
@@ -75,31 +76,34 @@ function initSideMenu(){
       if (tier){
         const isHidden = tier.hasAttribute('hidden');
         if (isHidden) tier.removeAttribute('hidden'); else tier.setAttribute('hidden','');
+        const caret = btn.querySelector('.material-symbols-outlined');
+        if (caret) caret.style.transform = (!isHidden) ? 'rotate(0deg)' : 'rotate(180deg)';
       }
-      const caret = btn.querySelector('.material-symbols-outlined');
-      if (caret) caret.style.transform = (tier && !tier.hasAttribute('hidden')) ? 'rotate(180deg)' : 'rotate(0deg)';
     });
   });
 }
 
-// -------------- root page dropdowns (แก้ให้ทำงานกับ data-drop / data-target) --------------
+// ---------- root dropdowns (M.4/M.5/M.6 + Terms) ----------
 function initRootDropdowns(){
-  document.querySelectorAll('[data-drop]').forEach(btn=>{
+  document.querySelectorAll('.tier-toggle').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      const key = btn.getAttribute('data-drop');
-      if (!key) return;
-      const target = document.querySelector(`[data-target="${key}"]`);
+      const id = btn.getAttribute('data-tier');
+      if (!id) return;
+      const target = document.getElementById(id);
       if (!target) return;
-      const isHidden = target.hasAttribute('hidden');
-      if (isHidden) target.removeAttribute('hidden'); else target.setAttribute('hidden','');
 
+      const willOpen = target.hasAttribute('hidden');
+      if (willOpen) target.removeAttribute('hidden'); else target.setAttribute('hidden','');
+
+      // caret rotate + aria-expanded
       const caret = btn.querySelector('.material-symbols-outlined');
-      if (caret) caret.style.transform = (!isHidden) ? 'rotate(0deg)' : 'rotate(180deg)';
+      if (caret) caret.style.transform = willOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+      btn.setAttribute('aria-expanded', String(willOpen));
     });
   });
 }
 
-// -------------- init all --------------
+// ---------- init ----------
 document.addEventListener('DOMContentLoaded', async ()=>{
   await includePartialsIfAny();
   initDarkMode();
