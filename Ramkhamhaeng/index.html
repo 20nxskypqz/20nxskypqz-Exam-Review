@@ -1,3 +1,4 @@
+<!-- Ramkhamhaeng-HTML-08102025-03 -->
 <!doctype html>
 <html lang="th">
 <head>
@@ -13,14 +14,12 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Header (inline แทนการ include) -->
+  <!-- Header (inline) -->
   <header class="header full-bleed">
-    <!-- 3 ขีด -->
     <button class="menu-toggle" aria-label="Toggle navigation" type="button">
       <span class="material-symbols-outlined">menu</span>
     </button>
 
-    <!-- ปุ่มสลับโหมด (แคปซูล) -->
     <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
       <div class="toggle-circle">
         <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
@@ -34,14 +33,14 @@
   <main class="content">
     <section class="hero">
       <h1 class="hero-title">Ramkhamhaeng</h1>
-      <h2 class="subline">วิชาในภาคเรียน</h2>
+      <!-- ลบ: วิชาในภาคเรียน -->
     </section>
 
-    <!-- กล่องลิงก์ไปหน้า RAM1131 (ลิงก์กดได้เลย ไม่ต้องมีลูกศร) -->
     <section class="section-card">
       <ul class="root-link-list" style="margin:0;">
         <li>
-          <a href="RAM1131/">
+          <!-- สีดำและขนาดแบบเดียวกับหน้า root ของ Exam Review -->
+          <a href="RAM1131/" style="color:#000; text-decoration:none;">
             RAM1131 - ทักษะการเข้าใจดิจิทัล
           </a>
         </li>
@@ -49,7 +48,7 @@
     </section>
   </main>
 
-  <!-- Footer (inline แทนการ include) -->
+  <!-- Footer (inline) -->
   <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
 
   <!-- Ramkhamhaeng local script -->
