@@ -1,4 +1,4 @@
-<!-- Ramkhamhaeng-HTML-08102025-02 -->
+<!-- Ramkhamhaeng-HTML-08102025-01 -->
 <!doctype html>
 <html lang="th">
 <head>
@@ -10,43 +10,36 @@
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <!-- Local (section) assets -->
-  <link rel="stylesheet" href="./styles.css" />
+  <!-- Site styles (Ramkhamhaeng local) -->
+  <link rel="stylesheet" href="/Ramkhamhaeng/styles.css" />
 </head>
 <body>
-  <!-- Header -->
-  <header class="header full-bleed">
-    <button class="menu-toggle" aria-label="Toggle navigation" type="button">
-      <span class="material-symbols-outlined">menu</span>
-    </button>
-
-    <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
-      <div class="toggle-circle">
-        <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
-      </div>
-    </div>
-  </header>
-
-  <!-- Side menu (shared include for Ramkhamhaeng only) -->
-  <div data-include="./shared/side-menu.html"></div>
+  <!-- shared header + side menu (Ramkhamhaeng local includes) -->
+  <div data-include="/Ramkhamhaeng/shared/header.html"></div>
+  <div data-include="/Ramkhamhaeng/shared/side-menu.html"></div>
 
   <main class="content">
-    <!-- hero ไม่มีข้อความตามสั่ง -->
-    <section class="hero"></section>
+    <section class="hero">
+      <h1 class="hero-title">Welcome</h1>
+      <h2 class="subline">Ramkhamhaeng</h2>
+    </section>
 
-    <!-- ลิงก์ไปหน้า RAM1131 (คลิกได้ทันที ไม่มีลูกศร/คำบรรยาย) -->
+    <!-- ลิสต์รายวิชา (ลิงก์กดไปได้เลย ไม่มีลูกศร) -->
     <section class="section-card">
-      <div class="drop-wrap">
-        <h2 class="align-left" style="margin:0;">
-          <a href="./RAM1131/" style="text-decoration:none;color:inherit;">RAM1131</a>
-        </h2>
-      </div>
+      <h2 class="align-left" style="margin:0 0 8px;">Courses</h2>
+      <ul class="root-link-list" style="margin-top:10px;">
+        <li>
+          <a href="/Ramkhamhaeng/RAM1131/">
+            RAM1131 - ทักษะการเข้าใจดิจิทัล
+          </a>
+        </li>
+      </ul>
     </section>
   </main>
 
-  <!-- Footer -->
-  <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
+  <div data-include="/Ramkhamhaeng/shared/footer.html"></div>
 
-  <script src="./script.js"></script>
+  <!-- Local script (Ramkhamhaeng) -->
+  <script src="/Ramkhamhaeng/script.js"></script>
 </body>
 </html>
