@@ -1,30 +1,187 @@
-<!-- เพิ่ม include เกต + ใส่ id ให้คอนเทนต์ และเรียกใช้ JS ของเกต -->
+<!-- Ramkhamhaeng-HTML-08102025-03 -->
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ramkhamhaeng — 20nxskypqz Exam Review</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
+  <!-- Material Symbols (Outlined) -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+  <!-- Local styles for Ramkhamhaeng (standalone for this section) -->
+  <link rel="stylesheet" href="./styles.css" />
+</head>
 <body>
-  <!-- header เดิม ... -->
+  <!-- Header (standalone; ไม่ใช้ shared header/footer ของ Exam Review หลัก) -->
+  <header class="header full-bleed">
+    <!-- 3 ขีด -->
+    <button class="menu-toggle" aria-label="Toggle navigation" type="button">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
 
-  <!-- ใส่เกต (อยู่ก่อนคอนเทนต์ เพื่อให้ทับทั้งหน้า) -->
-  <div data-include="shared/password-gate.html"></div>
+    <!-- แคปซูลสลับโหมด -->
+    <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
+      <div class="toggle-circle">
+        <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
+      </div>
+    </div>
+  </header>
 
-  <!-- side-menu เดิม -->
-  <div data-include="shared/side-menu.html"></div>
+  <!-- Side Menu (standalone ของ Ramkhamhaeng) -->
+  <aside id="sideMenu" class="side-menu" aria-hidden="true">
+    <button class="close-menu" id="closeMenuBtn" aria-label="Close menu" type="button">
+      <span class="material-symbols-outlined">close</span>
+    </button>
 
-  <!-- ใส่ id="private-content" และซ่อนด้วย hidden (เกตจะปลดให้เมื่อรหัสถูก) -->
-  <main id="private-content" hidden class="content">
+    <nav class="menu-group" aria-label="Ramkhamhaeng navigation">
+      <!-- หัวข้อบนสุดของเมนู -->
+      <div class="menu-title">Ramkhamhaeng</div>
+
+      <!-- รายการลิงก์ (ไม่มีไอคอนตามที่กำชับ) -->
+      <ul class="menu-sublist">
+        <li>
+          <a href="/20nxskypqz-Exam-Review/Ramkhamhaeng/RAM1131/">
+            RAM1131 – ทักษะการเข้าใจดิจิทัล
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+  <div id="menuOverlay" class="menu-overlay"></div>
+
+  <!-- Password Gate (include จาก /shared; ใช้ overlay ปิดหน้าจอจนกว่าจะกรอกรหัส) -->
+  <div data-include="/20nxskypqz-Exam-Review/shared/password-gate.html"></div>
+
+  <main class="content">
+    <!-- หัวเรื่องหน้าส่วนตัว -->
     <section class="hero">
-      <h2 class="hero-title">Ramkhamhaeng</h2>
+      <h1 class="hero-title">Ramkhamhaeng</h1>
+      <h2 class="subline">RAM1131 – ทักษะการเข้าใจดิจิทัล</h2>
     </section>
 
+    <!-- กล่องลิงก์ไปหน้า RAM1131 -->
     <section class="section-card">
-      <a class="card link-card" href="RAM1131/">
-        <div class="card-title align-left">RAM1131 – ทักษะการเข้าใจดิจิทัล</div>
-      </a>
+      <div class="card">
+        <p class="lead">ไปยังหน้า RAM1131</p>
+        <p style="margin:10px 0 0;">
+          <a class="btn" href="/20nxskypqz-Exam-Review/Ramkhamhaeng/RAM1131/">เปิดหน้า RAM1131</a>
+        </p>
+      </div>
     </section>
   </main>
 
-  <!-- footer เดิม ... -->
+  <!-- Footer (standalone ของ Ramkhamhaeng) -->
+  <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
 
-  <!-- script หลักของหน้า -->
-  <script src="script.js"></script>
-  <!-- script ของเกต (ต้องอยู่ท้ายสุด เพื่อให้จับ element หลัง include ได้) -->
-  <script src="shared/password-gate.js"></script>
+  <!-- Local script (standalone for Ramkhamhaeng) -->
+  <script>
+    // ---------------- include partials (เฉพาะ password gate) ----------------
+    async function includePartialsIfAny() {
+      const nodes = Array.from(document.querySelectorAll('[data-include]'));
+      for (const node of nodes) {
+        const url = node.getAttribute('data-include');
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          const html = await res.text();
+          const temp = document.createElement('div');
+          temp.innerHTML = html.trim();
+
+          // แก้พาธ CSS ภายใน password-gate.html ให้เป็น absolute (กันพาธซ้อนโฟลเดอร์)
+          temp.querySelectorAll('link[rel="stylesheet"]').forEach(link=>{
+            if (link.href.endsWith('shared/password-gate.css') || link.getAttribute('href')?.includes('password-gate.css')) {
+              link.setAttribute('href','/20nxskypqz-Exam-Review/shared/password-gate.css');
+            }
+          });
+
+          const frag = document.createDocumentFragment();
+          while (temp.firstChild) frag.appendChild(temp.firstChild);
+          node.replaceWith(frag);
+        } catch (e) {
+          console.error('Include failed:', url, e);
+        }
+      }
+    }
+
+    // ---------------- manual dark mode ----------------
+    function applyDarkModeClass(isDark){
+      document.body.classList.toggle('dark-mode', !!isDark);
+      const icon = document.getElementById('mode-icon');
+      if (icon) icon.textContent = isDark ? 'dark_mode' : 'light_mode';
+    }
+    function initDarkMode(){
+      const saved = localStorage.getItem('rk.dark');
+      const isDark = saved === '1';
+      applyDarkModeClass(isDark);
+      const toggle = document.getElementById('mode-toggle');
+      if (toggle){
+        const handler = ()=>{
+          const nowDark = !document.body.classList.contains('dark-mode');
+          applyDarkModeClass(nowDark);
+          localStorage.setItem('rk.dark', nowDark ? '1' : '0');
+        };
+        toggle.addEventListener('click', handler);
+        toggle.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); handler(); }});
+      }
+    }
+
+    // ---------------- side menu ----------------
+    function initSideMenu(){
+      const sideMenu = document.getElementById('sideMenu');
+      const overlay  = document.getElementById('menuOverlay');
+      const closeBtn = document.getElementById('closeMenuBtn');
+      const menuBtn  = document.querySelector('.menu-toggle');
+
+      const open = ()=>{ sideMenu?.classList.add('open'); overlay?.classList.add('visible'); sideMenu?.setAttribute('aria-hidden','false'); };
+      const close= ()=>{ sideMenu?.classList.remove('open'); overlay?.classList.remove('visible'); sideMenu?.setAttribute('aria-hidden','true'); };
+
+      menuBtn?.addEventListener('click', open);
+      closeBtn?.addEventListener('click', close);
+      overlay?.addEventListener('click', close);
+    }
+
+    // ---------------- password gate (รหัส: 140425) ----------------
+    function initPasswordGate(){
+      const CORRECT_PASSWORD = '140425';
+      const overlay = document.getElementById('password-overlay');
+      const input   = document.getElementById('password-input');
+      const btn     = document.getElementById('submit-button');
+      const error   = document.getElementById('error-message');
+
+      if (!overlay || !input || !btn) return;
+
+      function ok(){
+        overlay.classList.add('pg-hide');
+        overlay.style.display = 'none';
+      }
+      function fail(){
+        if (error) error.textContent = 'รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง';
+        input.classList.add('pg-error-border');
+        input.value = '';
+        input.focus();
+      }
+      function check(){
+        const v = input.value.trim();
+        if (v === CORRECT_PASSWORD) ok(); else fail();
+      }
+
+      btn.addEventListener('click', check);
+      input.addEventListener('keydown', (e)=>{
+        if (e.key === 'Enter') check();
+        if (error) error.textContent = '';
+        input.classList.remove('pg-error-border');
+      });
+    }
+
+    // ---------------- init all ----------------
+    document.addEventListener('DOMContentLoaded', async ()=>{
+      await includePartialsIfAny();
+      initDarkMode();
+      initSideMenu();
+      initPasswordGate();
+    });
+  </script>
 </body>
+</html>
