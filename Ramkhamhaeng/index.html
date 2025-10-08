@@ -1,79 +1,55 @@
-<!-- Ramkhamhaeng-HTML-08102025-01 -->
+<!-- Ramkhamhaeng-HTML-08102025-04 -->
 <!doctype html>
 <html lang="th">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Ramkhamhaeng</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ramkhamhaeng — 20nxskypqz</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="styles.css"/>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+  <!-- Ramkhamhaeng local styles -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- Header (inline) -->
   <header class="header full-bleed">
-    <button class="menu-toggle" aria-label="Toggle navigation" type="button">☰</button>
-    <div class="toggle-container" id="mode-toggle" role="button" tabindex="0" aria-label="Toggle light/dark mode">
+    <button class="menu-toggle" aria-label="Toggle navigation" type="button">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+
+    <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
       <div class="toggle-circle">
-        <span class="icon-sun">●</span>
+        <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
       </div>
     </div>
   </header>
 
-  <!-- include side menu เฉพาะ Ramkhamhaeng -->
+  <!-- ใช้เฉพาะ side-menu เป็น shared -->
   <div data-include="shared/side-menu.html"></div>
 
   <main class="content">
-    <section class="section-card ram-card">
-      <h2 class="ram-title">RAM1131 – ทักษะการเข้าใจดิจิทัล</h2>
-      <p style="margin:8px 0 0;">
-        <a href="./RAM1131/">ไปที่หน้า RAM1131</a>
-      </p>
+    <section class="hero">
+      <h1 class="hero-title">Ramkhamhaeng</h1>
+    </section>
+
+    <section class="section-card">
+      <ul class="root-link-list" style="margin:0;">
+        <li>
+          <a href="RAM1131/" style="color:#000; text-decoration:none; font-size:24px; font-weight:700;">
+            RAM1131 – ทักษะการเข้าใจดิจิทัล
+          </a>
+        </li>
+      </ul>
     </section>
   </main>
 
+  <!-- Footer (inline) -->
   <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
 
-  <script>
-    // include
-    async function includePartials(){
-      const nodes=[...document.querySelectorAll('[data-include]')];
-      for(const n of nodes){
-        const url=n.getAttribute('data-include');
-        try{
-          const res=await fetch(url,{cache:'no-store'});
-          n.outerHTML=await res.text();
-        }catch(e){ console.error('include fail',url,e); }
-      }
-    }
-    function applyDark(on){
-      document.body.classList.toggle('dark-mode',!!on);
-      localStorage.setItem('ram.dark', on?'1':'0');
-    }
-    function initTheme(){
-      applyDark(localStorage.getItem('ram.dark')==='1');
-      const t=document.getElementById('mode-toggle');
-      if(t){
-        const h=()=>applyDark(!document.body.classList.contains('dark-mode'));
-        t.addEventListener('click',h);
-        t.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();h();}});
-      }
-    }
-    function initSideMenu(){
-      const menu=document.getElementById('sideMenu');
-      const overlay=document.getElementById('menuOverlay');
-      const openBtn=document.querySelector('.menu-toggle');
-      const closeBtn=document.getElementById('closeMenuBtn');
-      const open=()=>{ if(!menu||!overlay) return; menu.classList.add('open'); overlay.classList.add('visible'); };
-      const close=()=>{ if(!menu||!overlay) return; menu.classList.remove('open'); overlay.classList.remove('visible'); };
-      if(openBtn) openBtn.addEventListener('click',open);
-      if(closeBtn) closeBtn.addEventListener('click',close);
-      if(overlay) overlay.addEventListener('click',close);
-    }
-    document.addEventListener('DOMContentLoaded', async ()=>{
-      await includePartials();
-      initTheme();
-      initSideMenu();
-    });
-  </script>
+  <!-- Ramkhamhaeng local script -->
+  <script src="script.js"></script>
 </body>
 </html>
