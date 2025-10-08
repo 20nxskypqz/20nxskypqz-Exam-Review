@@ -1,13 +1,19 @@
-/* Ramkhamhaeng-CSS-08102025-02 */
+/* Ramkhamhaeng-CSS-08102025-02 (standalone but reuse visual style) */
 :root{
-  --bg:#f9f9f9; --card:#fff; --ink:#111; --muted:#666;
+  --bg:#f9f9f9; 
+  --card:#fff; 
+  --ink:#111; 
+  --muted:#666;
   --shadow:0 6px 24px rgba(0,0,0,.08);
   --page-max:1100px;
+
   --grad-light: linear-gradient(90deg, #e63946, #ff9f1c);
   --grad-dark:  linear-gradient(90deg,#0b1929,#1f2937);
 }
+
 *{ box-sizing:border-box; }
 html,body{ height:100%; }
+
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:'Niramit', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
@@ -15,7 +21,6 @@ body{
   display:flex; flex-direction:column;
   min-height:100vh; min-height:100svh;
 }
-[data-include]{ display:contents; }
 
 h1{ font-size:32px; margin:.2em 0 .4em; text-align:center; }
 h2{ font-size:28px; margin:.8em 0 .4em; text-align:center; }
@@ -25,19 +30,32 @@ p,li{ font-size:16px; }
 .align-left{ text-align:left !important; }
 
 .content{ width:100%; max-width:var(--page-max); margin:16px auto; padding:0 20px; }
+
 .card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:12px 0; }
 .section-card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:16px 0; }
+.subcard{ background:var(--card); border-radius:10px; box-shadow:var(--shadow); padding:12px; margin:12px 0; }
 
 .full-bleed{ position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; }
 .header, .footer{ color:#fff; padding:10px 16px; box-shadow:var(--shadow); border-radius:0; }
-.header{ background:var(--grad-light); display:flex; justify-content:space-between; align-items:center; }
-.footer{ background:var(--grad-light); margin-top:auto; text-align:center; }
+.header{
+  background:var(--grad-light);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.footer{ 
+  background:var(--grad-light); 
+  margin-top:auto; text-align:center; 
+}
 
+/* โหมดมืด */
 body.dark-mode{ background:#0f1418; color:#e5e7eb; }
-body.dark-mode .card, body.dark-mode .section-card{ background:#172026; color:#e5e7eb; }
-body.dark-mode .header, body.dark-mode .footer{ background:var(--grad-dark); }
+body.dark-mode .card,
+body.dark-mode .section-card,
+body.dark-mode .subcard{ background:#172026; color:#e5e7eb; }
+body.dark-mode .header, 
+body.dark-mode .footer{ background:var(--grad-dark); }
 body.dark-mode a{ color:#d1defa; }
 
+/* Material Symbols */
 .material-symbols-outlined{
   font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 40;
   font-family:'Material Symbols Outlined' !important;
@@ -46,14 +64,14 @@ body.dark-mode a{ color:#d1defa; }
   vertical-align:middle;
 }
 
+/* ปุ่มเมนู/ปิดเมนู */
 .menu-toggle, .close-menu{
   background:none; border:none; color:inherit; cursor:pointer; font-size:24px; display:flex; align-items:center;
 }
 
-/* ===== Side menu (ล็อก 300px ตลอด) ===== */
+/* สไลด์เมนู (ขนาดเท่ากับ Exam Review) */
 .side-menu{
-  position:fixed; top:20px; left:20px; bottom:20px;
-  width:300px; max-width:92vw;
+  position:fixed; top:20px; left:20px; bottom:20px; width:300px;
   background:#222; color:#fff; border-radius:12px; padding:60px 0 12px;
   box-shadow: var(--shadow); transform:translateX(-120%); transition:transform .25s ease; z-index:1000;
 }
@@ -69,7 +87,7 @@ body.dark-mode a{ color:#d1defa; }
   font-weight:800; font-size:16px; padding:10px 14px; cursor:pointer; border-radius:8px;
 }
 .menu-section-toggle:hover{ background:rgba(255,255,255,.08); }
-.menu-section-toggle .material-symbols-outlined{ font-size:24px; color:#fff; }
+.menu-section-toggle .material-symbols-outlined{ font-size:24px; }
 
 .menu-sublist{ list-style:none; margin:6px 0 8px; padding:0; }
 .menu-sublist li a{
@@ -79,6 +97,24 @@ body.dark-mode a{ color:#d1defa; }
 }
 .menu-sublist li a:hover{ background:rgba(255,255,255,.08); }
 
+/* กล่องลิงก์หน้า root ของ Ramkhamhaeng (เช่น RAM1131) */
+.root-link-list{ list-style:none; padding:0; margin:10px 0 0; }
+.root-link-list li{ margin:8px 0; }
+.root-link-list a{
+  display:inline-flex; align-items:center; gap:8px;
+  text-decoration:none; color:#000; background:var(--card);
+  border-radius:10px; padding:10px 12px; box-shadow:var(--shadow);
+  white-space:normal; word-break:break-word; font-size:18px;
+}
+
+/* ทำให้ “RAM1131 – ทักษะการเข้าใจดิจิทัล” อ่านชัดในโหมดมืด */
+body.dark-mode .root-link-list a,
+body.dark-mode .card a,
+body.dark-mode a.ram-link{
+  color:#fff !important;
+}
+
+/* แคปซูลสลับโหมด — บังคับไอคอนดำทั้งสองโหมด */
 .toggle-container{
   --w:84px; --h:36px; --pad:3px;
   width:var(--w); height:var(--h); border-radius:999px; padding:var(--pad);
@@ -91,14 +127,13 @@ body.dark-mode a{ color:#d1defa; }
   border-radius:999px; background:#fff;
   display:flex; align-items:center; justify-content:center;
   box-shadow:0 3px 8px rgba(0,0,0,.25);
-  transition:transform .25s; font-size:20px; color:#111;
+  transition:transform .25s; font-size:20px; color:#000 !important;
 }
+.toggle-circle .material-symbols-outlined{ color:#000 !important; }
 body.dark-mode .toggle-container{ background:#1d2227; border-color:#3a424a; }
-body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); color:#e5e7eb; }
+body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); }
 
-/* ลบ/งดใช้กฎที่เคยทำให้ side-menu กว้างเต็มจอบนจอเล็ก */
-/*
+/* ปรับ responsive */
 @media (max-width: 480px){
   .side-menu{ left:12px; right:12px; width:auto; }
 }
-*/
