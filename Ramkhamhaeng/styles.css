@@ -1,22 +1,32 @@
-/* Ramkhamhaeng-CSS-08102025-01 (path: /Ramkhamhaeng/styles.css) */
+/* RK-Styles-08102025-04 — Ramkhamhaeng (standalone) */
 :root{
-  --bg:#f9f9f9; --card:#fff; --ink:#111; --muted:#666;
+  --bg:#f9f9f9; 
+  --card:#fff; 
+  --ink:#111; 
+  --muted:#666;
   --shadow:0 6px 24px rgba(0,0,0,.08);
   --page-max:1100px;
+
+  /* แถบหัว/ท้าย (เหมือน Exam Review) */
   --grad-light: linear-gradient(90deg, #e63946, #ff9f1c);
   --grad-dark:  linear-gradient(90deg,#0b1929,#1f2937);
 }
 
 *{ box-sizing:border-box; }
 html,body{ height:100%; }
+
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:'Niramit', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-  line-height:1.8; display:flex; flex-direction:column;
-  min-height:100vh; min-height:100svh;
+  line-height:1.8;
+  display:flex; flex-direction:column;           /* ให้ footer ดันไปล่าง */
+  min-height:100vh; min-height:100svh;           /* กันกรณี mobile svh */
 }
+
+/* ตัวช่วย include (ถ้ามี) */
 [data-include]{ display:contents; }
 
+/* หัวเรื่องทั่วไป (ไม่เปลี่ยนลำดับ/ตำแหน่งเดิมของคุณ) */
 h1{ font-size:32px; margin:.2em 0 .4em; text-align:center; }
 h2{ font-size:28px; margin:.8em 0 .4em; text-align:center; }
 h3{ font-size:24px; margin:.8em 0 .4em; text-align:center; }
@@ -24,24 +34,30 @@ h4{ font-size:20px; margin:.6em 0 .3em; text-align:center; }
 p,li{ font-size:16px; }
 .align-left{ text-align:left !important; }
 
+/* ---------- คอนเทนต์หลัก ---------- */
 .content{ width:100%; max-width:var(--page-max); margin:16px auto; padding:0 20px; }
-
 .card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:12px 0; }
-.section-card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:16px 0; }
 
+/* ---------- แถบหัว/ท้ายเต็มจอ (full-bleed) ---------- */
 .full-bleed{ position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; }
-.header,.footer{ color:#fff; padding:10px 16px; box-shadow:var(--shadow); border-radius:0; }
-.header{ background:var(--grad-light); display:flex; justify-content:space-between; align-items:center; }
-.footer{ background:var(--grad-light); margin-top:auto; text-align:center; }
+.header, .footer{ color:#fff; padding:10px 16px; box-shadow:var(--shadow); border-radius:0; }
+.header{
+  background:var(--grad-light);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.footer{
+  background:var(--grad-light);
+  margin-top:auto;                                /* สำคัญ: ดันไปชิดล่าง */
+  text-align:center;
+}
 
-/* โหมดมืด */
+/* ---------- โหมดมืด (ตรงตามที่ใช้อยู่) ---------- */
 body.dark-mode{ background:#0f1418; color:#e5e7eb; }
-body.dark-mode .card,
-body.dark-mode .section-card{ background:#172026; color:#e5e7eb; }
+body.dark-mode .card{ background:#172026; color:#e5e7eb; }
 body.dark-mode .header, body.dark-mode .footer{ background:var(--grad-dark); }
 body.dark-mode a{ color:#d1defa; }
 
-/* Material Symbols */
+/* ---------- ไอคอน Material Symbols (กัน system font ทับ) ---------- */
 .material-symbols-outlined{
   font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 40;
   font-family:'Material Symbols Outlined' !important;
@@ -50,7 +66,15 @@ body.dark-mode a{ color:#d1defa; }
   vertical-align:middle;
 }
 
-/* Capsule toggle */
+/* ---------- ปุ่มไอคอน/แคปซูลสลับโหมด (ตามที่ใช้เดิม) ---------- */
+.icon-btn{
+  background:transparent; border:none; padding:6px; margin:0;
+  cursor:pointer; display:inline-flex; align-items:center; line-height:1; border-radius:8px; color:inherit;
+}
+.icon-btn:hover{ background:rgba(0,0,0,.06); }
+body.dark-mode .icon-btn:hover{ background:rgba(255,255,255,.08); }
+.icon-btn .material-symbols-outlined{ font-size:32px; }
+
 .toggle-container{
   --w:84px; --h:36px; --pad:3px;
   width:var(--w); height:var(--h); border-radius:999px; padding:var(--pad);
@@ -63,22 +87,20 @@ body.dark-mode a{ color:#d1defa; }
   border-radius:999px; background:#fff;
   display:flex; align-items:center; justify-content:center;
   box-shadow:0 3px 8px rgba(0,0,0,.25);
-  transition:transform .25s; font-size:20px; color:#111; /* sun/moon = ดำ */
+  transition:transform .25s; font-size:20px; color:#111;
 }
+/* แคปซูลโหมดมืด: พื้นหลังเข้ม + ปุ่มเลื่อนไปขวา */
 body.dark-mode .toggle-container{ background:#1d2227; border-color:#3a424a; }
-body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); color:#111; }
+body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); color:#111; } /* ไอคอนสีดำตามที่สั่ง */
 
-/* Menu buttons */
-.menu-toggle,.close-menu{
-  background:none; border:none; color:#fff; cursor:pointer; font-size:24px; display:flex; align-items:center;
+/* ---------- สไลด์เมนู (คงขนาดเดิม) ---------- */
+.menu-toggle, .close-menu{
+  background:none; border:none; color:inherit; cursor:pointer; font-size:24px; display:flex; align-items:center;
 }
-
-/* Side menu (fixed width) */
 .side-menu{
-  position:fixed; top:20px; left:20px; bottom:20px;
-  width:300px;
+  position:fixed; top:20px; left:20px; bottom:20px; width:300px;   /* << ขนาดเท่าเดิม */
   background:#222; color:#fff; border-radius:12px; padding:60px 0 12px;
-  box-shadow:var(--shadow); transform:translateX(-120%); transition:transform .25s ease; z-index:1000;
+  box-shadow: var(--shadow); transform:translateX(-120%); transition:transform .25s ease; z-index:1000;
 }
 .side-menu.open{ transform:translateX(0); }
 .close-menu{ position:absolute; top:12px; right:12px; color:#fff; }
@@ -92,7 +114,7 @@ body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); 
   font-weight:800; font-size:16px; padding:10px 14px; cursor:pointer; border-radius:8px;
 }
 .menu-section-toggle:hover{ background:rgba(255,255,255,.08); }
-.menu-section-toggle .material-symbols-outlined{ font-size:24px; transform:rotate(0deg); transition:transform .2s ease; }
+.menu-section-toggle .material-symbols-outlined{ font-size:24px; }
 
 .menu-sublist{ list-style:none; margin:6px 0 8px; padding:0; }
 .menu-sublist li a{
@@ -102,10 +124,13 @@ body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); 
 }
 .menu-sublist li a:hover{ background:rgba(255,255,255,.08); }
 
-/* Root list cards on Ramkhamhaeng page */
-.page-list-heading{ margin:.2em 0 10px; }
-.link-card{ display:block; text-decoration:none; background:var(--card); }
-.card-title{
-  font-size:24px; font-weight:700; color:#111; text-align:left;
+/* ---------- ตัวอักษรชื่อวิชา RAM1131 (ตามที่สั่ง) ---------- */
+/* ใช้คลาสนี้กับข้อความ “RAM1131 – ทักษะการเข้าใจดิจิทัล” */
+.course-title{
+  font-size:24px; 
+  font-weight:700; 
+  color:#111;          /* สีดำ */
+  margin:.2em 0 .4em;
 }
-body.dark-mode .card-title{ color:#e5e7eb; }
+/* หากอยู่ในกล่อง .card และเปิดโหมดมืด ต้องคง “สีข้อความ” ตามธีม (คุณสั่งแค่ให้เป็นดำ 24px ไม่เปลี่ยนตำแหน่ง) */
+body.dark-mode .course-title{ color:#e5e7eb; }  /* ถ้าอยาก “ดำ” ตลอด ให้ลบบรรทัดนี้ทิ้ง */
