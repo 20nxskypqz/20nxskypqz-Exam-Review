@@ -1,4 +1,4 @@
-<!-- Ramkhamhaeng-HTML-08102025-03 -->
+<!-- Ramkhamhaeng-HTML-08102025-04 -->
 <!doctype html>
 <html lang="th">
 <head>
@@ -6,45 +6,44 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Ramkhamhaeng — 20nxskypqz Exam Review</title>
 
-  <!-- ฟอนต์ + ไอคอน -->
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <!-- สไตล์เฉพาะของโฟลเดอร์ Ramkhamhaeng -->
+  <!-- Local styles for Ramkhamhaeng folder -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-  <!-- ส่วนหัว (inline ในหน้านี้ ไม่ดึง shared header/footer ตามที่กำชับ) -->
-  <header class="header full-bleed">
-    <!-- 3 ขีด -->
-    <button class="menu-toggle" aria-label="Toggle navigation" type="button">
-      <span class="material-symbols-outlined">menu</span>
-    </button>
-
-    <!-- แคปซูลสลับโหมด -->
-    <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
-      <div class="toggle-circle">
-        <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
-      </div>
-    </div>
-  </header>
-
-  <!-- include เฉพาะสไลด์เมนู (ตามที่กำหนดให้แยก shared เฉพาะเมนู) -->
-  <div data-include="shared/side-menu.html"></div>
-
-  <!-- จุดที่คอนเทนต์จริงจะถูกแสดงหลังผ่านรหัส -->
+  <!-- จุดวางคอนเทนต์หลังผ่านรหัส -->
   <div id="protected-root"></div>
 
-  <!-- คอนเทนต์จริงของหน้า: ย้ายทุกอย่างมาไว้ใน template นี้ -->
+  <!-- คอนเทนต์จริงของหน้า (จะถูกใส่หลังใส่รหัสถูก) -->
   <template id="protected-tpl">
+    <!-- ส่วนหัว (inline) -->
+    <header class="header full-bleed">
+      <button class="menu-toggle" aria-label="Toggle navigation" type="button">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+
+      <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
+        <div class="toggle-circle">
+          <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- include เฉพาะสไลด์เมนู (shared ภายใต้โฟลเดอร์นี้) -->
+    <div data-include="shared/side-menu.html"></div>
+
+    <!-- เนื้อหา -->
     <main class="content">
       <!-- หัวหน้าหน้า (อยู่นอกกล่อง, กึ่งกลาง) -->
       <section class="hero">
         <h1 class="hero-title">Ramkhamhaeng</h1>
       </section>
 
-      <!-- กล่องลิงก์ไปหน้า RAM1131 (กดเข้าได้เลย, ไม่ต้องมีลูกศร) -->
+      <!-- กล่องลิงก์ไป RAM1131 (คลิกเข้าได้เลย) -->
       <section class="section-card">
         <ul class="root-link-list">
           <li>
@@ -56,16 +55,16 @@
       </section>
     </main>
 
-    <!-- ท้ายหน้า (inline ในหน้านี้ ไม่ดึง shared) -->
+    <!-- ส่วนท้าย (inline) -->
     <footer class="footer full-bleed">
       &copy; 2025 20nxskypqz Exam Review
     </footer>
   </template>
 
-  <!-- สคริปต์หลักของโฟลเดอร์ Ramkhamhaeng (รวม include [data-include], เมนู, โหมดมืด ฯลฯ) -->
+  <!-- สคริปต์หลัก (มี includePartialsIfAny, initDarkMode, initSideMenu ฯลฯ) -->
   <script src="script.js"></script>
 
-  <!-- สคริปต์ Auth (วิธี B): ต้องวางท้ายสุด เพื่อแสดง popup และย้าย template เข้า DOM หลังยืนยันรหัส -->
+  <!-- สคริปต์ Auth (แสดงป๊อปอัป + โหลดคอนเทนต์เมื่อผ่านรหัส) -->
   <script src="shared/auth-gate.js"></script>
 </body>
 </html>
