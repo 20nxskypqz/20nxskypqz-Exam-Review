@@ -1,15 +1,20 @@
-<!-- Ramkhamhaeng-SideMenu-HTML-08102025-01 -->
+<!-- Ramkhamhaeng-SharedSideMenu-08102025-01 -->
 <aside id="sideMenu" class="side-menu" aria-hidden="true">
   <button class="close-menu" id="closeMenuBtn" aria-label="Close menu" type="button">
     <span class="material-symbols-outlined">close</span>
   </button>
 
   <nav class="menu-group" aria-label="Ramkhamhaeng navigation">
-    <h3 class="align-left" style="margin:4px 0 8px; padding:0 14px; font-size:20px;">Courses</h3>
-    <ul class="menu-sublist">
+    <!-- กลุ่มรายวิชา Ramkhamhaeng -->
+    <button class="menu-section-toggle" data-menu-tier="ram">
+      <span>Ramkhamhaeng</span>
+      <span class="material-symbols-outlined">arrow_drop_down</span>
+    </button>
+    <ul id="menu-ram" class="menu-sublist" hidden>
       <li>
-        <a href="/Ramkhamhaeng/RAM1131/">
-          RAM1131 - ทักษะการเข้าใจดิจิทัล
+        <a href="/20nxskypqz-Exam-Review/Ramkhamhaeng/RAM1131/">
+          <span class="material-symbols-outlined">description</span>
+          <span>RAM1131 – ทักษะการเข้าใจดิจิทัล</span>
         </a>
       </li>
     </ul>
