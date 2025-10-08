@@ -1,33 +1,45 @@
-<!-- Ramkhamhaeng-HTML-08102025-02 -->
 <!doctype html>
 <html lang="th">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Ramkhamhaeng</title>
+  <title>Ramkhamhaeng — 20nxskypqz</title>
 
-  <!-- Fonts & Icons -->
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <!-- ใช้พาธสัมพัทธ์ (สำหรับ GitHub Project Pages) -->
+  <!-- Ramkhamhaeng local styles -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- include (ใช้พาธสัมพัทธ์) -->
-  <div data-include="shared/header.html"></div>
+  <!-- Header (inline แทนการ include) -->
+  <header class="header full-bleed">
+    <!-- 3 ขีด -->
+    <button class="menu-toggle" aria-label="Toggle navigation" type="button">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+
+    <!-- ปุ่มสลับโหมด (แคปซูล) -->
+    <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
+      <div class="toggle-circle">
+        <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ใช้เฉพาะ side-menu เป็น shared -->
   <div data-include="shared/side-menu.html"></div>
 
   <main class="content">
     <section class="hero">
-      <h1 class="hero-title">Welcome</h1>
-      <h2 class="subline">Ramkhamhaeng</h2>
+      <h1 class="hero-title">Ramkhamhaeng</h1>
+      <h2 class="subline">วิชาในภาคเรียน</h2>
     </section>
 
-    <!-- ลิสต์รายวิชา -->
+    <!-- กล่องลิงก์ไปหน้า RAM1131 (ลิงก์กดได้เลย ไม่ต้องมีลูกศร) -->
     <section class="section-card">
-      <h2 class="align-left" style="margin:0 0 8px;">Courses</h2>
-      <ul class="root-link-list" style="margin-top:10px;">
+      <ul class="root-link-list" style="margin:0;">
         <li>
           <a href="RAM1131/">
             RAM1131 - ทักษะการเข้าใจดิจิทัล
@@ -37,9 +49,10 @@
     </section>
   </main>
 
-  <div data-include="shared/footer.html"></div>
+  <!-- Footer (inline แทนการ include) -->
+  <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
 
-  <!-- ใช้พาธสัมพัทธ์ -->
+  <!-- Ramkhamhaeng local script -->
   <script src="script.js"></script>
 </body>
 </html>
