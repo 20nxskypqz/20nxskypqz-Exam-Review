@@ -180,3 +180,10 @@ body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); 
     width:280px !important; max-width:280px !important;
   }
 }
+
+/* === Secret Page link color ===
+   Light mode: black, Dark mode: white */
+a.secret-link{ color:#000 !important; }
+a.secret-link:visited{ color:#000 !important; }
+body.dark-mode a.secret-link{ color:#fff !important; }
+body.dark-mode a.secret-link:visited{ color:#fff !important; }
