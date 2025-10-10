@@ -1,4 +1,4 @@
-<!-- RAM1131-HTML-10102025-10 -->
+<!-- RAM1131-HTML-10102025-11 -->
 <!doctype html>
 <html lang="th">
 <head>
@@ -69,6 +69,41 @@
       <div class="card" id="chapter5-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="chapter5-box">Preparing…</div>
     </section>
+
+    <!-- เอกสาร 6 -->
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 6 – พาณิชย์อิเล็กทรอนิกส์</h2>
+      <div class="card" id="chapter6-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="chapter6-box">Preparing…</div>
+    </section>
+
+    <!-- เอกสาร 7 -->
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 7 – สุขภาพดีในยุคดิจิทัล</h2>
+      <div class="card" id="chapter7-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="chapter7-box">Preparing…</div>
+    </section>
+
+    <!-- เอกสาร 8 -->
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 8 – มารยาทสังคมดิจิทัล</h2>
+      <div class="card" id="chapter8-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="chapter8-box">Preparing…</div>
+    </section>
+
+    <!-- เอกสาร 9 -->
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 9 – กฎหมายดิจิทัล</h2>
+      <div class="card" id="chapter9-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="chapter9-box">Preparing…</div>
+    </section>
+
+    <!-- เอกสาร 10 -->
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 10 – การแก้ปัญหาด้วยเครื่องมือดิจิทัล</h2>
+      <div class="card" id="chapter10-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="chapter10-box">Preparing…</div>
+    </section>
   </main>
 
   <!-- Footer (inline) -->
@@ -110,13 +145,13 @@
         const maxPt = getMaxPtIn(p);
         let level = 0;
 
-        if (maxPt >= 24.5) {           // ~25pt
+        if (maxPt >= 24.5) {                 // ~25pt → H1
           level = 1;
-        } else if (Math.abs(maxPt - 20) < 0.6) { // ~20pt
+        } else if (Math.abs(maxPt - 20) < 0.6) { // ~20pt → H1 (ถ้ายังไม่เจอ) หรือ H2
           level = seenH1 ? 2 : 1;
-        } else if (Math.abs(maxPt - 16) < 0.6) { // ~16pt
+        } else if (Math.abs(maxPt - 16) < 0.6) { // ~16pt → H2
           level = 2;
-        } else if (Math.abs(maxPt - 17.5) < 0.6 || Math.abs(maxPt - 14) < 0.6) { // ~17.5 / ~14
+        } else if (Math.abs(maxPt - 17.5) < 0.6 || Math.abs(maxPt - 14) < 0.6) { // ~17.5 / ~14 → H3
           level = 3;
         }
 
@@ -155,11 +190,10 @@
       ]
     };
 
-    // ---------- DOC 1 ----------
-    (function () {
-      const statusEl = document.getElementById('chapter-status');
-      const boxEl    = document.getElementById('chapter-box');
-      const fileUrl  = "files/บทที่ 1 – สิทธิและความรับผิดชอบ.docx";
+    // helper สำหรับสร้าง loader แต่ละไฟล์
+    function makeDocLoader(fileUrl, statusId, boxId){
+      const statusEl = document.getElementById(statusId);
+      const boxEl    = document.getElementById(boxId);
 
       (async () => {
         try{
@@ -175,95 +209,19 @@
           boxEl.innerHTML = '<div style="color:#c00;font-weight:700">เกิดข้อผิดพลาดในการโหลดเอกสาร</div>';
         }
       })();
-    })();
+    }
 
-    // ---------- DOC 2 ----------
-    (function () {
-      const statusEl = document.getElementById('chapter2-status');
-      const boxEl    = document.getElementById('chapter2-box');
-      const fileUrl  = "files/บทที่ 2 – การเข้าถึงดิจิทัล.docx";
-
-      (async () => {
-        try{
-          const buf = await loadArrayBuffer(fileUrl);
-          const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
-          boxEl.innerHTML = html;
-          normalizeHeadingsByFont(boxEl);
-          fixListSpacing(boxEl);
-          statusEl.textContent = 'Done.';
-        }catch(e){
-          console.error(e);
-          statusEl.textContent = 'Error loading document.';
-          boxEl.innerHTML = '<div style="color:#c00;font-weight:700">เกิดข้อผิดพลาดในการโหลดเอกสาร</div>';
-        }
-      })();
-    })();
-
-    // ---------- DOC 3 ----------
-    (function () {
-      const statusEl = document.getElementById('chapter3-status');
-      const boxEl    = document.getElementById('chapter3-box');
-      const fileUrl  = "files/บทที่ 3 – การสื่อสารและการปฏิสัมพันธ์ในยุคดิจิทัล.docx";
-
-      (async () => {
-        try{
-          const buf = await loadArrayBuffer(fileUrl);
-          const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
-          boxEl.innerHTML = html;
-          normalizeHeadingsByFont(boxEl);
-          fixListSpacing(boxEl);
-          statusEl.textContent = 'Done.';
-        }catch(e){
-          console.error(e);
-          statusEl.textContent = 'Error loading document.';
-          boxEl.innerHTML = '<div style="color:#c00;font-weight:700">เกิดข้อผิดพลาดในการโหลดเอกสาร</div>';
-        }
-      })();
-    })();
-
-    // ---------- DOC 4 ----------
-    (function () {
-      const statusEl = document.getElementById('chapter4-status');
-      const boxEl    = document.getElementById('chapter4-box');
-      const fileUrl  = "files/บทที่ 4 – ความปลอดภัยยุคดิจิทัล.docx";
-
-      (async () => {
-        try{
-          const buf = await loadArrayBuffer(fileUrl);
-          const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
-          boxEl.innerHTML = html;
-          normalizeHeadingsByFont(boxEl);
-          fixListSpacing(boxEl);
-          statusEl.textContent = 'Done.';
-        }catch(e){
-          console.error(e);
-          statusEl.textContent = 'Error loading document.';
-          boxEl.innerHTML = '<div style="color:#c00;font-weight:700">เกิดข้อผิดพลาดในการโหลดเอกสาร</div>';
-        }
-      })();
-    })();
-
-    // ---------- DOC 5 ----------
-    (function () {
-      const statusEl = document.getElementById('chapter5-status');
-      const boxEl    = document.getElementById('chapter5-box');
-      const fileUrl  = "files/บทที่ 5 – การรู้เท่าทันและสารสนเทศ.docx";
-
-      (async () => {
-        try{
-          const buf = await loadArrayBuffer(fileUrl);
-          const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
-          boxEl.innerHTML = html;
-          normalizeHeadingsByFont(boxEl);
-          fixListSpacing(boxEl);
-          statusEl.textContent = 'Done.';
-        }catch(e){
-          console.error(e);
-          statusEl.textContent = 'Error loading document.';
-          boxEl.innerHTML = '<div style="color:#c00;font-weight:700">เกิดข้อผิดพลาดในการโหลดเอกสาร</div>';
-        }
-      })();
-    })();
+    // ---------- เรียกโหลดบท 1–10 ----------
+    makeDocLoader("files/บทที่ 1 – สิทธิและความรับผิดชอบ.docx","chapter-status","chapter-box");
+    makeDocLoader("files/บทที่ 2 – การเข้าถึงดิจิทัล.docx","chapter2-status","chapter2-box");
+    makeDocLoader("files/บทที่ 3 – การสื่อสารและการปฏิสัมพันธ์ในยุคดิจิทัล.docx","chapter3-status","chapter3-box");
+    makeDocLoader("files/บทที่ 4 – ความปลอดภัยยุคดิจิทัล.docx","chapter4-status","chapter4-box");
+    makeDocLoader("files/บทที่ 5 – การรู้เท่าทันและสารสนเทศ.docx","chapter5-status","chapter5-box");
+    makeDocLoader("files/บทที่ 6 – พาณิชย์อิเล็กทรอนิกส์.docx","chapter6-status","chapter6-box");
+    makeDocLoader("files/บทที่ 7 – สุขภาพดีในยุคดิจิทัล.docx","chapter7-status","chapter7-box");
+    makeDocLoader("files/บทที่ 8 – มารยาทสังคมดิจิทัล.docx","chapter8-status","chapter8-box");
+    makeDocLoader("files/บทที่ 9 – กฎหมายดิจิทัล.docx","chapter9-status","chapter9-box");
+    makeDocLoader("files/บทที่ 10 – การแก้ปัญหาด้วยเครื่องมือดิจิทัล.docx","chapter10-status","chapter10-box");
   </script>
 </body>
 </html>
