@@ -1,4 +1,4 @@
-/* Ramkhamhaeng-CSS-09102025-01 (path: /Ramkhamhaeng/styles.css) */
+/* Ramkhamhaeng-CSS-09102025-02 (path: /Ramkhamhaeng/styles.css) */
 :root{
   --bg:#f9f9f9; --card:#fff; --ink:#111; --muted:#666;
   --shadow:0 6px 24px rgba(0,0,0,.08);
@@ -10,7 +10,7 @@
 }
 
 *{ box-sizing:border-box; }
-html,body{ height:100%; }
+html,body{ height:100%; overflow-x:hidden; } /* ป้องกันล้นขวา */
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:'Niramit', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
@@ -36,8 +36,13 @@ p,li{ font-size:16px; }
 .card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:12px 0; }
 .section-card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:16px 0; }
 
-/* Full-bleed header/footer bars */
-.full-bleed{ position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; }
+/* Full-bleed header/footer bars (แก้ไม่ให้ใช้ 100vw เพื่อไม่ให้ล้นขวา) */
+.full-bleed{
+  position:relative;
+  left:auto; right:auto;
+  margin-left:0; margin-right:0;
+  width:100%;
+}
 .header,.footer{ color:#fff; padding:10px 16px; box-shadow:var(--shadow); border-radius:0; }
 .header{ background:var(--grad-light); display:flex; justify-content:space-between; align-items:center; }
 .footer{ background:var(--grad-light); margin-top:auto; text-align:center; }
