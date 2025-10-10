@@ -1,4 +1,4 @@
-<!-- RAM1131-HTML-08102025-08 -->
+<!-- RAM1131-HTML-08102025-09 -->
 <!doctype html>
 <html lang="th">
 <head>
@@ -37,21 +37,21 @@
 
     <!-- เอกสาร 1 -->
     <section class="section-card">
-      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 1 – สิทธิและความรับผิดชอบ</h2>
+      <h3 class="align-left" style="margin:0 0 8px;">บทที่ 1 – สิทธิและความรับผิดชอบ</h3>
       <div class="card" id="chapter-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="chapter-box">Preparing…</div>
     </section>
 
     <!-- เอกสาร 2 -->
     <section class="section-card">
-      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 2 – การเข้าถึงดิจิทัล</h2>
+      <h3 class="align-left" style="margin:0 0 8px;">บทที่ 2 – การเข้าถึงดิจิทัล</h3>
       <div class="card" id="chapter2-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="chapter2-box">Preparing…</div>
     </section>
 
     <!-- เอกสาร 3 -->
     <section class="section-card">
-      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 3 – การสื่อสารและการปฏิสัมพันธ์ในยุคดิจิทัล</h2>
+      <h3 class="align-left" style="margin:0 0 8px;">บทที่ 3 – การสื่อสารและการปฏิสัมพันธ์ในยุคดิจิทัล</h3>
       <div class="card" id="chapter3-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="chapter3-box">Preparing…</div>
     </section>
@@ -66,8 +66,58 @@
   <!-- reuse JS จากโฟลเดอร์แม่ -->
   <script src="../script.js"></script>
 
-  <!-- หน้านี้: ดึงไฟล์ DOCX และเรนเดอร์ -->
+  <!-- หน้านี้: ดึงไฟล์ DOCX และเรนเดอร์ + remap font-size → h1/h2/h3/p -->
   <script>
+    // แมปขนาดจาก Word → แท็กหัวเรื่อง/ย่อหน้า และล้าง inline font-size
+    function remapFontSizeToHeadings(container){
+      if (!container) return;
+
+      const pickLevel = (pt) => {
+        if (pt >= 24.5 && pt <= 26.5) return 'h1';        // ~25 pt → 28px
+        if (pt >= 19.5 && pt <= 20.5) return 'h2';        // ~20 pt → 24px
+        if ((pt >= 17 && pt <= 18.5) || (pt >= 13.5 && pt <= 14.5)) return 'h3'; // ~17.5/14 pt → 20px
+        if (pt >= 11.5 && pt <= 12.5) return 'p';         // ~12 pt → 16px
+        return null;
+      };
+
+      const stripFontSize = (el) => {
+        if (el.hasAttribute && el.hasAttribute('style')){
+          const cleaned = el.getAttribute('style').replace(/font-size:[^;"]*;?/gi,'').trim();
+          if (cleaned) el.setAttribute('style', cleaned); else el.removeAttribute('style');
+        }
+        for (const child of el.children || []) stripFontSize(child);
+      };
+
+      container.querySelectorAll('p').forEach(p => {
+        // หา font-size ที่ใหญ่สุดใน p (จาก inline style)
+        let maxPt = null;
+        const scan = (el)=>{
+          if (el.nodeType === 1){ // ELEMENT
+            const st = el.getAttribute && el.getAttribute('style');
+            if (st){
+              const m = st.match(/font-size:\s*([\d.]+)\s*pt/i);
+              if (m){ const v = parseFloat(m[1]); if (!isNaN(v)) maxPt = Math.max(maxPt ?? 0, v); }
+            }
+            for (const ch of el.children) scan(ch);
+          }
+        };
+        scan(p);
+
+        const level = (maxPt!=null) ? pickLevel(maxPt) : null;
+        if (level && level !== 'p'){
+          const h = document.createElement(level);
+          // ย้ายลูกทั้งหมด แล้วล้าง inline font-size
+          while (p.firstChild) h.appendChild(p.firstChild);
+          stripFontSize(h);
+          p.replaceWith(h);
+        }else{
+          // p ธรรมดา: ล้าง font-size ออก
+          stripFontSize(p);
+        }
+      });
+    }
+
+    // ===== เอกสาร 1 =====
     (function () {
       const statusEl = document.getElementById('chapter-status');
       const boxEl    = document.getElementById('chapter-box');
@@ -104,6 +154,7 @@
           const buf = await loadArrayBuffer(fileUrl);
           const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
           boxEl.innerHTML = html;
+          remapFontSizeToHeadings(boxEl);
           fixListSpacing(boxEl);
           statusEl.textContent = 'Done.';
         }catch(e){
@@ -114,6 +165,7 @@
       })();
     })();
 
+    // ===== เอกสาร 2 =====
     (function () {
       const statusEl = document.getElementById('chapter2-status');
       const boxEl    = document.getElementById('chapter2-box');
@@ -150,6 +202,7 @@
           const buf = await loadArrayBuffer(fileUrl);
           const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
           boxEl.innerHTML = html;
+          remapFontSizeToHeadings(boxEl);
           fixListSpacing(boxEl);
           statusEl.textContent = 'Done.';
         }catch(e){
@@ -160,6 +213,7 @@
       })();
     })();
 
+    // ===== เอกสาร 3 =====
     (function () {
       const statusEl = document.getElementById('chapter3-status');
       const boxEl    = document.getElementById('chapter3-box');
@@ -196,6 +250,7 @@
           const buf = await loadArrayBuffer(fileUrl);
           const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
           boxEl.innerHTML = html;
+          remapFontSizeToHeadings(boxEl);
           fixListSpacing(boxEl);
           statusEl.textContent = 'Done.';
         }catch(e){
