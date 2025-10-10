@@ -1,8 +1,10 @@
-/* Ramkhamhaeng-CSS-08102025-01 (path: /Ramkhamhaeng/styles.css) */
+/* Ramkhamhaeng-CSS-09102025-01 (path: /Ramkhamhaeng/styles.css) */
 :root{
   --bg:#f9f9f9; --card:#fff; --ink:#111; --muted:#666;
   --shadow:0 6px 24px rgba(0,0,0,.08);
   --page-max:1100px;
+
+  /* Header / Footer gradients */
   --grad-light: linear-gradient(90deg, #e63946, #ff9f1c);
   --grad-dark:  linear-gradient(90deg,#0b1929,#1f2937);
 }
@@ -15,8 +17,11 @@ body{
   line-height:1.8; display:flex; flex-direction:column;
   min-height:100vh; min-height:100svh;
 }
+
+/* include placeholders */
 [data-include]{ display:contents; }
 
+/* Headings (default centered) */
 h1{ font-size:32px; margin:.2em 0 .4em; text-align:center; }
 h2{ font-size:28px; margin:.8em 0 .4em; text-align:center; }
 h3{ font-size:24px; margin:.8em 0 .4em; text-align:center; }
@@ -24,24 +29,27 @@ h4{ font-size:20px; margin:.6em 0 .3em; text-align:center; }
 p,li{ font-size:16px; }
 .align-left{ text-align:left !important; }
 
+/* Content container */
 .content{ width:100%; max-width:var(--page-max); margin:16px auto; padding:0 20px; }
 
+/* Cards */
 .card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:12px 0; }
 .section-card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:16px 0; }
 
+/* Full-bleed header/footer bars */
 .full-bleed{ position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; width:100vw; }
 .header,.footer{ color:#fff; padding:10px 16px; box-shadow:var(--shadow); border-radius:0; }
 .header{ background:var(--grad-light); display:flex; justify-content:space-between; align-items:center; }
 .footer{ background:var(--grad-light); margin-top:auto; text-align:center; }
 
-/* โหมดมืด */
+/* Dark mode */
 body.dark-mode{ background:#0f1418; color:#e5e7eb; }
 body.dark-mode .card,
 body.dark-mode .section-card{ background:#172026; color:#e5e7eb; }
 body.dark-mode .header, body.dark-mode .footer{ background:var(--grad-dark); }
 body.dark-mode a{ color:#d1defa; }
 
-/* Material Symbols */
+/* Material Symbols (prevent system font override) */
 .material-symbols-outlined{
   font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 40;
   font-family:'Material Symbols Outlined' !important;
@@ -50,7 +58,7 @@ body.dark-mode a{ color:#d1defa; }
   vertical-align:middle;
 }
 
-/* Capsule toggle */
+/* Capsule toggle (sun/moon icons must be black in both modes) */
 .toggle-container{
   --w:84px; --h:36px; --pad:3px;
   width:var(--w); height:var(--h); border-radius:999px; padding:var(--pad);
@@ -63,7 +71,7 @@ body.dark-mode a{ color:#d1defa; }
   border-radius:999px; background:#fff;
   display:flex; align-items:center; justify-content:center;
   box-shadow:0 3px 8px rgba(0,0,0,.25);
-  transition:transform .25s; font-size:20px; color:#111; /* sun/moon = ดำ */
+  transition:transform .25s; font-size:20px; color:#111; /* sun/moon = black */
 }
 body.dark-mode .toggle-container{ background:#1d2227; border-color:#3a424a; }
 body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); color:#111; }
@@ -73,7 +81,7 @@ body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); 
   background:none; border:none; color:#fff; cursor:pointer; font-size:24px; display:flex; align-items:center;
 }
 
-/* Side menu (fixed width) */
+/* Side menu (fixed width, not fullscreen) */
 .side-menu{
   position:fixed; top:20px; left:20px; bottom:20px;
   width:300px;
@@ -109,3 +117,19 @@ body.dark-mode .toggle-circle{ transform:translateX(calc(var(--w) - var(--h))); 
   font-size:24px; font-weight:700; color:#111; text-align:left;
 }
 body.dark-mode .card-title{ color:#e5e7eb; }
+
+/* DOCX content (Mammoth output) — enforce the required scale and styles */
+.card h1, .card h2, .card h3{ text-align:left; font-weight:700; }
+.card h1{ font-size:28px; margin:18px 0 8px; }
+.card h2{ font-size:24px; margin:16px 0 6px; }
+.card h3{ font-size:20px; margin:14px 0 6px; }
+.card p{ margin:8px 0; }
+.card strong{ font-weight:700; }
+.card em{ font-style:italic; }
+.card ul, .card ol{ padding-left:1.4em; margin:8px 0; }
+.card li{ margin:4px 0; }
+
+/* Responsive: keep side-menu compact on small screens */
+@media (max-width: 480px){
+  .side-menu{ left:12px; width:280px; }
+}
