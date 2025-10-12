@@ -1,4 +1,3 @@
-<!-- Ramkhamhaeng-HTML-08102025-05 -->
 <!doctype html>
 <html lang="th">
 <head>
@@ -6,14 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Ramkhamhaeng — 20nxskypqz Exam Review</title>
 
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <!-- Local styles/scripts (reuse ภายในโฟลเดอร์นี้) -->
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Gate-first: ซ่อนคอนเทนต์ทั้งหมดไว้ก่อน จนกว่าจะปลดล็อก -->
   <style>
     html.pw-lock .gate-hide{ visibility:hidden !important; }
     html.pw-lock body{ overflow:hidden; }
@@ -24,27 +20,20 @@
   </script>
 </head>
 <body>
-  <!-- Password Gate (โหลดก่อนชิ้นส่วนอื่น) -->
   <div data-include="shared/password-gate.html"></div>
 
-  <!-- Header (inline) -->
   <header class="header full-bleed gate-hide">
     <button class="menu-toggle" aria-label="Toggle navigation" type="button">
       <span class="material-symbols-outlined">menu</span>
     </button>
 
-    <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
-      <div class="toggle-circle">
-        <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
-      </div>
-    </div>
+    <div data-include="shared/dark-mode-toggle.html"></div>
+
   </header>
 
-  <!-- Side menu (include เฉพาะเมนู) -->
   <div class="gate-hide" data-include="shared/side-menu.html"></div>
 
   <main class="content gate-hide">
-    <!-- หัวเรื่องอยู่นอกกล่อง -->
     <section class="hero">
       <h2 class="hero-title">Ramkhamhaeng</h2>
     </section>
@@ -56,7 +45,6 @@
     </section>
   </main>
 
-  <!-- Footer (inline) -->
   <footer class="footer full-bleed gate-hide">&copy; 2025 20nxskypqz Exam Review</footer>
 
   <script src="script.js"></script>
