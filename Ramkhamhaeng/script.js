@@ -21,26 +21,24 @@ async function includePartialsIfAny() {
 // ---------- dark mode ----------
 function applyDarkModeClass(isDark){
   document.body.classList.toggle('dark-mode', !!isDark);
-  const icon = document.getElementById('mode-icon');
-  if (icon) icon.textContent = isDark ? 'dark_mode' : 'light_mode';
 }
+
 function initDarkMode(){
+  const toggleCheckbox = document.getElementById('mode-toggle-checkbox');
+  if (!toggleCheckbox) return;
+
+  // Set initial state from localStorage
   const saved = localStorage.getItem('ram.dark');
   const isDark = saved === '1';
   applyDarkModeClass(isDark);
+  toggleCheckbox.checked = isDark;
 
-  const toggle = document.getElementById('mode-toggle');
-  const handler = ()=>{
-    const nowDark = !document.body.classList.contains('dark-mode');
+  // Add event listener for changes
+  toggleCheckbox.addEventListener('change', () => {
+    const nowDark = toggleCheckbox.checked;
     applyDarkModeClass(nowDark);
     localStorage.setItem('ram.dark', nowDark ? '1' : '0');
-  };
-  if (toggle){
-    toggle.addEventListener('click', handler);
-    toggle.addEventListener('keydown', e=>{
-      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); handler(); }
-    });
-  }
+  });
 }
 
 // ---------- password gate (from shared/password-gate.html) ----------
