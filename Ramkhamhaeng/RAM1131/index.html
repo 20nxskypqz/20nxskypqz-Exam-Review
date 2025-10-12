@@ -1,4 +1,3 @@
-<!-- RAM1131-HTML-10102025-11 -->
 <!doctype html>
 <html lang="th">
 <head>
@@ -9,96 +8,79 @@
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <!-- reuse CSS/JS จากโฟลเดอร์แม่ -->
   <link rel="stylesheet" href="../styles.css" />
 </head>
 <body>
-  <!-- Header (inline) -->
   <header class="header full-bleed">
     <button class="menu-toggle" aria-label="Toggle navigation" type="button">
       <span class="material-symbols-outlined">menu</span>
     </button>
 
-    <div class="toggle-container" id="mode-toggle" aria-label="Toggle light/dark mode" role="button" tabindex="0">
-      <div class="toggle-circle">
-        <span class="material-symbols-outlined" id="mode-icon" aria-hidden="true">light_mode</span>
-      </div>
-    </div>
+    <div data-include="../shared/dark-mode-toggle.html"></div>
+
   </header>
 
-  <!-- Side menu -->
   <div data-include="../shared/side-menu.html"></div>
 
   <main class="content">
-    <!-- หัวเรื่องอยู่นอกกล่อง + กึ่งกลาง + ขนาด 24px (h3) -->
     <section class="hero">
       <h3 class="hero-title">RAM1131 – ทักษะการเข้าใจดิจิทัล</h3>
     </section>
 
-    <!-- เอกสาร 1 -->
     <section class="section-card">
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 1 – สิทธิและความรับผิดชอบ</h2>
       <div class="card" id="chapter-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="chapter-box">Preparing…</div>
     </section>
 
-    <!-- เอกสาร 2 -->
     <section class="section-card">
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 2 – การเข้าถึงดิจิทัล</h2>
       <div class="card" id="chapter2-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="chapter2-box">Preparing…</div>
     </section>
 
-    <!-- เอกสาร 3 -->
     <section class="section-card">
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 3 – การสื่อสารและการปฏิสัมพันธ์ในยุคดิจิทัล</h2>
       <div class="card" id="chapter3-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="chapter3-box">Preparing…</div>
     </section>
 
-    <!-- เอกสาร 4 -->
     <section class="section-card">
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 4 – ความปลอดภัยยุคดิจิทัล</h2>
       <div class="card" id="chapter4-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="chapter4-box">Preparing…</div>
     </section>
 
-    <!-- เอกสาร 5 -->
     <section class="section-card">
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 5 – การรู้เท่าทันและสารสนเทศ</h2>
       <div class="card" id="chapter5-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="chapter5-box">Preparing…</div>
     </section>
 
-    <!-- เอกสาร 6 -->
     <section class="section-card">
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 6 – พาณิชย์อิเล็กทรอนิกส์</h2>
       <div class="card" id="chapter6-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="chapter6-box">Preparing…</div>
     </section>
 
-    <!-- เอกสาร 7 -->
     <section class="section-card">
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 7 – สุขภาพดีในยุคดิจิทัล</h2>
       <div class="card" id="chapter7-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="chapter7-box">Preparing…</div>
     </section>
 
-    <!-- เอกสาร 8 -->
     <section class="section-card">
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 8 – มารยาทสังคมดิจิทัล</h2>
       <div class="card" id="chapter8-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="chapter8-box">Preparing…</div>
     </section>
 
-    <!-- เอกสาร 9 -->
     <section class="section-card">
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 9 – กฎหมายดิจิทัล</h2>
       <div class="card" id="chapter9-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="chapter9-box">Preparing…</div>
     </section>
 
-    <!-- เอกสาร 10 -->
     <section class="section-card">
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 10 – การแก้ปัญหาด้วยเครื่องมือดิจิทัล</h2>
       <div class="card" id="chapter10-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
@@ -106,16 +88,12 @@
     </section>
   </main>
 
-  <!-- Footer (inline) -->
   <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
 
-  <!-- Mammoth (DOCX → HTML) -->
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
 
-  <!-- reuse JS จากโฟลเดอร์แม่ -->
   <script src="../script.js"></script>
 
-  <!-- หน้านี้: ดึงไฟล์ DOCX และเรนเดอร์ + ตัวปรับระดับหัวข้อแบบ fallback สำหรับคู่ขนาดไทย/อังกฤษ -->
   <script>
     // --- Fallback: จัดระดับหัวข้อจากขนาดฟอนต์ตรง (รองรับคู่ขนาด 25/20, 20/16, 17.5/14) ---
     // ถ้า DOCX ใช้ Heading 1/2/3 อยู่แล้ว ตัวนี้จะไม่มีผล
@@ -198,7 +176,7 @@
       (async () => {
         try{
           const buf = await loadArrayBuffer(fileUrl);
-          const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
+          const { value: html } = await window. mammoth.convertToHtml({ arrayBuffer: buf }, options);
           boxEl.innerHTML = html;
           normalizeHeadingsByFont(boxEl);
           fixListSpacing(boxEl);
