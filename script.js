@@ -20,27 +20,26 @@ async function includePartialsIfAny() {
   }
 }
 
-// ---------- dark mode ----------
+// ---------- dark mode (EDITED) ----------
 function applyDarkModeClass(isDark){
   document.body.classList.toggle('dark-mode', !!isDark);
-  const icon = document.getElementById('mode-icon');
-  if (icon) icon.textContent = isDark ? 'dark_mode' : 'light_mode';
 }
 function initDarkMode(){
+  const toggleCheckbox = document.getElementById('mode-toggle-checkbox');
+  if (!toggleCheckbox) return;
+
+  // Set initial state from localStorage
   const saved = localStorage.getItem('er.dark');
   const isDark = saved === '1';
   applyDarkModeClass(isDark);
+  toggleCheckbox.checked = isDark;
 
-  const toggle = document.getElementById('mode-toggle');
-  if (toggle){
-    const handler = ()=>{
-      const nowDark = !document.body.classList.contains('dark-mode');
-      applyDarkModeClass(nowDark);
-      localStorage.setItem('er.dark', nowDark ? '1' : '0');
-    };
-    toggle.addEventListener('click', handler);
-    toggle.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); handler(); }});
-  }
+  // Add event listener for changes
+  toggleCheckbox.addEventListener('change', () => {
+    const nowDark = toggleCheckbox.checked;
+    applyDarkModeClass(nowDark);
+    localStorage.setItem('er.dark', nowDark ? '1' : '0');
+  });
 }
 
 // ---------- side menu ----------
