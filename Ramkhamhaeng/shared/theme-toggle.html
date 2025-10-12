@@ -1,0 +1,96 @@
+<!-- Ramkhamhaeng-ThemeToggle-HTML-10102025-01 (single shared file) -->
+<style>
+  /* ใช้ prefix .ram-toggle เพื่อไม่ชนกับสไตล์อื่น */
+  .ram-toggle{ display:flex; align-items:center; }
+
+  .ram-toggle__checkbox{ display:none; }
+
+  .ram-toggle__label{
+    position:relative; width:200px; height:90px; cursor:pointer;
+    border-radius:50px; overflow:hidden;
+    background:#4dabf7; /* day bg */
+    box-shadow:0 5px 15px rgba(0,0,0,.2), inset 0 2px 4px rgba(255,255,255,.2);
+    transition:background-color .8s cubic-bezier(.25,.46,.45,.94);
+    display:block;
+  }
+
+  /* thumb (sun/moon) */
+  .ram-toggle__thumb{
+    position:absolute; top:5px; left:5px; width:80px; height:80px;
+    background:#FFD700; border-radius:50%;
+    transition:all .8s cubic-bezier(.68,-.55,.27,1.55);
+    z-index:10;
+  }
+  .ram-toggle__thumb::before{
+    content:""; position:absolute; top:50%; left:50%; width:100%; height:100%;
+    background:radial-gradient(circle, rgba(255,255,255,.6) 0%, rgba(255,255,255,0) 60%);
+    border-radius:50%; transform:translate(-50%,-50%) scale(1); transition:all .8s ease; opacity:1;
+  }
+  /* หลุมดวงจันทร์ */
+  .ram-toggle__crater{ position:absolute; background:rgba(0,0,0,.1); border-radius:50%; opacity:0; transition:all .8s ease; }
+  .ram-toggle__crater--1{ top:15px; left:40px; width:15px; height:15px; }
+  .ram-toggle__crater--2{ top:45px; left:15px; width:25px; height:25px; }
+  .ram-toggle__crater--3{ top:25px; left:10px; width:10px; height:10px; }
+
+  /* เมฆ (กลางวัน) */
+  .ram-toggle__cloud{ position:absolute; background:#fff; border-radius:20px; opacity:.8; filter:drop-shadow(0 2px 3px rgba(0,0,0,.1)); transition:all 1s ease-out; }
+  .ram-toggle__cloud--1{ top:20px; left:-50px; width:80px; height:25px; animation:ram-drift 20s linear infinite; }
+  .ram-toggle__cloud--2{ top:45px; left:-80px; width:60px; height:20px; animation:ram-drift 25s linear infinite 5s; }
+  .ram-toggle__cloud--3{ top:30px; left:-60px; width:100px; height:30px; animation:ram-drift 18s linear infinite 2s; }
+  @keyframes ram-drift{ from{transform:translateX(0)} to{transform:translateX(280px)} }
+
+  /* ดาว (กลางคืน) */
+  .ram-toggle__star{ position:absolute; background:#fff; border-radius:50%; transform:scale(0); opacity:0; transition:all .8s cubic-bezier(.4,0,.2,1); }
+  .ram-toggle__star--1{ top:20px; left:40px; width:3px; height:3px; transition-delay:.1s; }
+  .ram-toggle__star--2{ top:45px; left:80px; width:4px; height:4px; transition-delay:.2s; animation:ram-twinkle 2s infinite; }
+  .ram-toggle__star--3{ top:60px; left:30px; width:2px; height:2px; transition-delay:.3s; }
+  .ram-toggle__star--4{ top:30px; left:120px; width:2px; height:2px; transition-delay:.4s; }
+  .ram-toggle__star--5{ top:50px; left:150px; width:3px; height:3px; transition-delay:.5s; animation:ram-twinkle 3s infinite; }
+  .ram-toggle__star--6{ top:15px; left:95px; width:2px; height:2px; transition-delay:.6s; }
+  @keyframes ram-twinkle{ 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(.5);opacity:.5} }
+
+  .ram-toggle__shoot{ position:absolute; top:-50px; left:50%; width:2px; height:80px;
+    background:linear-gradient(to bottom, rgba(255,255,255,.8), transparent);
+    border-radius:50%; opacity:0; transform:rotate(45deg);
+  }
+  @keyframes ram-shoot{
+    0%{ opacity:1; transform:translateY(0) translateX(-100px) rotate(45deg); }
+    100%{ opacity:0; transform:translateY(150px) translateX(100px) rotate(45deg); }
+  }
+
+  /* เมื่อสลับเป็นกลางคืน (checkbox:checked) -> เปลี่ยนเฉพาะหน้าตาปุ่ม */
+  .ram-toggle__checkbox:checked + .ram-toggle__label{ background:#1e3a5f; }
+  .ram-toggle__checkbox:checked + .ram-toggle__label .ram-toggle__thumb{
+    transform:translateX(105px); background:#EAEAEA; box-shadow:0 0 15px rgba(255,255,255,.5), 0 0 25px rgba(255,255,255,.3);
+  }
+  .ram-toggle__checkbox:checked + .ram-toggle__label .ram-toggle__thumb::before{ opacity:0; transform:translate(-50%,-50%) scale(0); }
+  .ram-toggle__checkbox:checked + .ram-toggle__label .ram-toggle__crater{ opacity:1; }
+
+  .ram-toggle__checkbox:checked + .ram-toggle__label .ram-toggle__cloud{ transform:translateX(250px) scale(.5); opacity:0; }
+  .ram-toggle__checkbox:checked + .ram-toggle__label .ram-toggle__star{ transform:scale(1); opacity:1; }
+  .ram-toggle__checkbox:checked + .ram-toggle__label .ram-toggle__shoot{ animation:ram-shoot 3s ease-out 1.5s; }
+</style>
+
+<div class="ram-toggle" aria-label="Toggle light/dark mode">
+  <input type="checkbox" id="ram-theme-toggle" class="ram-toggle__checkbox" />
+  <label for="ram-theme-toggle" class="ram-toggle__label">
+    <!-- stars -->
+    <span class="ram-toggle__star ram-toggle__star--1"></span>
+    <span class="ram-toggle__star ram-toggle__star--2"></span>
+    <span class="ram-toggle__star ram-toggle__star--3"></span>
+    <span class="ram-toggle__star ram-toggle__star--4"></span>
+    <span class="ram-toggle__star ram-toggle__star--5"></span>
+    <span class="ram-toggle__star ram-toggle__star--6"></span>
+    <span class="ram-toggle__shoot"></span>
+    <!-- clouds -->
+    <span class="ram-toggle__cloud ram-toggle__cloud--1"></span>
+    <span class="ram-toggle__cloud ram-toggle__cloud--2"></span>
+    <span class="ram-toggle__cloud ram-toggle__cloud--3"></span>
+    <!-- thumb -->
+    <div class="ram-toggle__thumb">
+      <div class="ram-toggle__crater ram-toggle__crater--1"></div>
+      <div class="ram-toggle__crater ram-toggle__crater--2"></div>
+      <div class="ram-toggle__crater ram-toggle__crater--3"></div>
+    </div>
+  </label>
+</div>
