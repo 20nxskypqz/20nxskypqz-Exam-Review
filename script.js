@@ -1,26 +1,39 @@
 // ExamReview-JS-08102025-12
 
-// ---------- include partials ----------
+// ---------- include partials (EDITED to handle nested includes) ----------
 async function includePartialsIfAny() {
-  const nodes = Array.from(document.querySelectorAll('[data-include]'));
-  if (nodes.length === 0) return;
-  for (const node of nodes) {
-    const url = node.getAttribute('data-include');
-    try{
-      const res = await fetch(url, { cache: 'no-store' });
-      const html = await res.text();
-      const temp = document.createElement('div');
-      temp.innerHTML = html.trim();
-      const frag = document.createDocumentFragment();
-      while (temp.firstChild) frag.appendChild(temp.firstChild);
-      node.replaceWith(frag);
-    }catch(e){
-      console.error('Include failed:', url, e);
+  let nodesToInclude = document.querySelectorAll('[data-include]');
+  // ใช้ while loop เพื่อให้ทำงานซ้ำจนกว่าจะไม่มี data-include เหลือ
+  while (nodesToInclude.length > 0) {
+    for (const node of nodesToInclude) {
+      const url = node.getAttribute('data-include');
+      try{
+        // Set 'data-include' to empty to prevent infinite loops on failure
+        node.setAttribute('data-include', ''); 
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Failed to fetch ${url}`);
+        
+        const html = await res.text();
+        const temp = document.createElement('div');
+        temp.innerHTML = html.trim();
+        
+        const frag = document.createDocumentFragment();
+        while (temp.firstChild) {
+          frag.appendChild(temp.firstChild);
+        }
+        node.replaceWith(frag);
+      } catch(e) {
+        console.error('Include failed:', url, e);
+        // If it fails, remove the node to prevent loops
+        node.remove(); 
+      }
     }
+    // ค้นหาอีกครั้ง เผื่อมี nested include ที่เพิ่งถูกเพิ่มเข้ามา
+    nodesToInclude = document.querySelectorAll('[data-include]:not([data-include=""])');
   }
 }
 
-// ---------- dark mode (EDITED) ----------
+// ---------- dark mode ----------
 function applyDarkModeClass(isDark){
   document.body.classList.toggle('dark-mode', !!isDark);
 }
