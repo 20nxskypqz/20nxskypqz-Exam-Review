@@ -64,7 +64,7 @@ function initPasswordGate(){
   });
 }
 
-// ---------- side menu (EDITED for icon swapping) ----------
+// ---------- side menu (for icon swapping) ----------
 function initSideMenu(){
   const menuToggle = document.getElementById('menuToggle');
   const slideMenu  = document.getElementById('sideMenu');
@@ -80,14 +80,14 @@ function initSideMenu(){
     slideMenu.classList.add('active');
     document.body.classList.add('menu-active');
     slideMenu.setAttribute('aria-hidden', 'false');
-    if (icon) icon.textContent = 'close'; // EDITED: Change icon to 'close'
+    if (icon) icon.textContent = 'close';
   };
 
   const closeMenu = () => {
     slideMenu.classList.remove('active');
     document.body.classList.remove('menu-active');
     slideMenu.setAttribute('aria-hidden', 'true');
-    if (icon) icon.textContent = 'menu'; // EDITED: Change icon back to 'menu'
+    if (icon) icon.textContent = 'menu';
   };
 
   menuToggle.addEventListener('click', (e) => {
