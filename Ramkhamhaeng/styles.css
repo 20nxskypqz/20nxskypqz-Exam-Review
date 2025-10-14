@@ -1,4 +1,4 @@
-/* Ramkhamhaeng-CSS-09102025-02 (path: /Ramkhamhaeng/styles.css) */
+/* Ramkhamhaeng-CSS-091025-03 (path: /Ramkhamhaeng/styles.css) */
 :root{
   --bg:#f9f9f9; --card:#fff; --ink:#111; --muted:#666;
   --shadow:0 6px 24px rgba(0,0,0,.08);
@@ -116,23 +116,27 @@ body.dark-mode a{ color:#d1defa; }
 @keyframes shoot { 0% { opacity: 1; transform: translateY(0) translateX(-40px) rotate(45deg); } 100% { opacity: 0; transform: translateY(60px) translateX(40px) rotate(45deg); } }
 
 
-/* ---------- START: NEW LIQUID GLASS MENU STYLES ---------- */
+/* ---------- START: NEW LIQUID GLASS MENU STYLES (EDITED) ---------- */
 
-/* Menu Toggle (Hamburger) Button in Header */
+/* EDITED: Menu Toggle (Hamburger) Button - Resized */
 .menu-toggle {
   background: none; border: none; padding: 0;
-  width: 40px; height: 40px;
-  cursor: pointer; z-index: 1001; /* Above everything */
+  width: 40px; height: 40px; /* Keep clickable area large */
+  cursor: pointer; z-index: 1001;
   display: flex; flex-direction: column;
-  justify-content: center; align-items: center; gap: 6px;
+  justify-content: center; align-items: center;
+  gap: 5px; /* EDITED: Reduced gap */
 }
 .menu-toggle .bar {
-  width: 28px; height: 3px; background-color: #fff; border-radius: 3px;
+  width: 24px; /* EDITED: Reduced width */
+  height: 2px; /* EDITED: Reduced height */
+  background-color: #fff; border-radius: 3px;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
-.menu-toggle.active .bar:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+/* EDITED: Adjusted transform for new size */
+.menu-toggle.active .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .menu-toggle.active .bar:nth-child(2) { opacity: 0; }
-.menu-toggle.active .bar:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+.menu-toggle.active .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 
 /* The Main Slide Menu Panel */
@@ -159,7 +163,6 @@ body.dark-mode .slide-menu {
 /* Container for nav items inside menu */
 .menu-nav-container { padding-top: 80px; }
 
-
 /* Styling for OLD menu items to fit the NEW menu */
 .menu-group { padding: 0 12px; }
 .menu-section-toggle {
@@ -170,6 +173,14 @@ body.dark-mode .slide-menu {
   padding: 15px 20px; cursor: pointer;
   transition: background 0.3s ease;
   position: relative;
+}
+.menu-sublist {
+  list-style: none; /* EDITED: Ensure no bullets on the list itself */
+  padding: 0;
+  margin: 0;
+}
+.menu-sublist li {
+  list-style-type: none !important; /* EDITED: Force remove bullets from list items */
 }
 .menu-sublist li a {
   display: block; padding: 12px 20px 12px 40px; /* Indent sub-items */
