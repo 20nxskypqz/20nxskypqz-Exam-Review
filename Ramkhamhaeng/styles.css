@@ -58,13 +58,11 @@ body.dark-mode a{ color:#d1defa; }
 
 /* ---------- START: LIQUID GLASS MENU STYLES (EDITED) ---------- */
 
-/* EDITED: Reverted to icon button style */
 .menu-toggle {
   background: none; border: none; color: #fff; cursor: pointer;
   font-size: 24px; display: flex; align-items: center; z-index: 1001;
 }
 
-/* The Main Slide Menu Panel */
 .slide-menu {
   position: fixed; top: 0; left: 0;
   width: 300px; height: 100%;
@@ -74,13 +72,11 @@ body.dark-mode a{ color:#d1defa; }
   box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   transform: translateX(-100%);
-  /* EDITED: Hide menu completely when closed to fix shadow bug */
   visibility: hidden;
   transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), visibility 0.6s;
 }
 .slide-menu.active {
   transform: translateX(0);
-  /* EDITED: Show menu when active */
   visibility: visible;
 }
 body.dark-mode .slide-menu {
