@@ -25,13 +25,146 @@
     <section class="hero">
       <h3 class="hero-title">RAM1131 – ทักษะการเข้าใจดิจิทัล</h3>
     </section>
-    
-    </main>
-  
+
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 1 – สิทธิและความรับผิดชอบ</h2>
+      <div class="card" id="chapter-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="chapter-box">Preparing…</div>
+    </section>
+
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 2 – การเข้าถึงดิจิทัล</h2>
+      <div class="card" id="chapter2-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="chapter2-box">Preparing…</div>
+    </section>
+
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 3 – การสื่อสารและการปฏิสัมพันธ์ในยุคดิจิทัล</h2>
+      <div class="card" id="chapter3-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="chapter3-box">Preparing…</div>
+    </section>
+
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 4 – ความปลอดภัยยุคดิจิทัล</h2>
+      <div class="card" id="chapter4-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="chapter4-box">Preparing…</div>
+    </section>
+
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 5 – การรู้เท่าทันและสารสนเทศ</h2>
+      <div class="card" id="chapter5-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="chapter5-box">Preparing…</div>
+    </section>
+
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 6 – พาณิชย์อิเล็กทรอนิกส์</h2>
+      <div class="card" id="chapter6-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="chapter6-box">Preparing…</div>
+    </section>
+
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 7 – สุขภาพดีในยุคดิจิทัล</h2>
+      <div class="card" id="chapter7-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="chapter7-box">Preparing…</div>
+    </section>
+
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 8 – มารยาทสังคมดิจิทัล</h2>
+      <div class="card" id="chapter8-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="chapter8-box">Preparing…</div>
+    </section>
+
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 9 – กฎหมายดิจิทัล</h2>
+      <div class="card" id="chapter9-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="chapter9-box">Preparing…</div>
+    </section>
+
+    <section class="section-card">
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 10 – การแก้ปัญหาด้วยเครื่องมือดิจิทัล</h2>
+      <div class="card" id="chapter10-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="chapter10-box">Preparing…</div>
+    </section>
+  </main>
+
   <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
 
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
   <script src="../script.js"></script>
-  
-  </body>
+  <script>
+    function normalizeHeadingsByFont(container){
+      const paras = Array.from(container.querySelectorAll('p'));
+      let seenH1 = false;
+      const pxToPt = px => Math.round((px / 96) * 72 * 10) / 10;
+      const getMaxPtIn = (el) => {
+        let maxPt = 0;
+        const walk = (node)=>{
+          if(node.nodeType === 1){
+            const style = node.getAttribute('style') || '';
+            const m1 = style.match(/font-size:\s*([\d.]+)pt/i);
+            const m2 = style.match(/font-size:\s*([\d.]+)px/i);
+            if(m1){ maxPt = Math.max(maxPt, parseFloat(m1[1])); }
+            if(m2){ maxPt = Math.max(maxPt, pxToPt(parseFloat(m2[1]))); }
+            Array.from(node.childNodes).forEach(walk);
+          }
+        };
+        walk(el);
+        return maxPt;
+      };
+      paras.forEach(p=>{
+        if (p.tagName !== 'P') return;
+        const maxPt = getMaxPtIn(p);
+        let level = 0;
+        if (maxPt >= 24.5) { level = 1; }
+        else if (Math.abs(maxPt - 20) < 0.6) { level = seenH1 ? 2 : 1; }
+        else if (Math.abs(maxPt - 16) < 0.6) { level = 2; }
+        else if (Math.abs(maxPt - 17.5) < 0.6 || Math.abs(maxPt - 14) < 0.6) { level = 3; }
+        if (level === 1){ const h = document.createElement('h1'); h.innerHTML = p.innerHTML; p.replaceWith(h); seenH1 = true; }
+        else if (level === 2){ const h = document.createElement('h2'); h.innerHTML = p.innerHTML; p.replaceWith(h); }
+        else if (level === 3){ const h = document.createElement('h3'); h.innerHTML = p.innerHTML; p.replaceWith(h); }
+      });
+    }
+    function fixListSpacing(container){
+      container.querySelectorAll('li').forEach(li=>{
+        li.innerHTML = li.innerHTML.replace(/^(\d+)\.\s?/, (_,m)=> m + '. ').replace(/^•\s?/, '• ');
+      });
+    }
+    async function loadArrayBuffer(url){
+      const res = await fetch(encodeURI(url), { cache: 'no-store' });
+      if(!res.ok) throw new Error('โหลดไฟล์ไม่ได้: ' + url + ' [' + res.status + ']');
+      return await res.arrayBuffer();
+    }
+    const options = {
+      styleMap: [ "p[style-name='Title'] => h1:fresh", "p[style-name='Subtitle'] => h2:fresh", "p[style-name='Heading 1'] => h1:fresh", "p[style-name='Heading 2'] => h2:fresh", "p[style-name='Heading 3'] => h3:fresh", "b => strong", "i => em" ]
+    };
+    function makeDocLoader(fileUrl, statusId, boxId){
+      const statusEl = document.getElementById(statusId);
+      const boxEl    = document.getElementById(boxId);
+      (async () => {
+        try{
+          const buf = await loadArrayBuffer(fileUrl);
+          const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
+          boxEl.innerHTML = html;
+          normalizeHeadingsByFont(boxEl);
+          fixListSpacing(boxEl);
+          statusEl.textContent = 'Done.';
+        }catch(e){
+          console.error(e);
+          statusEl.textContent = 'Error loading document.';
+          boxEl.innerHTML = '<div style="color:#c00;font-weight:700">เกิดข้อผิดพลาดในการโหลดเอกสาร</div>';
+        }
+      })();
+    }
+    makeDocLoader("files/บทที่ 1 – สิทธิและความรับผิดชอบ.docx","chapter-status","chapter-box");
+    makeDocLoader("files/บทที่ 2 – การเข้าถึงดิจิทัล.docx","chapter2-status","chapter2-box");
+    makeDocLoader("files/บทที่ 3 – การสื่อสารและการปฏิสัมพันธ์ในยุคดิจิทัล.docx","chapter3-status","chapter3-box");
+    makeDocLoader("files/บทที่ 4 – ความปลอดภัยยุคดิจิทัล.docx","chapter4-status","chapter4-box");
+    makeDocLoader("files/บทที่ 5 – การรู้เท่าทันและสารสนเทศ.docx","chapter5-status","chapter5-box");
+    makeDocLoader("files/บทที่ 6 – พาณิชย์อิเล็กทรอนิกส์.docx","chapter6-status","chapter6-box");
+    makeDocLoader("files/บทที่ 7 – สุขภาพดีในยุคดิจิทัล.docx","chapter7-status","chapter7-box");
+    makeDocLoader("files/บทที่ 8 – มารยาทสังคมดิจิทัล.docx","chapter8-status","chapter8-box");
+    makeDocLoader("files/บทที่ 9 – กฎหมายดิจิทัล.docx","chapter9-status","chapter9-box");
+    makeDocLoader("files/บทที่ 10 – การแก้ปัญหาด้วยเครื่องมือดิจิทัล.docx","chapter10-status","chapter10-box");
+  </script>
+</body>
 </html>
