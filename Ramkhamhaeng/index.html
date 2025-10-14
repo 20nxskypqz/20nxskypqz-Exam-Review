@@ -15,7 +15,6 @@
     html.pw-lock body{ overflow:hidden; }
   </style>
   <script>
-    // ใส่ class ตั้งแต่ต้นเพื่อตัดโอกาสเห็นหน้าเนื้อหาแวบๆ
     document.documentElement.classList.add('pw-lock');
   </script>
 </head>
@@ -23,14 +22,11 @@
   <div data-include="shared/password-gate.html"></div>
 
   <header class="header full-bleed gate-hide">
-    <div class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" role="button" tabindex="0">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-    </div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" type="button">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
 
     <div data-include="shared/dark-mode-toggle.html"></div>
-
   </header>
 
   <div class="gate-hide" data-include="shared/side-menu.html"></div>
