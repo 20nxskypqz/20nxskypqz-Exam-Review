@@ -10,13 +10,30 @@
 }
 
 *{ box-sizing:border-box; }
-html,body{ height:100%; overflow-x:hidden; } /* ป้องกันล้นขวา */
+html,body{ height:100%; overflow-x:hidden; }
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:'Niramit', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   line-height:1.8; display:flex; flex-direction:column;
   min-height:100vh; min-height:100svh;
 }
+
+/* Blur main content when menu is active */
+body.menu-active .content,
+body.menu-active .footer {
+  filter: blur(5px);
+  transition: filter 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+/* Dark overlay for when menu is active */
+body.menu-active::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 999;
+}
+
 
 /* include placeholders */
 [data-include]{ display:contents; }
@@ -30,13 +47,13 @@ p,li{ font-size:16px; }
 .align-left{ text-align:left !important; }
 
 /* Content container */
-.content{ width:100%; max-width:var(--page-max); margin:16px auto; padding:0 20px; }
+.content{ width:100%; max-width:var(--page-max); margin:16px auto; padding:0 20px; transition: filter 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
 
 /* Cards */
 .card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:12px 0; }
 .section-card{ background:var(--card); border-radius:12px; box-shadow:var(--shadow); padding:16px; margin:16px 0; }
 
-/* Full-bleed header/footer bars (แก้ไม่ให้ใช้ 100vw เพื่อไม่ให้ล้นขวา) */
+/* Full-bleed header/footer bars */
 .full-bleed{
   position:relative;
   left:auto; right:auto;
@@ -44,8 +61,8 @@ p,li{ font-size:16px; }
   width:100%;
 }
 .header,.footer{ color:#fff; padding:10px 16px; box-shadow:var(--shadow); border-radius:0; }
-.header{ background:var(--grad-light); display:flex; justify-content:space-between; align-items:center; }
-.footer{ background:var(--grad-light); margin-top:auto; text-align:center; }
+.header{ background:var(--grad-light); display:flex; justify-content:space-between; align-items:center; z-index: 900; } /* Ensure header is above content */
+.footer{ background:var(--grad-light); margin-top:auto; text-align:center; transition: filter 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
 
 /* Dark mode */
 body.dark-mode{ background:#0f1418; color:#e5e7eb; }
@@ -54,7 +71,7 @@ body.dark-mode .section-card{ background:#172026; color:#e5e7eb; }
 body.dark-mode .header, body.dark-mode .footer{ background:var(--grad-dark); }
 body.dark-mode a{ color:#d1defa; }
 
-/* Material Symbols (prevent system font override) */
+/* Material Symbols */
 .material-symbols-outlined{
   font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 40;
   font-family:'Material Symbols Outlined' !important;
@@ -64,210 +81,127 @@ body.dark-mode a{ color:#d1defa; }
 }
 
 
-/* ---------- START: NEW DAY/NIGHT TOGGLE ---------- */
-/* NOTE: Styles have been scaled down to fit the header. */
-
-.toggle-wrapper {
-  display: flex;
-  align-items: center;
-}
-
-.toggle-checkbox {
-  display: none;
-}
-
+/* ---------- Day/Night Toggle Styles (Unchanged) ---------- */
+.toggle-wrapper { display: flex; align-items: center; }
+.toggle-checkbox { display: none; }
 .toggle-label {
-  --toggle-day-bg: #4dabf7;
-  --toggle-night-bg: #1e3a5f;
-  --thumb-day-color: #FFD700;
-  --thumb-night-color: #EAEAEA;
-  
-  display: block;
-  position: relative;
-  width: 80px; /* Scaled from 200px */
-  height: 36px; /* Scaled from 90px */
-  background-color: var(--toggle-day-bg);
-  border-radius: 20px; /* Scaled from 50px */
-  cursor: pointer;
-  transition: background-color 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+  --toggle-day-bg: #4dabf7; --toggle-night-bg: #1e3a5f; --thumb-day-color: #FFD700; --thumb-night-color: #EAEAEA;
+  display: block; position: relative; width: 80px; height: 36px; background-color: var(--toggle-day-bg); border-radius: 20px; cursor: pointer;
+  transition: background-color 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); overflow: hidden; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2);
 }
-
 .toggle-thumb {
-  position: absolute;
-  top: 2px; /* Scaled from 5px */
-  left: 2px; /* Scaled from 5px */
-  width: 32px; /* Scaled from 80px */
-  height: 32px; /* Scaled from 80px */
-  background-color: var(--thumb-day-color);
-  border-radius: 50%;
-  transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-  z-index: 10;
+  position: absolute; top: 2px; left: 2px; width: 32px; height: 32px; background-color: var(--thumb-day-color); border-radius: 50%;
+  transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); z-index: 10;
 }
-
 .toggle-thumb::before {
+  content: ''; position: absolute; top: 50%; left: 50%; width: 100%; height: 100%; background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 60%);
+  border-radius: 50%; transform: translate(-50%, -50%) scale(1); transition: all 0.8s ease; opacity: 1;
+}
+.moon-crater { position: absolute; background-color: rgba(0,0,0,0.1); border-radius: 50%; transition: all 0.8s ease; opacity: 0; }
+.moon-crater-1 { top: 6px; left: 16px; width: 6px; height: 6px; } .moon-crater-2 { top: 18px; left: 6px; width: 10px; height: 10px; } .moon-crater-3 { top: 10px; left: 4px; width: 4px; height: 4px; }
+.cloud { position: absolute; background-color: white; border-radius: 10px; transition: all 1s ease-out; opacity: 0.8; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1)); }
+.cloud-1 { top: 8px; left: -20px; width: 32px; height: 10px; animation: drift 20s linear infinite; } .cloud-2 { top: 18px; left: -32px; width: 24px; height: 8px; animation: drift 25s linear infinite 5s; } .cloud-3 { top: 12px; left: -24px; width: 40px; height: 12px; animation: drift 18s linear infinite 2s; }
+@keyframes drift { from { transform: translateX(0); } to { transform: translateX(112px); } }
+.star { position: absolute; background-color: white; border-radius: 50%; transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform: scale(0); opacity: 0; }
+.star-1 { top: 8px; left: 16px; width: 1px; height: 1px; transition-delay: 0.1s; } .star-2 { top: 18px; left: 32px; width: 2px; height: 2px; transition-delay: 0.2s; animation: twinkle 2s infinite; } .star-3 { top: 24px; left: 12px; width: 1px; height: 1px; transition-delay: 0.3s; } .star-4 { top: 12px; left: 48px; width: 1px; height: 1px; transition-delay: 0.4s; } .star-5 { top: 20px; left: 60px; width: 1px; height: 1px; transition-delay: 0.5s; animation: twinkle 3s infinite; } .star-6 { top: 6px; left: 38px; width: 1px; height: 1px; transition-delay: 0.6s; }
+@keyframes twinkle { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.5); opacity: 0.5; } }
+.shooting-star { position: absolute; top: -20px; left: 50%; width: 1px; height: 32px; background: linear-gradient(to bottom, rgba(255,255,255,0.8), transparent); border-radius: 50%; opacity: 0; transform: rotate(45deg); }
+.toggle-checkbox:checked + .toggle-label { background-color: var(--toggle-night-bg); }
+.toggle-checkbox:checked + .toggle-label .toggle-thumb { transform: translateX(44px); background-color: var(--thumb-night-color); box-shadow: 0 0 6px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.3); }
+.toggle-checkbox:checked + .toggle-label .toggle-thumb::before { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+.toggle-checkbox:checked + .toggle-label .moon-crater { opacity: 1; }
+.toggle-checkbox:checked + .toggle-label .cloud { transform: translateX(100px) scale(0.5); opacity: 0; }
+.toggle-checkbox:checked + .toggle-label .star { transform: scale(1); opacity: 1; }
+.toggle-checkbox:checked + .toggle-label .shooting-star { animation: shoot 3s ease-out 1.5s; }
+@keyframes shoot { 0% { opacity: 1; transform: translateY(0) translateX(-40px) rotate(45deg); } 100% { opacity: 0; transform: translateY(60px) translateX(40px) rotate(45deg); } }
+
+
+/* ---------- START: NEW LIQUID GLASS MENU STYLES ---------- */
+
+/* Menu Toggle (Hamburger) Button in Header */
+.menu-toggle {
+  background: none; border: none; padding: 0;
+  width: 40px; height: 40px;
+  cursor: pointer; z-index: 1001; /* Above everything */
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center; gap: 6px;
+}
+.menu-toggle .bar {
+  width: 28px; height: 3px; background-color: #fff; border-radius: 3px;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.menu-toggle.active .bar:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+.menu-toggle.active .bar:nth-child(2) { opacity: 0; }
+.menu-toggle.active .bar:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+
+/* The Main Slide Menu Panel */
+.slide-menu {
+  position: fixed; top: 0; left: 0;
+  width: 300px; height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transform: translateX(-100%);
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.slide-menu.active { transform: translateX(0); }
+
+/* Dark mode adjustments for glass menu */
+body.dark-mode .slide-menu {
+  background: rgba(15, 20, 24, 0.1); /* Darker glass */
+  border-right-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Container for nav items inside menu */
+.menu-nav-container { padding-top: 80px; }
+
+
+/* Styling for OLD menu items to fit the NEW menu */
+.menu-group { padding: 0 12px; }
+.menu-section-toggle {
+  width: 100%; background: transparent; border: none; color: #fff;
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: 'Niramit', sans-serif;
+  font-weight: 700; font-size: 1.1rem;
+  padding: 15px 20px; cursor: pointer;
+  transition: background 0.3s ease;
+  position: relative;
+}
+.menu-sublist li a {
+  display: block; padding: 12px 20px 12px 40px; /* Indent sub-items */
+  color: #fff; text-decoration: none;
+  font-size: 1rem; font-weight: 400;
+  transition: background 0.3s ease;
+  position: relative;
+  white-space: normal; word-break: break-word;
+}
+
+/* Common Hover effect for all menu buttons/links */
+.menu-section-toggle::before,
+.menu-sublist li a::before {
   content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 60%);
-  border-radius: 50%;
-  transform: translate(-50%, -50%) scale(1);
-  transition: all 0.8s ease;
-  opacity: 1;
+  position: absolute; left: 0; top: 0;
+  width: 0; height: 100%;
+  background: rgba(255, 255, 255, 0.15);
+  transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
-
-.moon-crater {
-  position: absolute;
-  background-color: rgba(0,0,0,0.1);
-  border-radius: 50%;
-  transition: all 0.8s ease;
-  opacity: 0;
-}
-.moon-crater-1 { top: 6px; left: 16px; width: 6px; height: 6px; } /* Scaled */
-.moon-crater-2 { top: 18px; left: 6px; width: 10px; height: 10px; } /* Scaled */
-.moon-crater-3 { top: 10px; left: 4px; width: 4px; height: 4px; } /* Scaled */
-
-.cloud {
-  position: absolute;
-  background-color: white;
-  border-radius: 10px; /* Scaled */
-  transition: all 1s ease-out;
-  opacity: 0.8;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
-}
-.cloud-1 { top: 8px; left: -20px; width: 32px; height: 10px; animation: drift 20s linear infinite; } /* Scaled */
-.cloud-2 { top: 18px; left: -32px; width: 24px; height: 8px; animation: drift 25s linear infinite 5s; } /* Scaled */
-.cloud-3 { top: 12px; left: -24px; width: 40px; height: 12px; animation: drift 18s linear infinite 2s; } /* Scaled */
-
-@keyframes drift {
-  from { transform: translateX(0); }
-  to { transform: translateX(112px); } /* Scaled from 280px */
-}
-
-.star {
-  position: absolute;
-  background-color: white;
-  border-radius: 50%;
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: scale(0);
-  opacity: 0;
-}
-.star-1 { top: 8px; left: 16px; width: 1px; height: 1px; transition-delay: 0.1s; } /* Scaled */
-.star-2 { top: 18px; left: 32px; width: 2px; height: 2px; transition-delay: 0.2s; animation: twinkle 2s infinite; } /* Scaled */
-.star-3 { top: 24px; left: 12px; width: 1px; height: 1px; transition-delay: 0.3s; } /* Scaled */
-.star-4 { top: 12px; left: 48px; width: 1px; height: 1px; transition-delay: 0.4s; } /* Scaled */
-.star-5 { top: 20px; left: 60px; width: 1px; height: 1px; transition-delay: 0.5s; animation: twinkle 3s infinite; } /* Scaled */
-.star-6 { top: 6px; left: 38px; width: 1px; height: 1px; transition-delay: 0.6s; } /* Scaled */
-
-@keyframes twinkle {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(0.5); opacity: 0.5; }
-}
-
-.shooting-star {
-  position: absolute;
-  top: -20px; /* Scaled */
-  left: 50%;
-  width: 1px; /* Scaled */
-  height: 32px; /* Scaled */
-  background: linear-gradient(to bottom, rgba(255,255,255,0.8), transparent);
-  border-radius: 50%;
-  opacity: 0;
-  transform: rotate(45deg);
-}
-
-.toggle-checkbox:checked + .toggle-label {
-  background-color: var(--toggle-night-bg);
-}
-
-.toggle-checkbox:checked + .toggle-label .toggle-thumb {
-  transform: translateX(44px); /* Scaled from ~105px */
-  background-color: var(--thumb-night-color);
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.3);
-}
-
-.toggle-checkbox:checked + .toggle-label .toggle-thumb::before {
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0);
-}
-.toggle-checkbox:checked + .toggle-label .moon-crater {
-  opacity: 1;
-}
-
-.toggle-checkbox:checked + .toggle-label .cloud {
-  transform: translateX(100px) scale(0.5); /* Scaled */
-  opacity: 0;
-}
-
-.toggle-checkbox:checked + .toggle-label .star {
-  transform: scale(1);
-  opacity: 1;
-}
-
-.toggle-checkbox:checked + .toggle-label .shooting-star {
-  animation: shoot 3s ease-out 1.5s;
-}
-
-@keyframes shoot {
-  0% {
-    opacity: 1;
-    transform: translateY(0) translateX(-40px) rotate(45deg); /* Scaled */
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(60px) translateX(40px) rotate(45deg); /* Scaled */
-  }
-}
-/* ---------- END: NEW DAY/NIGHT TOGGLE ---------- */
+.menu-section-toggle:hover::before,
+.menu-sublist li a:hover::before { width: 100%; }
+.menu-section-toggle .material-symbols-outlined{ transition:transform .2s ease; }
 
 
-/* Menu buttons */
-.menu-toggle,.close-menu{
-  background:none; border:none; color:#fff; cursor:pointer; font-size:24px; display:flex; align-items:center;
-}
+/* ---------- END: NEW LIQUID GLASS MENU STYLES ---------- */
 
-/* Side menu (fixed width, not fullscreen) */
-.side-menu{
-  position:fixed; top:20px; left:20px; bottom:20px;
-  width:300px;
-  background:#222; color:#fff; border-radius:12px; padding:60px 0 12px;
-  box-shadow:var(--shadow); transform:translateX(-120%); transition:transform .25s ease; z-index:1000;
-}
-.side-menu.open{ transform:translateX(0); }
-.close-menu{ position:absolute; top:12px; right:12px; color:#fff; }
-.menu-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; z-index:900; }
-.menu-overlay.visible{ display:block; }
 
-.menu-group{ padding:0 8px 12px; }
-.menu-section-toggle{
-  width:100%; background:transparent; border:none; color:#fff;
-  display:flex; align-items:center; justify-content:space-between;
-  font-weight:800; font-size:16px; padding:10px 14px; cursor:pointer; border-radius:8px;
-}
-.menu-section-toggle:hover{ background:rgba(255,255,255,.08); }
-.menu-section-toggle .material-symbols-outlined{ font-size:24px; transform:rotate(0deg); transition:transform .2s ease; }
-
-.menu-sublist{ list-style:none; margin:6px 0 8px; padding:0; }
-.menu-sublist li a{
-  display:flex; gap:8px; align-items:center; padding:8px 18px;
-  color:#fff; text-decoration:none; border-radius:8px;
-  white-space:normal; word-break:break-word;
-}
-.menu-sublist li a:hover{ background:rgba(255,255,255,.08); }
-
-/* Root list cards on Ramkhamhaeng page */
+/* Other styles (Unchanged) */
 .page-list-heading{ margin:.2em 0 10px; }
 .link-card{ display:block; text-decoration:none; background:var(--card); }
-.card-title{
-  font-size:24px; font-weight:700; color:#111; text-align:left;
-}
+.card-title{ font-size:24px; font-weight:700; color:#111; text-align:left; }
 body.dark-mode .card-title{ color:#e5e7eb; }
-
-/* DOCX content (Mammoth output) — enforce the required scale and styles */
 .card h1, .card h2, .card h3{ text-align:left; font-weight:700; }
 .card h1{ font-size:28px; margin:18px 0 8px; }
 .card h2{ font-size:24px; margin:16px 0 6px; }
@@ -278,7 +212,6 @@ body.dark-mode .card-title{ color:#e5e7eb; }
 .card ul, .card ol{ padding-left:1.4em; margin:8px 0; }
 .card li{ margin:4px 0; }
 
-/* Responsive: keep side-menu compact on small screens */
 @media (max-width: 480px){
-  .side-menu{ left:12px; width:280px; }
+  .slide-menu{ width:280px; }
 }
