@@ -1,4 +1,4 @@
-// Ramkhamhaeng-JS-081025-07
+// Ramkhamhaeng-JS-081025-08
 
 // ---------- include partials ----------
 async function includePartialsIfAny() {
@@ -17,9 +17,7 @@ async function includePartialsIfAny() {
 }
 
 // ---------- dark mode ----------
-function applyDarkModeClass(isDark){
-  document.body.classList.toggle('dark-mode', !!isDark);
-}
+function applyDarkModeClass(isDark){ document.body.classList.toggle('dark-mode', !!isDark); }
 function initDarkMode(){
   const toggleCheckbox = document.getElementById('mode-toggle-checkbox');
   if (!toggleCheckbox) return;
@@ -45,60 +43,50 @@ function initPasswordGate(){
     return;
   }
   const CORRECT_PASSWORD = '140425';
-  const unlock = ()=>{
-    overlay.style.display = 'none';
-    document.documentElement.classList.remove('pw-lock');
-  };
-  const fail = ()=>{
-    err.textContent = 'รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง';
-    input.classList.add('border-red-500');
-    input.value = '';
-    input.focus();
-  };
+  const unlock = ()=>{ overlay.style.display = 'none'; document.documentElement.classList.remove('pw-lock'); };
+  const fail = ()=>{ err.textContent = 'รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง'; input.classList.add('border-red-500'); input.value = ''; input.focus(); };
   const check = ()=> (input.value === CORRECT_PASSWORD) ? unlock() : fail();
   btn.addEventListener('click', check);
-  input.addEventListener('keydown', e=>{
-    if(e.key === 'Enter') check();
-    err.textContent = '';
-    input.classList.remove('border-red-500');
-  });
+  input.addEventListener('keydown', e=>{ if(e.key === 'Enter') check(); err.textContent = ''; input.classList.remove('border-red-500'); });
 }
 
-// ---------- side menu (for icon swapping) ----------
+// ---------- side menu (EDITED for separate close button) ----------
 function initSideMenu(){
   const menuToggle = document.getElementById('menuToggle');
   const slideMenu  = document.getElementById('sideMenu');
+  // EDITED: Get the new close button
+  const closeBtn   = document.getElementById('closeMenuBtn');
 
-  if (!menuToggle || !slideMenu) {
+  if (!menuToggle || !slideMenu || !closeBtn) {
     console.warn('Side menu elements not found.');
     return;
   }
-
-  const icon = menuToggle.querySelector('.material-symbols-outlined');
 
   const openMenu = () => {
     slideMenu.classList.add('active');
     document.body.classList.add('menu-active');
     slideMenu.setAttribute('aria-hidden', 'false');
-    if (icon) icon.textContent = 'close';
   };
 
   const closeMenu = () => {
     slideMenu.classList.remove('active');
     document.body.classList.remove('menu-active');
     slideMenu.setAttribute('aria-hidden', 'true');
-    if (icon) icon.textContent = 'menu';
   };
 
+  // EDITED: Hamburger ONLY opens the menu
   menuToggle.addEventListener('click', (e) => {
     e.stopPropagation();
-    if (slideMenu.classList.contains('active')) {
-      closeMenu();
-    } else {
-      openMenu();
-    }
+    openMenu();
   });
 
+  // EDITED: New close button ONLY closes the menu
+  closeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeMenu();
+  });
+
+  // Dropdown logic (unchanged)
   slideMenu.addEventListener('click', (e) => {
     const btn = e.target.closest('.menu-section-toggle');
     if (btn) {
@@ -114,14 +102,16 @@ function initSideMenu(){
     }
   });
 
+  // Close when clicking outside (unchanged)
   document.addEventListener('click', (e) => {
     if (slideMenu.classList.contains('active')) {
-      if (!e.target.closest('#menuToggle') && !e.target.closest('#sideMenu')) {
+      if (!e.target.closest('#sideMenu')) {
         closeMenu();
       }
     }
   });
   
+  // Close with Escape key (unchanged)
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && slideMenu.classList.contains('active')) {
       closeMenu();
