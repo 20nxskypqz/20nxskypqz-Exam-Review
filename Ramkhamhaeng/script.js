@@ -1,4 +1,4 @@
-// Ramkhamhaeng-JS-08102025-06
+// Ramkhamhaeng-JS-081025-07
 
 // ---------- include partials ----------
 async function includePartialsIfAny() {
@@ -12,9 +12,7 @@ async function includePartialsIfAny() {
       const frag = document.createDocumentFragment();
       while (temp.firstChild) frag.appendChild(temp.firstChild);
       node.replaceWith(frag);
-    } catch (e) {
-      console.error('Include failed:', url, e);
-    }
+    } catch (e) { console.error('Include failed:', url, e); }
   }
 }
 
@@ -22,16 +20,13 @@ async function includePartialsIfAny() {
 function applyDarkModeClass(isDark){
   document.body.classList.toggle('dark-mode', !!isDark);
 }
-
 function initDarkMode(){
   const toggleCheckbox = document.getElementById('mode-toggle-checkbox');
   if (!toggleCheckbox) return;
-
   const saved = localStorage.getItem('ram.dark');
   const isDark = saved === '1';
   applyDarkModeClass(isDark);
   toggleCheckbox.checked = isDark;
-
   toggleCheckbox.addEventListener('change', () => {
     const nowDark = toggleCheckbox.checked;
     applyDarkModeClass(nowDark);
@@ -39,18 +34,17 @@ function initDarkMode(){
   });
 }
 
-// ---------- password gate (from shared/password-gate.html) ----------
+// ---------- password gate ----------
 function initPasswordGate(){
   const overlay = document.getElementById('password-overlay');
-  const input   = document.getElementById('password-input');
-  const btn     = document.getElementById('submit-button');
-  const err     = document.getElementById('error-message');
+  const input = document.getElementById('password-input');
+  const btn = document.getElementById('submit-button');
+  const err = document.getElementById('error-message');
   if(!overlay || !input || !btn) {
     document.documentElement.classList.remove('pw-lock');
     return;
   }
   const CORRECT_PASSWORD = '140425';
-
   const unlock = ()=>{
     overlay.style.display = 'none';
     document.documentElement.classList.remove('pw-lock');
@@ -62,7 +56,6 @@ function initPasswordGate(){
     input.focus();
   };
   const check = ()=> (input.value === CORRECT_PASSWORD) ? unlock() : fail();
-
   btn.addEventListener('click', check);
   input.addEventListener('keydown', e=>{
     if(e.key === 'Enter') check();
@@ -71,7 +64,7 @@ function initPasswordGate(){
   });
 }
 
-// ---------- side menu (EDITED for Liquid Glass Menu) ----------
+// ---------- side menu (EDITED for icon swapping) ----------
 function initSideMenu(){
   const menuToggle = document.getElementById('menuToggle');
   const slideMenu  = document.getElementById('sideMenu');
@@ -81,56 +74,48 @@ function initSideMenu(){
     return;
   }
 
+  const icon = menuToggle.querySelector('.material-symbols-outlined');
+
   const openMenu = () => {
-    menuToggle.classList.add('active');
     slideMenu.classList.add('active');
     document.body.classList.add('menu-active');
     slideMenu.setAttribute('aria-hidden', 'false');
+    if (icon) icon.textContent = 'close'; // EDITED: Change icon to 'close'
   };
 
   const closeMenu = () => {
-    menuToggle.classList.remove('active');
     slideMenu.classList.remove('active');
     document.body.classList.remove('menu-active');
     slideMenu.setAttribute('aria-hidden', 'true');
+    if (icon) icon.textContent = 'menu'; // EDITED: Change icon back to 'menu'
   };
 
-  // --- Event Listeners ---
-
-  // Main toggle button
   menuToggle.addEventListener('click', (e) => {
     e.stopPropagation();
-    const isActive = slideMenu.classList.contains('active');
-    if (isActive) {
+    if (slideMenu.classList.contains('active')) {
       closeMenu();
     } else {
       openMenu();
     }
   });
 
-  // Dropdowns inside the menu (using event delegation)
   slideMenu.addEventListener('click', (e) => {
     const btn = e.target.closest('.menu-section-toggle');
     if (btn) {
-      e.stopPropagation(); // Prevent closing menu when clicking dropdown
+      e.stopPropagation();
       const key = btn.getAttribute('data-menu-tier');
       if (!key) return;
-      
       const tier = document.getElementById('menu-' + key);
       if (!tier) return;
-
       const willShow = tier.hasAttribute('hidden');
       if (willShow) tier.removeAttribute('hidden'); else tier.setAttribute('hidden', '');
-
       const caret = btn.querySelector('.material-symbols-outlined');
       if (caret) caret.style.transform = willShow ? 'rotate(180deg)' : 'rotate(0deg)';
     }
   });
 
-  // Close menu by clicking outside or pressing Escape
   document.addEventListener('click', (e) => {
     if (slideMenu.classList.contains('active')) {
-      // If the click is not on the menu toggle and not inside the slide menu
       if (!e.target.closest('#menuToggle') && !e.target.closest('#sideMenu')) {
         closeMenu();
       }
@@ -146,8 +131,8 @@ function initSideMenu(){
 
 // ---------- init ----------
 document.addEventListener('DOMContentLoaded', async ()=>{
-  await includePartialsIfAny();   // ดึง side-menu มาก่อน
-  initPasswordGate();             // gate ก่อนใช้งาน
+  await includePartialsIfAny();
+  initPasswordGate();
   initDarkMode();
-  initSideMenu();                 // เมนูพร้อมและใช้ delegation แล้ว
+  initSideMenu();
 });
