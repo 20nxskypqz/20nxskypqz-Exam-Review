@@ -27,13 +27,11 @@ function initDarkMode(){
   const toggleCheckbox = document.getElementById('mode-toggle-checkbox');
   if (!toggleCheckbox) return;
 
-  // Set initial state from localStorage
   const saved = localStorage.getItem('ram.dark');
   const isDark = saved === '1';
   applyDarkModeClass(isDark);
   toggleCheckbox.checked = isDark;
 
-  // Add event listener for changes
   toggleCheckbox.addEventListener('change', () => {
     const nowDark = toggleCheckbox.checked;
     applyDarkModeClass(nowDark);
@@ -48,7 +46,6 @@ function initPasswordGate(){
   const btn     = document.getElementById('submit-button');
   const err     = document.getElementById('error-message');
   if(!overlay || !input || !btn) {
-    // ไม่มีเกต -> ปลดล็อกทันที
     document.documentElement.classList.remove('pw-lock');
     return;
   }
@@ -74,47 +71,75 @@ function initPasswordGate(){
   });
 }
 
-// ---------- side menu (with event delegation) ----------
+// ---------- side menu (EDITED for Liquid Glass Menu) ----------
 function initSideMenu(){
-  const sideMenu = document.getElementById('sideMenu');
-  const overlay  = document.getElementById('menuOverlay');
+  const menuToggle = document.getElementById('menuToggle');
+  const slideMenu  = document.getElementById('sideMenu');
 
-  const openMenu = ()=>{
-    if (!sideMenu || !overlay) return;
-    sideMenu.classList.add('open');
-    overlay.classList.add('visible');
-    sideMenu.setAttribute('aria-hidden','false');
-  };
-  const closeMenu = ()=>{
-    if (!sideMenu || !overlay) return;
-    sideMenu.classList.remove('open');
-    overlay.classList.remove('visible');
-    sideMenu.setAttribute('aria-hidden','true');
+  if (!menuToggle || !slideMenu) {
+    console.warn('Side menu elements not found.');
+    return;
+  }
+
+  const openMenu = () => {
+    menuToggle.classList.add('active');
+    slideMenu.classList.add('active');
+    document.body.classList.add('menu-active');
+    slideMenu.setAttribute('aria-hidden', 'false');
   };
 
-  // ใช้ event delegation เพื่อให้ทำงานเสมอ
-  document.addEventListener('click', (e)=>{
-    // เปิดเมนู
-    if (e.target.closest('.menu-toggle')) {
-      openMenu(); return;
+  const closeMenu = () => {
+    menuToggle.classList.remove('active');
+    slideMenu.classList.remove('active');
+    document.body.classList.remove('menu-active');
+    slideMenu.setAttribute('aria-hidden', 'true');
+  };
+
+  // --- Event Listeners ---
+
+  // Main toggle button
+  menuToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isActive = slideMenu.classList.contains('active');
+    if (isActive) {
+      closeMenu();
+    } else {
+      openMenu();
     }
-    // ปิดเมนู
-    if (e.target.closest('#closeMenuBtn') || e.target.closest('#menuOverlay')) {
-      closeMenu(); return;
-    }
-    // สลับ dropdown ภายในเมนู
+  });
+
+  // Dropdowns inside the menu (using event delegation)
+  slideMenu.addEventListener('click', (e) => {
     const btn = e.target.closest('.menu-section-toggle');
-    if (btn && btn.closest('#sideMenu')) {
+    if (btn) {
+      e.stopPropagation(); // Prevent closing menu when clicking dropdown
       const key = btn.getAttribute('data-menu-tier');
       if (!key) return;
+      
       const tier = document.getElementById('menu-' + key);
       if (!tier) return;
-      const willShow = tier.hasAttribute('hidden');
-      if (willShow) tier.removeAttribute('hidden'); else tier.setAttribute('hidden','');
 
-      // หมุนลูกศรลง (ปิด) / ขึ้น (เปิด)
+      const willShow = tier.hasAttribute('hidden');
+      if (willShow) tier.removeAttribute('hidden'); else tier.setAttribute('hidden', '');
+
       const caret = btn.querySelector('.material-symbols-outlined');
       if (caret) caret.style.transform = willShow ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+  });
+
+  // Close menu by clicking outside or pressing Escape
+  document.addEventListener('click', (e) => {
+    if (slideMenu.classList.contains('active')) {
+      // If the click is not on the menu toggle and not inside the slide menu
+      if (!e.target.closest('#menuToggle') && !e.target.closest('#sideMenu')) {
+        closeMenu();
+      }
+    }
+  });
+  
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && slideMenu.classList.contains('active')) {
+      closeMenu();
     }
   });
 }
