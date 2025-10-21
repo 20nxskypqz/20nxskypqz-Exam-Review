@@ -25,7 +25,12 @@
       <h3 class="hero-title">POL1101 – การเมืองและการปกครองไทย</h3>
     </section>
 
-    <p style="text-align:center; color: var(--muted); margin: 40px 0;"><i>(รอใส่เนื้อหา...)</i></p>
+    <section class="section-card">
+      <h4 style="text-align:center; margin:-5px 0 15px 0; font-weight: bold;">ภาค 1 ความนำทั่วไป</h4>
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 1 – การเมืองการปกครอง รูปแบบ ลักษณะ และลัทธิ</h2>
+      <div class="card" id="pol-ch1-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="pol-ch1-box">Preparing…</div>
+    </section>
 
   </main>
 
@@ -34,7 +39,7 @@
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
   <script src="../script.js"></script>
   <script>
-    // ฟังก์ชัน helper เหมือน RAM1131
+    // ฟังก์ชัน helper เหมือนเดิม
     function normalizeHeadingsByFont(container){
       const paras = Array.from(container.querySelectorAll('p'));
       let seenH1 = false;
@@ -104,9 +109,8 @@
       })();
     }
 
-    // ---------- เรียกโหลดไฟล์ DOCX ของ POL1101 ----------
-    // ***** รอใส่ชื่อไฟล์และ ID ที่ถูกต้องตรงนี้ *****
-    // makeDocLoader("ชื่อไฟล์บทที่1.docx", "pol-ch1-status", "pol-ch1-box");
+    // ---------- EDITED: เรียกโหลดไฟล์ บทที่ 1 ของ POL1101 ----------
+    makeDocLoader("บทที่ 1 การเมืองการปกครอง รูปแบบ ลักษณะ และลัทธิ.docx", "pol-ch1-status", "pol-ch1-box");
 
   </script>
 </body>
