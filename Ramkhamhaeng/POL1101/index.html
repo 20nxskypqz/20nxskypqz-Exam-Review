@@ -38,6 +38,23 @@
 
     </section>
 
+    <section class="section-card">
+      <h4 style="text-align:center; margin:-5px 0 15px 0; font-weight: bold;">ภาค 2 ประวัติศาสตร์</h4>
+
+      <h2 class="align-left" style="margin:0 0 8px;">บทที่ 3 – สุโขทัย อยุธยา รัตนโกสินทร์</h2>
+      <div class="card" id="pol-ch3-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="pol-ch3-box">Preparing…</div>
+
+      <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 4 – ปฏิวัติ 24 มิถุนายน 2475</h2>
+      <div class="card" id="pol-ch4-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="pol-ch4-box">Preparing…</div>
+
+      <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 5 – กบฏ ปฏิวัติ รัฐประหาร</h2>
+      <div class="card" id="pol-ch5-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="pol-ch5-box">Preparing…</div>
+
+    </section>
+
   </main>
 
   <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
@@ -45,15 +62,10 @@
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
   <script src="../script.js"></script>
   <script>
-    // ฟังก์ชัน helper (เหมือนเดิม)
+    // ฟังก์ชัน helper เหมือนเดิม
     function normalizeHeadingsByFont(container){ /* ... code ... */ }
     function fixListSpacing(container){ /* ... code ... */ }
-    async function loadArrayBuffer(url){
-      const res = await fetch(encodeURI(url), { cache: 'no-store' });
-      // *** จุดที่มักเกิด Error คือบรรทัดนี้ ***
-      if(!res.ok) throw new Error('โหลดไฟล์ไม่ได้: ' + url + ' [' + res.status + ']');
-      return await res.arrayBuffer();
-    }
+    async function loadArrayBuffer(url){ /* ... code ... */ }
     const options = { /* ... code ... */ };
 
     function makeDocLoader(fileUrl, statusId, boxId){
@@ -65,7 +77,6 @@
       }
       (async () => {
         try{
-          // *** Path ที่สร้างขึ้นคือ "files/ชื่อไฟล์.docx" ***
           const buf = await loadArrayBuffer(`files/${fileUrl}`);
           const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
           boxEl.innerHTML = html;
@@ -73,16 +84,19 @@
           fixListSpacing(boxEl);
           statusEl.textContent = 'Done.';
         }catch(e){
-          console.error(e); // แสดง Error จริงใน Console
+          console.error(e);
           statusEl.textContent = 'Error loading document.';
           boxEl.innerHTML = '<div style="color:#c00;font-weight:700">เกิดข้อผิดพลาดในการโหลดเอกสาร</div>';
         }
       })();
     }
 
-    // *** ตรวจสอบชื่อไฟล์ตรงนี้ให้แน่ใจว่าตรงกับไฟล์จริง 100% ***
+    // ---------- EDITED: เรียกโหลดไฟล์ บทที่ 1, 2, 3, 4, 5 ----------
     makeDocLoader("บทที่ 1 การเมืองการปกครอง รูปแบบ ลักษณะ และลัทธิ.docx", "pol-ch1-status", "pol-ch1-box");
     makeDocLoader("บทที่ 2 หลักประชาธิปไตย.docx", "pol-ch2-status", "pol-ch2-box");
+    makeDocLoader("บทที่ 3 สุโขทัย อยุธยา รัตนโกสินทร์.docx", "pol-ch3-status", "pol-ch3-box");
+    makeDocLoader("บทที่ 4 ปฏิวัติ 24 มิถุนายน 2475.docx", "pol-ch4-status", "pol-ch4-box");
+    makeDocLoader("บทที่ 5 กบฏ ปฏิวัติ รัฐประหาร.docx", "pol-ch5-status", "pol-ch5-box");
 
   </script>
 </body>
