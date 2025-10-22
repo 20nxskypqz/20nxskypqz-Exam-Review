@@ -37,18 +37,23 @@
       <div class="card" id="pol-ch2-box">Preparing…</div>
 
     </section>
-    
-    </main>
+
+  </main>
 
   <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
 
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
   <script src="../script.js"></script>
   <script>
-    // ฟังก์ชัน helper เหมือนเดิม
+    // ฟังก์ชัน helper (เหมือนเดิม)
     function normalizeHeadingsByFont(container){ /* ... code ... */ }
     function fixListSpacing(container){ /* ... code ... */ }
-    async function loadArrayBuffer(url){ /* ... code ... */ }
+    async function loadArrayBuffer(url){
+      const res = await fetch(encodeURI(url), { cache: 'no-store' });
+      // *** จุดที่มักเกิด Error คือบรรทัดนี้ ***
+      if(!res.ok) throw new Error('โหลดไฟล์ไม่ได้: ' + url + ' [' + res.status + ']');
+      return await res.arrayBuffer();
+    }
     const options = { /* ... code ... */ };
 
     function makeDocLoader(fileUrl, statusId, boxId){
@@ -60,6 +65,7 @@
       }
       (async () => {
         try{
+          // *** Path ที่สร้างขึ้นคือ "files/ชื่อไฟล์.docx" ***
           const buf = await loadArrayBuffer(`files/${fileUrl}`);
           const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
           boxEl.innerHTML = html;
@@ -67,14 +73,14 @@
           fixListSpacing(boxEl);
           statusEl.textContent = 'Done.';
         }catch(e){
-          console.error(e);
+          console.error(e); // แสดง Error จริงใน Console
           statusEl.textContent = 'Error loading document.';
           boxEl.innerHTML = '<div style="color:#c00;font-weight:700">เกิดข้อผิดพลาดในการโหลดเอกสาร</div>';
         }
       })();
     }
 
-    // ---------- EDITED: เรียกโหลดไฟล์ บทที่ 1 และ บทที่ 2 ----------
+    // *** ตรวจสอบชื่อไฟล์ตรงนี้ให้แน่ใจว่าตรงกับไฟล์จริง 100% ***
     makeDocLoader("บทที่ 1 การเมืองการปกครอง รูปแบบ ลักษณะ และลัทธิ.docx", "pol-ch1-status", "pol-ch1-box");
     makeDocLoader("บทที่ 2 หลักประชาธิปไตย.docx", "pol-ch2-status", "pol-ch2-box");
 
