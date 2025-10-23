@@ -108,82 +108,44 @@
     // ฟังก์ชัน helper (เหมือนเดิม)
     function normalizeHeadingsByFont(container){ /* ... */ }
     function fixListSpacing(container){ /* ... */ }
-    async function loadArrayBuffer(url){ /* ... */ } // ใช้เวอร์ชันล่าสุดที่มี log ละเอียด
     const options = { /* ... */ };
 
-    // *** EDITED: เพิ่มฟังก์ชัน fixOrphanedListItems ***
-    function fixOrphanedListItems(container) {
-        console.log("[Fixer] Running fixOrphanedListItems...");
-        const potentialOrphans = container.querySelectorAll('p');
-        let changesMade = false;
-
-        potentialOrphans.forEach((p, index) => {
-            // สมมติฐาน: <p> ที่ควรเป็น <li> มักจะมี margin-left หรือ padding-left
-            // ค่า 36pt (ประมาณ 48px) เป็นค่าที่พบบ่อยสำหรับการเยื้องระดับแรก ลองปรับค่านี้ได้
-            const style = p.getAttribute('style') || '';
-            const indentMatch = style.match(/margin-left:\s*([\d.]+)pt/i) || style.match(/padding-left:\s*([\d.]+)pt/i) ||
-                                style.match(/margin-left:\s*([\d.]+)px/i) || style.match(/padding-left:\s*([\d.]+)px/i);
-
-            // สมมติฐาน: <p> ที่ควรเป็น <li> มักจะอยู่ติดกับ <ul> หรือ <li> ก่อนหน้า
-            const prevElement = p.previousElementSibling;
-
-            if (indentMatch && parseFloat(indentMatch[1]) > 10) { // ต้องมีการเยื้องพอสมควร
-                 // หา <ul> ที่ใกล้ที่สุดก่อนหน้า <p> นี้ หรือ <ul> ของ <li> ก่อนหน้า
-                 let targetUl = null;
-                 if (prevElement) {
-                     if (prevElement.tagName === 'UL') {
-                         targetUl = prevElement;
-                     } else if (prevElement.tagName === 'LI') {
-                         // หา <ul> ที่เป็นลูกของ <li> ก่อนหน้า
-                         targetUl = prevElement.querySelector('ul');
-                         // ถ้าไม่มี ให้ลองหา <ul> ที่เป็นพี่น้องถัดไปของ <li> ก่อนหน้า (กรณี list ต่อกัน)
-                         if (!targetUl && prevElement.nextElementSibling && prevElement.nextElementSibling.tagName === 'UL') {
-                             targetUl = prevElement.nextElementSibling;
-                         }
-                         // ถ้ายังไม่มีอีก ลองดูว่า <li> ก่อนหน้าอยู่ใน <ul> หรือเปล่า
-                         if (!targetUl && prevElement.parentElement.tagName === 'UL') {
-                             targetUl = prevElement.parentElement;
-                         }
-                     }
-                 }
-
-                 // ถ้าหา <ul> เป้าหมายเจอ หรือ <p> นี้อยู่ติดกับ <ul> ก่อนหน้า
-                 if (targetUl || (prevElement && prevElement.tagName === 'UL')) {
-                     console.log(`[Fixer] Found potential orphan: "${p.textContent.substring(0, 30)}..." with indent ${indentMatch[0]}`);
-                     const li = document.createElement('li');
-                     // ย้าย content จาก p ไป li (อาจจะต้องปรับปรุงเรื่อง style ถ้ามี)
-                     while (p.firstChild) {
-                         li.appendChild(p.firstChild);
-                     }
-                     // เอา style การเยื้องออก (เพราะ ul/li จัดการเอง)
-                     li.style.marginLeft = '';
-                     li.style.paddingLeft = '';
-
-                     if (targetUl) {
-                          // เพิ่ม li เข้าไปใน ul ที่หาเจอ
-                          targetUl.appendChild(li);
-                          p.remove(); // ลบ p เดิมทิ้ง
-                          changesMade = true;
-                          console.log(`[Fixer]   Moved to existing UL.`);
-                     } else if (prevElement && prevElement.tagName === 'UL') {
-                          // เพิ่ม li เข้าไปใน ul ก่อนหน้า
-                          prevElement.appendChild(li);
-                          p.remove(); // ลบ p เดิมทิ้ง
-                          changesMade = true;
-                          console.log(`[Fixer]   Moved to previous UL.`);
-                     } else {
-                         console.log(`[Fixer]   Could not reliably find target UL.`);
-                     }
-
-                 }
-            }
-        });
-        if (!changesMade) {
-             console.log("[Fixer] No potential orphans found or moved.");
+    async function loadArrayBuffer(url){
+      const encodedUrl = encodeURI(url);
+      console.log(`[Fetch] Attempting: ${encodedUrl}`);
+      let res;
+      try {
+        res = await fetch(encodedUrl, { cache: 'no-store' });
+        const contentType = res.headers.get("content-type");
+        console.log(`[Fetch] Status for ${encodedUrl}: ${res.status}, Type: ${contentType}`);
+        if (!res.ok) { throw new Error(`โหลดไฟล์ไม่ได้ [Status: ${res.status}]`); }
+        const isDocx = contentType && contentType.includes("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        if (!isDocx && contentType && !contentType.startsWith("application/octet-stream")) {
+             console.warn(`[Fetch] Unexpected Content-Type for ${url}: ${contentType}. Expected DOCX or octet-stream.`);
+             if (contentType && contentType.includes("text/html")) {
+                 throw new Error(`Server returned HTML instead of DOCX (Possible 404 page?)`);
+             }
         }
+        if (!res.body) {
+            console.error(`[Fetch] Response body is null or undefined for ${encodedUrl}. Cannot read data.`);
+            throw new Error(`ไม่สามารถอ่านข้อมูลไฟล์ได้ (Response body is null)`);
+        }
+        console.log(`[Fetch] Attempting to read arrayBuffer for ${encodedUrl}`);
+        const buffer = await res.arrayBuffer();
+        if (!buffer || buffer.byteLength < 50) {
+             console.error(`[Fetch] Received empty or tiny ArrayBuffer for ${encodedUrl} (${buffer?.byteLength} bytes).`);
+             throw new Error(`ได้รับข้อมูลไฟล์ไม่สมบูรณ์ (${buffer?.byteLength} bytes)`);
+        }
+        console.log(`[Fetch] Received ArrayBuffer (${buffer.byteLength} bytes) for ${encodedUrl}`);
+        return buffer;
+      } catch (error) {
+        console.error(`[Fetch] Failed for ${encodedUrl}:`, error);
+        const statusMsg = res ? ` [Status: ${res.status}]` : '';
+        throw new Error(`เกิดปัญหาในการโหลดไฟล์ ${url}${statusMsg}: ${error.message}`);
+      }
     }
 
-
+    // *** EDITED: ปรับปรุง makeDocLoader ให้ตรวจสอบ buf ก่อนเรียก Mammoth ***
     function makeDocLoader(fileUrl, statusId, boxId){
       const statusEl = document.getElementById(statusId);
       const boxEl    = document.getElementById(boxId);
@@ -197,24 +159,34 @@
         console.log(`[Loader] Starting for: ${fullFileUrl}`);
         statusEl.textContent = 'Loading...';
         boxEl.innerHTML = '<i>Loading content...</i>';
+        let buf = null; // ประกาศ buf ข้างนอก try block
         try{
-          const buf = await loadArrayBuffer(fullFileUrl);
+          // ขั้นตอนที่ 1: โหลดไฟล์ (เก็บผลลัพธ์ไว้ใน buf)
+          buf = await loadArrayBuffer(fullFileUrl);
+
+          // *** เพิ่ม: ตรวจสอบ buf อย่างเข้มงวด ก่อนเรียก Mammoth ***
+          if (!(buf instanceof ArrayBuffer) || buf.byteLength < 50) {
+            console.error(`[Loader] Invalid ArrayBuffer received for ${fullFileUrl}. Type: ${typeof buf}, Instance: ${buf instanceof ArrayBuffer}, Size: ${buf?.byteLength}`);
+            // สร้าง Error ที่ชัดเจนขึ้นสำหรับกรณีนี้
+            throw new Error(`ข้อมูลไฟล์ที่ได้รับมาไม่ถูกต้อง (ไม่ใช่ ArrayBuffer หรือขนาดเล็กเกินไป)`);
+          }
+
+          // ขั้นตอนที่ 2: แปลงด้วย Mammoth (ถ้า buf ถูกต้อง)
           console.log(`[Loader] Attempting Mammoth conversion for ${fullFileUrl}`);
           const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
 
-          boxEl.innerHTML = html; // แสดง HTML ดิบก่อน
-
-          // *** EDITED: เรียกใช้ฟังก์ชันแก้ไขหลัง Mammoth แปลงเสร็จ ***
-          console.log(`[Loader] Running post-processing for ${fullFileUrl}`);
-          normalizeHeadingsByFont(boxEl); // ทำงานเหมือนเดิม
-          fixListSpacing(boxEl); // ทำงานเหมือนเดิม
-          fixOrphanedListItems(boxEl); // *** ฟังก์ชันใหม่ที่เพิ่มเข้ามา ***
-
+          // ขั้นตอนที่ 3: แสดงผลและปรับแต่ง
+          boxEl.innerHTML = html;
+          normalizeHeadingsByFont(boxEl);
+          fixListSpacing(boxEl);
+          // อาจจะต้องเรียก fixOrphanedListItems(boxEl); ถ้าปัญหาก่อนหน้านี้ยังอยู่
           statusEl.textContent = 'Done.';
           console.log(`[Loader] Successfully loaded and rendered: ${fullFileUrl}`);
+
         } catch(e) {
           console.error(`[Loader] Failed for ${fullFileUrl}:`, e);
           statusEl.textContent = 'Error loading document.';
+          // แสดง Error message ที่ละเอียดขึ้น
           boxEl.innerHTML = `<div style="color:#c00;font-weight:700">เกิดข้อผิดพลาด: ${e.message}</div>`;
         }
       })();
