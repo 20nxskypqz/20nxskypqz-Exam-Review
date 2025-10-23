@@ -9,11 +9,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-  <!-- สไตล์หลัก (ของคุณ) -->
+  <!-- สไตล์หลักของโปรเจกต์ -->
   <link rel="stylesheet" href="../styles.css" />
+
+  <!-- สไตล์เสริมให้คงที่/แก้ย่อหน้า -->
   <style>
-    /* เสริมความทนทานเล็กน้อย กรณีไม่มี styles.css */
-    body{font-family:"Niramit",system-ui,-apple-system,Segoe UI,Roboto,Arial,"TH Sarabun New",sans-serif}
+    :root{
+      /* ล็อกฐานขนาดให้คาดเดาได้ */
+      font-size: 16px;
+    }
+    body{
+      font-family:"Niramit", system-ui, -apple-system, Segoe UI, Roboto, Arial, "TH Sarabun New", sans-serif;
+      line-height: 1.6;
+    }
+    /* scale หัวข้อให้คงที่ ไม่พองเกิน */
+    h1{font-size:clamp(1.6rem, 2.5vw, 2.0rem); line-height:1.25}
+    h2{font-size:clamp(1.35rem, 2.0vw, 1.6rem); line-height:1.3}
+    h3{font-size:clamp(1.2rem, 1.6vw, 1.35rem); line-height:1.35}
+    h4{font-size:1.05rem}
     .content{max-width:1100px;margin:0 auto;padding:16px}
     .card{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.05);padding:16px}
     .section-card{margin:24px 0}
@@ -22,14 +35,20 @@
     .status-warn{color:#f57c00;font-weight:700}
     .status-err{color:#c62828;font-weight:700}
     .status-dim{color:#666;font-weight:700}
-    /* list ให้คล้าย Word: ระดับ 1/2/3 => • / ○ / ▪ */
-    ul{margin:0 0 .75em 1.25em; list-style:disc}
-    ul ul{list-style:circle}
-    ul ul ul{list-style:square}
-    ol{margin:0 0 .75em 1.25em}
+
+    /* ---- รายการ: ใช้ padding-left แทน margin เพื่อควบคุมอินเดนท์ ---- */
+    ul, ol{ margin: 0 0 .75em 0; padding-left: 1.5em; }
+    ul ul, ol ul, ul ol, ol ol{ margin: .25em 0 .25em 0; padding-left: 1.5em; }
+
+    /* ระดับชั้น 1/2/3 เป็น • / ○ / ▪ */
+    ul{ list-style-type: disc; }
+    ul ul{ list-style-type: circle; }
+    ul ul ul{ list-style-type: square; }
+
+    /* ตารางพื้นฐาน */
     table{border-collapse:collapse;width:100%;margin:12px 0}
     th,td{border:1px solid #e0e0e0;padding:8px;vertical-align:top}
-    .small-note{font-size:.9em;color:#666;margin:6px 0 14px}
+    .small-note{font-size:.9rem;color:#666;margin:6px 0 14px}
     .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
   </style>
 </head>
@@ -50,157 +69,128 @@
 
     <section class="section-card">
       <h4 style="text-align:center; margin:-5px 0 15px 0; font-weight: bold;">ภาค 1 ความนำทั่วไป</h4>
-
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 1 – การเมืองการปกครอง รูปแบบ ลักษณะ และลัทธิ</h2>
-      <div class="card" id="pol-ch1-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch1-status">Loading document…</div>
       <div class="card" id="pol-ch1-box">Preparing…</div>
 
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 2 – หลักประชาธิปไตย</h2>
-      <div class="card" id="pol-ch2-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch2-status">Loading document…</div>
       <div class="card" id="pol-ch2-box">Preparing…</div>
     </section>
 
     <section class="section-card">
       <h4 style="text-align:center; margin:-5px 0 15px 0; font-weight: bold;">ภาค 2 ประวัติศาสตร์</h4>
-
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 3 – สุโขทัย อยุธยา รัตนโกสินทร์</h2>
-      <div class="card" id="pol-ch3-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch3-status">Loading document…</div>
       <div class="card" id="pol-ch3-box">Preparing…</div>
 
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 4 – ปฏิวัติ 24 มิถุนายน 2475</h2>
-      <div class="card" id="pol-ch4-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch4-status">Loading document…</div>
       <div class="card" id="pol-ch4-box">Preparing…</div>
 
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 5 – กบฏ ปฏิวัติ รัฐประหาร</h2>
-      <div class="card" id="pol-ch5-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch5-status">Loading document…</div>
       <div class="card" id="pol-ch5-box">Preparing…</div>
     </section>
 
     <section class="section-card">
       <h4 style="text-align:center; margin:-5px 0 15px 0; font-weight: bold;">ภาค 3 สถาบัน</h4>
-
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 6 – รัฐธรรมนูญ</h2>
-      <div class="card" id="pol-ch6-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch6-status">Loading document…</div>
       <div class="card" id="pol-ch6-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 7 – พระมหากษัตริย์</h2>
-      <div class="card" id="pol-ch7-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch7-status">Loading document…</div>
       <div class="card" id="pol-ch7-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 8 – คณะรัฐมนตรี</h2>
-      <div class="card" id="pol-ch8-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch8-status">Loading document…</div>
       <div class="card" id="pol-ch8-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 9 – รัฐสภา</h2>
-      <div class="card" id="pol-ch9-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch9-status">Loading document…</div>
       <div class="card" id="pol-ch9-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 10 – การบัญญัติกฎหมาย</h2>
-      <div class="card" id="pol-ch10-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch10-status">Loading document…</div>
       <div class="card" id="pol-ch10-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 11 – ตุลาการ</h2>
-      <div class="card" id="pol-ch11-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch11-status">Loading document…</div>
       <div class="card" id="pol-ch11-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 12 – พรรคการเมือง</h2>
-      <div class="card" id="pol-ch12-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch12-status">Loading document…</div>
       <div class="card" id="pol-ch12-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 13 – กลุ่มผลประโยชน์</h2>
-      <div class="card" id="pol-ch13-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch13-status">Loading document…</div>
       <div class="card" id="pol-ch13-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 14 – การเลือกตั้ง</h2>
-      <div class="card" id="pol-ch14-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch14-status">Loading document…</div>
       <div class="card" id="pol-ch14-box">Preparing…</div>
     </section>
 
     <section class="section-card">
       <h4 style="text-align:center; margin:-5px 0 15px 0; font-weight: bold;">ภาค 4 ระเบียบบริหารราชการแผ่นดิน</h4>
-
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 15 – การบริหารราชการ</h2>
-      <div class="card" id="pol-ch15-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch15-status">Loading document…</div>
       <div class="card" id="pol-ch15-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 16 – ระเบียบบริหารราชการส่วนกลาง</h2>
-      <div class="card" id="pol-ch16-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch16-status">Loading document…</div>
       <div class="card" id="pol-ch16-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 17 – การปกครองส่วนภูมิภาค</h2>
-      <div class="card" id="pol-ch17-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch17-status">Loading document…</div>
       <div class="card" id="pol-ch17-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 18 – การปกครองส่วนท้องถิ่น (ตอนที่ 1)</h2>
-      <div class="card" id="pol-ch18-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch18-status">Loading document…</div>
       <div class="card" id="pol-ch18-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 19 – การปกครองส่วนท้องถิ่น (ตอนที่ 2)</h2>
-      <div class="card" id="pol-ch19-status" class="status-dim">Loading document…</div>
+      <div class="card status-dim" id="pol-ch19-status">Loading document…</div>
       <div class="card" id="pol-ch19-box">Preparing…</div>
     </section>
   </main>
 
   <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
 
-  <!-- Mammoth: ใช้ CDN; หากเปิดแบบออฟไลน์/ถูกบล็อก ให้ดาวน์โหลดไฟล์มาไว้ข้างๆ และเปลี่ยน src เป็น ./mammoth.browser.min.js -->
+  <!-- Mammoth: ถ้าเปิดแบบออฟไลน์ ให้ดาวน์โหลดไฟล์มาไว้ข้างๆ และแก้เป็น ./mammoth.browser.min.js -->
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
   <!-- <script src="./mammoth.browser.min.js"></script> -->
 
-  <!-- สคริปต์รวมของคุณ (ถ้าต้องใช้ data-include เป็นต้น) -->
+  <!-- สคริปต์รวมของโปรเจกต์ (ถ้าใช้ data-include) -->
   <script src="../script.js"></script>
 
   <script>
-    /***********************
-     * ยูทิลิตี้ / สถานะ
-     ***********************/
+    /*************** สถานะเล็ก ๆ ***************/
     function setStatus(el, text, cls){
       if(!el) return;
       el.textContent = text;
       el.classList.remove('status-ok','status-warn','status-err','status-dim');
       if (cls) el.classList.add(cls);
     }
-
     function humanFileSize(bytes) {
       if (isNaN(bytes)) return "?";
-      const thresh = 1024;
-      if (Math.abs(bytes) < thresh) return bytes + ' B';
-      const units = ['KB','MB','GB','TB'];
-      let u = -1;
-      do { bytes /= thresh; ++u; } while (Math.abs(bytes) >= thresh && u < units.length - 1);
-      return bytes.toFixed(1)+' '+units[u];
+      const k=1024; if (Math.abs(bytes)<k) return bytes+' B';
+      const u=['KB','MB','GB']; let i=-1; do{bytes/=k;++i}while(Math.abs(bytes)>=k && i<u.length-1);
+      return bytes.toFixed(1)+' '+u[i];
     }
 
-    /***********************
-     * โหลดไฟล์ .docx เป็น ArrayBuffer (พร้อมเช็ก error)
-     ***********************/
+    /*************** โหลดไฟล์ .docx ***************/
     async function loadArrayBuffer(url){
       console.log(`[Fetch] GET ${url}`);
-      // กัน cache ค้างตอนรีเฟรช
-      const res = await fetch(url + (url.includes('?') ? '&' : '?') + '_ts=' + Date.now(), {
-        method: 'GET',
-        cache: 'no-store'
-      });
-      if(!res.ok){
-        throw new Error(`HTTP ${res.status} – โหลดไม่ได้: ${url}`);
-      }
+      const res = await fetch(url + (url.includes('?')?'&':'?') + '_ts=' + Date.now(), { cache:'no-store' });
+      if(!res.ok) throw new Error(`HTTP ${res.status} – โหลดไม่ได้: ${url}`);
       const buf = await res.arrayBuffer();
       console.log(`[Fetch] Done ${url} size=${humanFileSize(buf.byteLength)}`);
       return buf;
     }
 
-    /***********************
-     * ปรับหัวข้อที่ถูกแปลงออกมาเป็น <p><strong>หัวข้อ</strong></p> ให้เป็น <h3>
-     ***********************/
+    /*************** ปิด/ควบคุมการโปรโมตหัวข้อ ***************/
+    const headingAutoPromoteEnabled = false; // ปิดไว้ก่อนเพื่อกัน “ตัวใหญ่”
     function normalizeHeadingsByStrong(container){
-      if(!container) return;
+      if(!headingAutoPromoteEnabled || !container) return;
+      // ถ้าจะเปิด ให้เข้มงวด: ต้อง match คำขึ้นต้นเป็น "บทที่/ภาคที่" เท่านั้น
+      const re = /^(บทที่|ภาค)\s*\d+/;
       const paras = Array.from(container.querySelectorAll('p'));
       let changed = 0;
       paras.forEach(p=>{
         const onlyChild = p.childNodes.length === 1 && p.firstElementChild && p.firstElementChild.tagName === 'STRONG';
         if(onlyChild){
           const text = p.textContent.trim();
-          if(text && text.length <= 120){ // heuristic หัวข้อ
+          if(re.test(text) && text.length<=80){
             const h = document.createElement('h3');
             h.textContent = text;
             p.replaceWith(h);
@@ -208,104 +198,108 @@
           }
         }
       });
-      console.log(`[Normalize] promote <p><strong>..</strong></p> -> <h3>: ${changed} changed`);
+      console.log(`[Normalize] promote -> <h3>: ${changed} changed`);
     }
 
-    /***********************
-     * รวม <p> bullet ปลอม => <ul><li> และรองรับระดับชั้นง่ายๆ
-     ***********************/
+    /*************** รวมบูลเล็ตปลอม => <ul><li> (คง inline formatting) ***************/
     function normalizeLists(root){
       if(!root) return;
       console.log("[Normalize] Running normalizeLists...");
-      // สัญลักษณ์ bullet ที่พบได้บ่อย รวม hyphen/dash
+      // bullet ที่มักเจอ + dash ต่าง ๆ
       const bulletRegex = /^([•◦○▪■\-–—])\s+/;
-      // ระดับชั้นง่ายๆ โดยอาศัย margin-left/indent ที่ mammoth อาจใส่มาเป็น style
-      const getLevel = (el) => {
-        let ml = 0;
+
+      // ประเมินระดับจาก style="margin-left:..", &nbsp;/space หรือแท็บ
+      const unitToPx = (val, unit) => {
+        const dpi = 96;
+        switch(unit){
+          case 'px': return val;
+          case 'pt': return val * (96/72);
+          case 'cm': return val * (dpi/2.54);
+          case 'mm': return val * (dpi/25.4);
+          case 'in': return val * dpi;
+          default: return val;
+        }
+      };
+      const getLevelByStyle = (el) => {
         const style = (el.getAttribute && el.getAttribute('style')) || '';
         const m = /margin-left:\s*([\d\.]+)(cm|mm|in|px|pt)/i.exec(style);
-        if(m){
-          const v = parseFloat(m[1]);
-          const unit = m[2].toLowerCase();
-          // แปลงเป็น px แบบหยาบๆ
-          const toPx = (val, unit) => {
-            const dpi = 96;
-            switch(unit){
-              case 'px': return val;
-              case 'pt': return val * (96/72);
-              case 'cm': return val * (dpi/2.54);
-              case 'mm': return val * (dpi/25.4);
-              case 'in': return val * dpi;
-              default: return val;
-            }
-          };
-          ml = toPx(v, unit);
-        }
-        // ทุก ๆ ~24px ถือเป็น 1 ระดับ
-        return Math.min(3, Math.max(0, Math.round(ml/24)));
+        if(!m) return null;
+        const px = unitToPx(parseFloat(m[1]), (m[2]||'px').toLowerCase());
+        return Math.min(3, Math.max(0, Math.round(px/24))); // ทุก ๆ ~24px = 1 level
+      };
+      const getLevelBySpaces = (text) => {
+        const mNbsp = text.match(/^(?:\u00a0|\s){1,}/); // เริ่มบรรทัดเป็นช่องว่าง/nbsp
+        if(!mNbsp) return 0;
+        const n = mNbsp[0].length;
+        return Math.min(3, Math.floor(n/2)); // 2 ช่องต่อ 1 level (หยาบ ๆ)
       };
 
       const paragraphs = Array.from(root.querySelectorAll("p"));
-      let currentStack = []; // เก็บ ul ตามระดับ [ul0, ul1, ul2]
+      let currentStack = []; // เก็บ ul ตาม level
       let changesMade = 0;
 
-      const closeDeeper = (level) => {
+      const closeTo = (level) => {
         while(currentStack.length > level+1){
           currentStack.pop();
         }
       };
-
-      paragraphs.forEach(p => {
-        const text = p.textContent || "";
-        const match = bulletRegex.exec(text);
-        if(match){
-          const level = getLevel(p);
-          // เตรียม UL ตามระดับ
-          if (!currentStack[level]){
-            // ต้องปิดระดับที่ลึกกว่าก่อน
-            closeDeeper(level-1);
-            const ul = document.createElement('ul');
-            // ใส่ list-style ให้ตามระดับ
-            if(level === 0) ul.style.listStyleType = 'disc';
-            if(level === 1) ul.style.listStyleType = 'circle';
-            if(level === 2) ul.style.listStyleType = 'square';
-            // แทรก ul ก่อน p
-            p.parentNode.insertBefore(ul, p);
-            currentStack[level] = ul;
-          }
-          // ถ้ามี ul ระดับลึกกว่า แต่เราเด้งขึ้น ให้ปิด
-          closeDeeper(level);
-
-          const li = document.createElement('li');
-          li.textContent = text.replace(bulletRegex, "").trim();
-          currentStack[level].appendChild(li);
-          p.remove();
-          changesMade++;
-        }else{
-          // ไม่ใช่ bullet — reset stack
-          currentStack = [];
+      const ensureUlForLevel = (refNode, level) => {
+        if(!currentStack[level]){
+          closeTo(level-1);
+          const ul = document.createElement('ul');
+          // กำหนด list-style ตามระดับ (ซ้ำกับ CSS เพื่อให้แน่ใจ)
+          ul.style.listStyleType = (level===0?'disc':(level===1?'circle':'square'));
+          refNode.parentNode.insertBefore(ul, refNode);
+          currentStack[level] = ul;
         }
+      };
+
+      paragraphs.forEach(p=>{
+        const raw = p.textContent || "";
+        const match = bulletRegex.exec(raw);
+        if(!match){
+          currentStack = []; // หลุดจากรายการ
+          return;
+        }
+
+        // หาระดับ
+        let level = getLevelByStyle(p);
+        if(level === null) level = getLevelBySpaces(p.textContent);
+
+        ensureUlForLevel(p, level);
+        closeTo(level);
+
+        // สร้าง <li> โดย “ย้ายโหนดลูก” (เพื่อคง bold/italic/ลิงก์)
+        const li = document.createElement('li');
+
+        // clone childNodes แล้วตัด bullet ออกจากโหนดแรก
+        const frag = document.createDocumentFragment();
+        Array.from(p.childNodes).forEach((node, idx)=>{
+          if(idx===0 && node.nodeType===Node.TEXT_NODE){
+            const replaced = node.textContent.replace(bulletRegex,''); // ตัด bullet + เว้นวรรคแรก
+            const trimmed = replaced.replace(/^\u00a0+/, ''); // ตัด nbsp นำหน้า
+            frag.appendChild(document.createTextNode(trimmed));
+          }else{
+            frag.appendChild(node.cloneNode(true));
+          }
+        });
+        li.appendChild(frag);
+        currentStack[level].appendChild(li);
+        p.remove();
+        changesMade++;
       });
 
-      console.log(`[Normalize] Finished. Converted ${changesMade} paragraphs to list items.`);
+      console.log(`[Normalize] Lists: converted ${changesMade} paragraphs.`);
     }
 
-    /***********************
-     * เกลี่ยช่องไฟรายการ/ย่อหน้า
-     ***********************/
+    /*************** เกลี่ยช่องไฟรอบรายการ ***************/
     function fixListSpacing(container){
       if(!container) return;
-      // ตัด margin top ของ li/ul ที่ซ้อนกันมากเกิน
       container.querySelectorAll('ul,ol').forEach(list=>{
-        const cs = window.getComputedStyle(list);
-        if(parseFloat(cs.marginTop) > 20){
-          list.style.marginTop = '0.75em';
-        }
-        if(parseFloat(cs.marginBottom) > 20){
-          list.style.marginBottom = '0.75em';
-        }
+        list.style.marginTop = list.style.marginTop || '0.25em';
+        list.style.marginBottom = list.style.marginBottom || '0.75em';
       });
-      // ลบรอยประหลาด: <p> ว่างหลังลิสต์
+      // ลบ <p> ว่างที่ติดรอบลิสต์
       container.querySelectorAll('p').forEach(p=>{
         if(!p.textContent.trim() && (p.previousElementSibling?.matches('ul,ol') || p.nextElementSibling?.matches('ul,ol'))){
           p.remove();
@@ -313,79 +307,59 @@
       });
     }
 
-    /***********************
-     * ตัวเลือกการแปลงของ Mammoth
-     ***********************/
+    /*************** ตัวเลือก Mammoth ***************/
     const options = {
       styleMap: [
         "p[style-name='Title'] => h1:fresh",
         "p[style-name='Subtitle'] => h2:fresh",
-        // อนุรักษ์ <u>, <s>
         "u => u",
         "strike => s"
       ],
       includeEmbeddedStyleMap: true,
       convertImage: mammoth.images.inline(function(element) {
-        // ใส่รูปเป็น data URI (สะดวกทดสอบ)
         return element.read("base64").then(function(imageBuffer) {
           return { src: "data:" + element.contentType + ";base64," + imageBuffer };
         });
       })
     };
 
-    /***********************
-     * โหลด/แปลง/แสดง (หนึ่งบทต่อหนึ่งกล่อง)
-     ***********************/
+    /*************** โหลด-แปลง-แสดง ***************/
     function makeDocLoader(fileName, statusId, boxId){
       const statusEl = document.getElementById(statusId);
       const boxEl    = document.getElementById(boxId);
-      if (!statusEl || !boxEl) {
-        console.warn(`[Loader] Missing elements for ${fileName}`);
-        return;
-      }
+      if (!statusEl || !boxEl) return;
 
       (async () => {
-        const fullFileUrl = `files/${fileName}`;
+        const url = `files/${fileName}`;
         setStatus(statusEl, `Loading: ${fileName}`, 'status-dim');
         boxEl.innerHTML = '<span class="small-note mono">Preparing…</span>';
-
         try{
           if(!window.mammoth){
-            // แจ้งเตือนกรณี CDN ไม่โหลด (เช่น เปิดแบบ file:/// แล้วโดนบล็อก)
-            setStatus(statusEl,
-              'ไม่พบ Mammoth.js — ถ้าเปิดแบบออฟไลน์ให้ดาวน์โหลด mammoth.browser.min.js มาไว้ข้างไฟล์ แล้วแก้ <script src> เป็นแบบไฟล์โลคัล',
-              'status-err'
-            );
+            setStatus(statusEl,'ไม่พบ Mammoth.js (ตรวจสคริปต์/การบล็อก CDN)', 'status-err');
             boxEl.innerHTML = '<div class="small-note">Cannot start conversion because mammoth is not loaded.</div>';
             return;
           }
-
-          const buf = await loadArrayBuffer(fullFileUrl);
+          const buf = await loadArrayBuffer(url);
           setStatus(statusEl, `Converting (${humanFileSize(buf.byteLength)})…`, 'status-dim');
 
           const result = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
           const html   = result.value;
           const notes  = result.messages || [];
 
-          // แสดงผลดิบก่อน
           boxEl.innerHTML = html;
 
-          // Post-process
+          // Post-process (หัวข้อถูกปิดไว้, รายการ + spacing เปิดไว้)
           normalizeHeadingsByStrong(boxEl);
           normalizeLists(boxEl);
           fixListSpacing(boxEl);
 
-          // สรุปสถานะ
           if (notes.length){
-            const warn = notes.map(m => `• ${m.message}`).join('\n');
-            setStatus(statusEl, `Done with notes (${notes.length}). ดูคอนโซลสำหรับรายละเอียด`, 'status-warn');
-            console.log(`[Mammoth Notes] ${fileName}\n${warn}`);
+            setStatus(statusEl, `Done with notes (${notes.length}).`, 'status-warn');
+            console.log(`[Mammoth Notes] ${fileName}`, notes);
           }else{
             setStatus(statusEl, 'Done.', 'status-ok');
           }
-
-          console.log(`[Loader] Successfully rendered: ${fullFileUrl}`);
-        } catch(e) {
+        }catch(e){
           console.error(e);
           setStatus(statusEl, `Error: ${e.message}`, 'status-err');
           boxEl.innerHTML = `<div class="small-note">โหลด/แปลงไม่สำเร็จ: <span class="mono">${e.message}</span></div>`;
@@ -393,9 +367,7 @@
       })();
     }
 
-    /***********************
-     * เรียกโหลดทุกบท
-     ***********************/
+    /*************** เรียกทุกบท ***************/
     document.addEventListener('DOMContentLoaded', () => {
       // ภาค 1
       makeDocLoader("บทที่ 1 การเมืองการปกครอง รูปแบบ ลักษณะ และลัทธิ.docx", "pol-ch1-status", "pol-ch1-box");
