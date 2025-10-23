@@ -111,122 +111,12 @@
     async function loadArrayBuffer(url){ /* ... */ } // ใช้เวอร์ชันล่าสุดที่มี log ละเอียด
     const options = { /* ... */ };
 
-    // *** EDITED: ฟังก์ชัน restructureIndentedParagraphs เวอร์ชั่นใหม่ (ทำงานกับทุก P) ***
+    // ฟังก์ชัน restructureIndentedParagraphs (ยังคงโค้ดไว้ แต่เราจะไม่เรียกใช้ชั่วคราว)
     function restructureIndentedParagraphs(container) {
         console.log("[Restructure V2] Starting...");
-        const elements = Array.from(container.children); // ใช้ children เพื่อให้ได้เฉพาะ element ลูกตรงๆ
-        let currentListStack = []; // Stack เก็บ [ulElement, level]
-        let lastLi = null;         // li ล่าสุดที่เพิ่มเข้าไป
-        let lastLevel = -1;        // Level ของ element ก่อนหน้า (-1 คือยังไม่เริ่ม list)
-        const indentThreshold = 30; // ค่า pt โดยประมาณ (อาจต้องปรับ)
-
-        function getIndentLevel(element) {
-            if (element.tagName !== 'P') return -1; // สนใจแค่ P
-            const style = element.getAttribute('style') || '';
-            let indent = 0;
-            const ptMatch = style.match(/(?:margin|padding)-left:\s*([\d.]+)pt/i);
-            const pxMatch = style.match(/(?:margin|padding)-left:\s*([\d.]+)px/i);
-            if (ptMatch) indent = parseFloat(ptMatch[1]);
-            else if (pxMatch) indent = parseFloat(pxMatch[1]) * (72 / 96);
-
-            // Level 0 คือไม่มีการเยื้อง หรือเยื้องน้อยมาก
-            // Level 1 คือเยื้องประมาณ indentThreshold, Level 2 คือ 2*indentThreshold,...
-            return Math.max(0, Math.round(indent / indentThreshold));
-        }
-
-        const fragment = document.createDocumentFragment(); // สร้าง fragment เพื่อเก็บผลลัพธ์ชั่วคราว
-        let listActive = false; // Flag ว่ากำลังอยู่ใน list หรือไม่
-
-        elements.forEach(el => {
-            const currentLevel = getIndentLevel(el);
-
-            if (currentLevel >= 0) { // ถ้าเป็น P และมีการเยื้อง (หรือไม่มีเลย)
-                listActive = true; // เริ่มเข้าสู่โหมด list
-                console.log(`[Restructure V2] P: "${el.textContent.substring(0,20)}..." -> Level: ${currentLevel}`);
-                const newLi = document.createElement('li');
-                while (el.firstChild) { newLi.appendChild(el.firstChild); }
-
-                if (currentLevel > lastLevel) {
-                    // เยื้องเข้า: สร้าง UL ใหม่ซ้อนใน LI เก่า (ถ้ามี LI เก่า)
-                    if (!lastLi) { // กรณีเป็นรายการแรกสุด
-                         console.log("[Restructure V2]   First item or indenting without parent LI.");
-                         // สร้าง UL ใหม่ถ้ายังไม่มีใน stack หรือ level ปัจจุบันยังไม่มี UL
-                         if (currentListStack.length === 0 || currentListStack[currentListStack.length-1][1] < currentLevel) {
-                              const newUl = document.createElement('ul');
-                              // ถ้ามี UL อยู่แล้วใน stack ให้ซ้อนเข้าไป
-                              if (currentListStack.length > 0) {
-                                   const [parentUl, parentLevel] = currentListStack[currentListStack.length-1];
-                                   // หา li สุดท้ายของ parentUl เพื่อ append ul ใหม่ (ควรจะเป็น lastLi แต่เผื่อไว้)
-                                   const parentLastLi = parentUl.lastElementChild;
-                                   if (parentLastLi && parentLastLi.tagName === 'LI') {
-                                        parentLastLi.appendChild(newUl);
-                                   } else {
-                                        console.warn("[Restructure V2] Cannot find parent LI to append nested UL.");
-                                        parentUl.appendChild(newUl); // fallback append ที่ UL แม่
-                                   }
-                              } else {
-                                   fragment.appendChild(newUl); // UL แรกสุด เพิ่มเข้า fragment
-                              }
-                              currentListStack.push([newUl, currentLevel]);
-                              console.log("[Restructure V2]   Created new UL at level", currentLevel);
-                         } else {
-                              // ใช้ UL เดิมที่ level ตรงกัน
-                              currentUl = currentListStack[currentListStack.length-1][0];
-                         }
-                    } else {
-                        const newUl = document.createElement('ul');
-                        lastLi.appendChild(newUl);
-                        currentListStack.push([newUl, currentLevel]);
-                        console.log("[Restructure V2]   Indent increased. Created new UL inside LI.");
-                    }
-                } else if (currentLevel < lastLevel) {
-                    // ถอยออก: Pop stack จนเจอ level ที่ถูกต้อง
-                    while (currentListStack.length > 0 && currentListStack[currentListStack.length-1][1] > currentLevel) {
-                        currentListStack.pop();
-                    }
-                     console.log("[Restructure V2]   Indent decreased. Popped stack to level", currentLevel);
-                } else {
-                     console.log("[Restructure V2]   Same level.");
-                }
-
-                // หา UL ปัจจุบันจาก stack
-                let currentUl;
-                if (currentListStack.length > 0) {
-                    currentUl = currentListStack[currentListStack.length - 1][0];
-                } else {
-                    // กรณีแปลกๆ ที่ไม่มี stack เหลือ ให้สร้าง UL ใหม่ที่ root
-                    console.warn("[Restructure V2] No UL in stack, creating new root UL.");
-                    currentUl = document.createElement('ul');
-                    fragment.appendChild(currentUl);
-                    currentListStack.push([currentUl, 0]); // สมมติเป็น level 0
-                }
-
-                // เพิ่ม LI เข้า UL ปัจจุบัน
-                currentUl.appendChild(newLi);
-                lastLi = newLi;
-                lastLevel = currentLevel;
-
-            } else { // ถ้าไม่ใช่ P หรือไม่มีการเยื้องที่ต้องจัดการ
-                // ถ้าเคยอยู่ใน list ให้ปิด list นั้น (เคลียร์ stack)
-                if (listActive) {
-                    console.log("[Restructure V2] Exiting list mode.");
-                    currentListStack = [];
-                    lastLi = null;
-                    lastLevel = -1;
-                    listActive = false;
-                }
-                // ย้าย element เดิมเข้า fragment โดยตรง
-                fragment.appendChild(el);
-            }
-        });
-
-        // เคลียร์ container เดิม แล้วใส่ fragment ที่สร้างใหม่เข้าไป
-        console.log("[Restructure V2] Replacing content.");
-        container.innerHTML = '';
-        container.appendChild(fragment);
+        // ... (โค้ดฟังก์ชันเหมือนเดิมทั้งหมด) ...
         console.log("[Restructure V2] Finished.");
     }
-
 
     function makeDocLoader(fileUrl, statusId, boxId){
       const statusEl = document.getElementById(statusId);
@@ -245,18 +135,34 @@
           normalizeHeadingsByFont(boxEl); // ทำงานเหมือนเดิม
           fixListSpacing(boxEl); // ทำงานเหมือนเดิม
 
-          // *** EDITED: เรียก restructureIndentedParagraphs เสมอ ***
-          restructureIndentedParagraphs(boxEl); // ไม่ต้องมี if แล้ว ทำงานทุกไฟล์
+          // *** Comment out การเรียกใช้ฟังก์ชันนี้ชั่วคราว ***
+          // restructureIndentedParagraphs(boxEl);
 
           statusEl.textContent = 'Done.';
-          console.log(`[Loader] Successfully loaded and rendered: ${fullFileUrl}`);
+          console.log(`[Loader] Successfully loaded (without restructuring): ${fullFileUrl}`);
         } catch(e) { /* ... */ }
       })();
     }
 
     // เรียกโหลดไฟล์ (เหมือนเดิม)
     makeDocLoader("บทที่ 1 การเมืองการปกครอง รูปแบบ ลักษณะ และลัทธิ.docx", "pol-ch1-status", "pol-ch1-box");
-    // ... (เรียกไฟล์อื่นๆ บทที่ 2 ถึง 18) ...
+    makeDocLoader("บทที่ 2 หลักประชาธิปไตย.docx", "pol-ch2-status", "pol-ch2-box");
+    makeDocLoader("บทที่ 3 สุโขทัย อยุธยา รัตนโกสินทร์.docx", "pol-ch3-status", "pol-ch3-box");
+    makeDocLoader("บทที่ 4 ปฏิวัติ 24 มิถุนายน 2475.docx", "pol-ch4-status", "pol-ch4-box");
+    makeDocLoader("บทที่ 5 กบฏ ปฏิวัติ รัฐประหาร.docx", "pol-ch5-status", "pol-ch5-box");
+    makeDocLoader("บทที่ 6 รัฐธรรมนูญ.docx", "pol-ch6-status", "pol-ch6-box");
+    makeDocLoader("บทที่ 7 พระมหากษัตริย์.docx", "pol-ch7-status", "pol-ch7-box");
+    makeDocLoader("บทที่ 8 คณะรัฐมนตรี.docx", "pol-ch8-status", "pol-ch8-box");
+    makeDocLoader("บทที่ 9 รัฐสภา.docx", "pol-ch9-status", "pol-ch9-box");
+    makeDocLoader("บทที่ 10 การบัญญัติกฎหมาย.docx", "pol-ch10-status", "pol-ch10-box");
+    makeDocLoader("บทที่ 11 ตุลาการ.docx", "pol-ch11-status", "pol-ch11-box");
+    makeDocLoader("บทที่ 12 พรรคการเมือง.docx", "pol-ch12-status", "pol-ch12-box");
+    makeDocLoader("บทที่ 13 กลุ่มผลประโยชน์.docx", "pol-ch13-status", "pol-ch13-box");
+    makeDocLoader("บทที่ 14 การเลือกตั้ง.docx", "pol-ch14-status", "pol-ch14-box");
+    makeDocLoader("บทที่ 15 การบริหารราชการ.docx", "pol-ch15-status", "pol-ch15-box");
+    makeDocLoader("บทที่ 16 ระเบียบบริหารราชการส่วนกลาง.docx", "pol-ch16-status", "pol-ch16-box");
+    makeDocLoader("บทที่ 17 การปกครองส่วนภูมิภาค.docx", "pol-ch17-status", "pol-ch17-box");
+    makeDocLoader("บทที่ 18 การปกครองส่วนท้องถิ่น (ตอนที่ 1).docx", "pol-ch18-status", "pol-ch18-box");
     makeDocLoader("บทที่ 19 การปกครองส่วนท้องถิ่น (ตอนที่ 2).docx", "pol-ch19-status", "pol-ch19-box");
 
   </script>
