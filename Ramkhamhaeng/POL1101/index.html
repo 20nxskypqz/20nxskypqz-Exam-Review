@@ -79,6 +79,30 @@
       <div class="card" id="pol-ch14-box">Preparing…</div>
     </section>
 
+    <section class="section-card">
+        <h4 style="text-align:center; margin:-5px 0 15px 0; font-weight: bold;">ภาค 4 ระเบียบบริหารราชการแผ่นดิน</h4>
+
+        <h2 class="align-left" style="margin:0 0 8px;">บทที่ 15 – การบริหารราชการ</h2>
+        <div class="card" id="pol-ch15-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+        <div class="card" id="pol-ch15-box">Preparing…</div>
+
+        <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 16 – ระเบียบบริหารราชการส่วนกลาง</h2>
+        <div class="card" id="pol-ch16-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+        <div class="card" id="pol-ch16-box">Preparing…</div>
+
+        <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 17 – การปกครองส่วนภูมิภาค</h2>
+        <div class="card" id="pol-ch17-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+        <div class="card" id="pol-ch17-box">Preparing…</div>
+
+        <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 18 – การปกครองส่วนท้องถิ่น (ตอนที่ 1)</h2>
+        <div class="card" id="pol-ch18-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+        <div class="card" id="pol-ch18-box">Preparing…</div>
+
+        <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 19 – การปกครองส่วนท้องถิ่น (ตอนที่ 2)</h2>
+        <div class="card" id="pol-ch19-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+        <div class="card" id="pol-ch19-box">Preparing…</div>
+    </section>
+
   </main>
 
   <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
@@ -89,46 +113,9 @@
     // ฟังก์ชัน helper (เหมือนเดิม)
     function normalizeHeadingsByFont(container){ /* ... */ }
     function fixListSpacing(container){ /* ... */ }
+    async function loadArrayBuffer(url){ /* ... */ }
     const options = { /* ... */ };
 
-    // *** EDITED: ปรับปรุงการตรวจสอบ Error ใน loadArrayBuffer ***
-    async function loadArrayBuffer(url){
-      const encodedUrl = encodeURI(url);
-      console.log(`[Fetch] Attempting: ${encodedUrl}`);
-      try {
-        const res = await fetch(encodedUrl, { cache: 'no-store' });
-        const contentType = res.headers.get("content-type");
-        console.log(`[Fetch] Status for ${encodedUrl}: ${res.status}, Type: ${contentType}`);
-
-        if (!res.ok) {
-          throw new Error(`โหลดไฟล์ไม่ได้ [Status: ${res.status}]`);
-        }
-        // ตรวจสอบ Content-Type อย่างเข้มงวดมากขึ้น
-        const isDocx = contentType && contentType.includes("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-        if (!isDocx) {
-             console.warn(`[Fetch] Unexpected Content-Type for ${url}: ${contentType}. Expected DOCX.`);
-             // ถ้า GitHub Pages ส่ง 404 HTML มา มันมักจะเป็น text/html
-             if (contentType && contentType.includes("text/html")) {
-                 throw new Error(`Server trả về HTML thay vì DOCX (Có thể là trang 404?)`); // Throw error ถ้าได้ HTML กลับมา
-             }
-             // ถ้าเป็น Type อื่นที่ไม่รู้จัก ก็อาจจะลองเสี่ยงโหลดต่อ แต่มีโอกาสที่ Mammoth จะ Error สูง
-        }
-        const buffer = await res.arrayBuffer();
-        // *** เพิ่ม: ตรวจสอบขนาด Buffer ก่อน return ***
-        if (!buffer || buffer.byteLength < 50) { // เลข 50 เป็นค่าสมมติ อาจต้องปรับ
-             console.error(`[Fetch] Received empty or tiny ArrayBuffer for ${encodedUrl} (${buffer?.byteLength} bytes). File might be missing or corrupted.`);
-             throw new Error(`ได้รับข้อมูลไฟล์ไม่สมบูรณ์ (${buffer?.byteLength} bytes)`);
-        }
-        console.log(`[Fetch] Received ArrayBuffer (${buffer.byteLength} bytes) for ${encodedUrl}`);
-        return buffer;
-
-      } catch (networkError) {
-        console.error(`[Fetch] Network error for ${encodedUrl}:`, networkError);
-        throw networkError; // ส่งต่อ Error
-      }
-    }
-
-    // *** EDITED: ปรับปรุงการจัดการ Error ใน makeDocLoader ***
     function makeDocLoader(fileUrl, statusId, boxId){
       const statusEl = document.getElementById(statusId);
       const boxEl    = document.getElementById(boxId);
@@ -140,30 +127,27 @@
         const fullFileUrl = `files/${fileUrl}`;
         console.log(`[Loader] Starting for: ${fullFileUrl}`);
         try{
-          // ขั้นตอนที่ 1: โหลดไฟล์
           const buf = await loadArrayBuffer(fullFileUrl);
-
-          // ขั้นตอนที่ 2: แปลงด้วย Mammoth (ถ้า buf ถูกต้อง)
+          if (!buf || buf.byteLength < 50) {
+             console.error(`[Loader] Received empty or tiny ArrayBuffer for ${fullFileUrl} (${buf?.byteLength} bytes).`);
+             throw new Error(`ได้รับข้อมูลไฟล์ไม่สมบูรณ์ (${buf?.byteLength} bytes)`);
+          }
           console.log(`[Loader] Attempting Mammoth conversion for ${fullFileUrl}`);
           const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
-
-          // ขั้นตอนที่ 3: แสดงผลและปรับแต่ง
           boxEl.innerHTML = html;
           normalizeHeadingsByFont(boxEl);
           fixListSpacing(boxEl);
           statusEl.textContent = 'Done.';
           console.log(`[Loader] Successfully loaded and rendered: ${fullFileUrl}`);
-
-        } catch(e) { // Catch ทั้ง Error จาก fetch และ Mammoth
+        } catch(e) {
           console.error(`[Loader] Failed for ${fullFileUrl}:`, e);
           statusEl.textContent = 'Error loading document.';
-          // แสดง Error message ที่ละเอียดขึ้น
           boxEl.innerHTML = `<div style="color:#c00;font-weight:700">เกิดข้อผิดพลาด: ${e.message}</div>`;
         }
       })();
     }
 
-    // เรียกโหลดไฟล์ (เหมือนเดิม)
+    // ---------- EDITED: เรียกโหลดไฟล์ทั้งหมด ----------
     makeDocLoader("บทที่ 1 การเมืองการปกครอง รูปแบบ ลักษณะ และลัทธิ.docx", "pol-ch1-status", "pol-ch1-box");
     makeDocLoader("บทที่ 2 หลักประชาธิปไตย.docx", "pol-ch2-status", "pol-ch2-box");
     makeDocLoader("บทที่ 3 สุโขทัย อยุธยา รัตนโกสินทร์.docx", "pol-ch3-status", "pol-ch3-box");
@@ -178,6 +162,11 @@
     makeDocLoader("บทที่ 12 พรรคการเมือง.docx", "pol-ch12-status", "pol-ch12-box");
     makeDocLoader("บทที่ 13 กลุ่มผลประโยชน์.docx", "pol-ch13-status", "pol-ch13-box");
     makeDocLoader("บทที่ 14 การเลือกตั้ง.docx", "pol-ch14-status", "pol-ch14-box");
+    makeDocLoader("บทที่ 15 การบริหารราชการ.docx", "pol-ch15-status", "pol-ch15-box");
+    makeDocLoader("บทที่ 16 ระเบียบบริหารราชการส่วนกลาง.docx", "pol-ch16-status", "pol-ch16-box");
+    makeDocLoader("บทที่ 17 การปกครองส่วนภูมิภาค.docx", "pol-ch17-status", "pol-ch17-box");
+    makeDocLoader("บทที่ 18 การปกครองส่วนท้องถิ่น (ตอนที่ 1).docx", "pol-ch18-status", "pol-ch18-box");
+    makeDocLoader("บทที่ 19 การปกครองส่วนท้องถิ่น (ตอนที่ 2).docx", "pol-ch19-status", "pol-ch19-box");
 
   </script>
 </body>
