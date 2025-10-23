@@ -27,57 +27,44 @@
 
     <section class="section-card">
       <h4 style="text-align:center; margin:-5px 0 15px 0; font-weight: bold;">ภาค 1 ความนำทั่วไป</h4>
-
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 1 – การเมืองการปกครอง รูปแบบ ลักษณะ และลัทธิ</h2>
       <div class="card" id="pol-ch1-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="pol-ch1-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 2 – หลักประชาธิปไตย</h2>
       <div class="card" id="pol-ch2-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="pol-ch2-box">Preparing…</div>
-
     </section>
 
     <section class="section-card">
       <h4 style="text-align:center; margin:-5px 0 15px 0; font-weight: bold;">ภาค 2 ประวัติศาสตร์</h4>
-
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 3 – สุโขทัย อยุธยา รัตนโกสินทร์</h2>
       <div class="card" id="pol-ch3-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="pol-ch3-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 4 – ปฏิวัติ 24 มิถุนายน 2475</h2>
       <div class="card" id="pol-ch4-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="pol-ch4-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 5 – กบฏ ปฏิวัติ รัฐประหาร</h2>
       <div class="card" id="pol-ch5-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="pol-ch5-box">Preparing…</div>
-
     </section>
 
     <section class="section-card">
       <h4 style="text-align:center; margin:-5px 0 15px 0; font-weight: bold;">ภาค 3 สถาบัน</h4>
-
       <h2 class="align-left" style="margin:0 0 8px;">บทที่ 6 – รัฐธรรมนูญ</h2>
       <div class="card" id="pol-ch6-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="pol-ch6-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 7 – พระมหากษัตริย์</h2>
       <div class="card" id="pol-ch7-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="pol-ch7-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 8 – คณะรัฐมนตรี</h2>
       <div class="card" id="pol-ch8-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="pol-ch8-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 9 – รัฐสภา</h2>
       <div class="card" id="pol-ch9-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="pol-ch9-box">Preparing…</div>
-
       <h2 class="align-left" style="margin:20px 0 8px;">บทที่ 10 – การบัญญัติกฎหมาย</h2>
       <div class="card" id="pol-ch10-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
       <div class="card" id="pol-ch10-box">Preparing…</div>
-
     </section>
 
   </main>
@@ -90,8 +77,36 @@
     // ฟังก์ชัน helper (เหมือนเดิม)
     function normalizeHeadingsByFont(container){ /* ... code ... */ }
     function fixListSpacing(container){ /* ... code ... */ }
-    async function loadArrayBuffer(url){ /* ... code ... */ }
-    const options = { /* ... code ... */ };
+
+    // *** EDITED: เพิ่มการตรวจสอบ Content-Type ***
+    async function loadArrayBuffer(url){
+      const encodedUrl = encodeURI(url);
+      console.log(`Attempting to fetch: ${encodedUrl}`);
+      try {
+        const res = await fetch(encodedUrl, { cache: 'no-store' });
+        const contentType = res.headers.get("content-type");
+        console.log(`Fetch status for ${encodedUrl}: ${res.status}, Content-Type: ${contentType}`); // <-- Log Content-Type
+
+        if (!res.ok) {
+          throw new Error(`โหลดไฟล์ไม่ได้: ${url} [Status: ${res.status}]`);
+        }
+        // *** เพิ่มการตรวจสอบ ***
+        // ตรวจสอบว่า Content-Type เป็น .docx หรือไม่ (อาจต้องปรับตาม server)
+        if (!contentType || !contentType.includes("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+             console.warn(`Unexpected Content-Type for ${url}: ${contentType}`);
+             // ลองโหลดต่อไปเผื่อ server ไม่ได้ตั้ง Content-Type ถูกต้อง แต่ถ้า Mammoth error ก็จะ catch ได้
+             // หรือจะ throw Error ตรงนี้เลยก็ได้ถ้ามั่นใจว่า Content-Type ต้องถูกเสมอ
+             // throw new Error(`ไม่ใช่ไฟล์ DOCX ที่ถูกต้อง (Content-Type: ${contentType})`);
+        }
+        return await res.arrayBuffer();
+      } catch (networkError) {
+        console.error(`Network error fetching ${encodedUrl}:`, networkError);
+        throw networkError;
+      }
+    }
+    const options = {
+       styleMap: [ "p[style-name='Title'] => h1:fresh", "p[style-name='Subtitle'] => h2:fresh", "p[style-name='Heading 1'] => h1:fresh", "p[style-name='Heading 2'] => h2:fresh", "p[style-name='Heading 3'] => h3:fresh", "b => strong", "i => em" ]
+    };
 
     function makeDocLoader(fileUrl, statusId, boxId){
       const statusEl = document.getElementById(statusId);
@@ -101,22 +116,31 @@
         return;
       }
       (async () => {
+        const fullFileUrl = `files/${fileUrl}`;
+        console.log(`makeDocLoader called for: ${fullFileUrl}`);
         try{
-          const buf = await loadArrayBuffer(`files/${fileUrl}`);
+          const buf = await loadArrayBuffer(fullFileUrl);
+          // *** ตรวจสอบขนาด Buffer เบื้องต้น (ไฟล์เปล่าๆ หรือเล็กผิดปกติ?) ***
+          if (!buf || buf.byteLength < 50) { // เลข 50 เป็นแค่ตัวอย่าง ไฟล์ docx จริงควรใหญ่กว่านี้มาก
+             console.warn(`ArrayBuffer for ${fullFileUrl} seems unusually small (${buf?.byteLength} bytes).`);
+          }
           const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
           boxEl.innerHTML = html;
           normalizeHeadingsByFont(boxEl);
           fixListSpacing(boxEl);
           statusEl.textContent = 'Done.';
+          console.log(`Successfully loaded: ${fullFileUrl}`);
         }catch(e){
-          console.error(e);
+          console.error(`Error in makeDocLoader for ${fullFileUrl}:`, e);
           statusEl.textContent = 'Error loading document.';
           boxEl.innerHTML = `<div style="color:#c00;font-weight:700">เกิดข้อผิดพลาดในการโหลดเอกสาร: ${e.message}</div>`;
+          // *** เพิ่ม Log ว่า Mammoth Error เกิดขึ้น ***
+          console.warn(`Mammoth.js likely failed to process the data for ${fullFileUrl}. Check previous logs for fetch status and content-type.`);
         }
       })();
     }
 
-    // ---------- EDITED: เรียกโหลดไฟล์ทั้งหมด ----------
+    // เรียกโหลดไฟล์ (เหมือนเดิม)
     makeDocLoader("บทที่ 1 การเมืองการปกครอง รูปแบบ ลักษณะ และลัทธิ.docx", "pol-ch1-status", "pol-ch1-box");
     makeDocLoader("บทที่ 2 หลักประชาธิปไตย.docx", "pol-ch2-status", "pol-ch2-box");
     makeDocLoader("บทที่ 3 สุโขทัย อยุธยา รัตนโกสินทร์.docx", "pol-ch3-status", "pol-ch3-box");
