@@ -5,13 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>POL1101 การเมืองและการปกครองไทย — 20nxskypqz Exam Review</title>
 
-  <!-- ฟอนต์/ไอคอน (ไม่ล็อคขนาดใด ๆ ทั้งสิ้น) -->
   <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-
   <link rel="stylesheet" href="../styles.css" />
 
-  <!-- CSS: จัดย่อหน้า/ลิสต์ให้เสถียร โดยไม่แตะ font-size -->
   <style>
     body{font-family:"Niramit",system-ui,-apple-system,Segoe UI,Roboto,Arial,"TH Sarabun New",sans-serif;line-height:1.6}
     .content{max-width:1100px;margin:0 auto;padding:16px}
@@ -23,16 +20,13 @@
     .status-err{color:#c62828;font-weight:700}
     .status-dim{color:#666;font-weight:700}
 
-    /* ---- ย่อหน้า: ให้ margin ปลายบรรทัดพอดี ไม่ไปชนกับลิสต์ ---- */
-    p{margin:.4em 0 .8em; text-indent:0} /* ไม่ยุ่ง first-line indent ที่ mammoth อาจฝังไว้ใน style ของ p */
-
-    /* ---- ลิสต์: ใช้ padding-left คุมอินเดนท์ให้สม่ำเสมอ ---- */
-    ul,ol{margin:.25em 0 .75em; padding-left:1.6em}
-    ul ul,ol ul,ul ol,ol ol{margin:.2em 0 .5em; padding-left:1.6em}
-    /* ระดับ 1/2/3 = • / ○ / ▪︎ */
-    ul{list-style-type:disc}
-    ul ul{list-style-type:circle}
-    ul ul ul{list-style-type:square}
+    p{margin:.4em 0 .8em; text-indent:0}
+    /* ป้องกันสไตล์ global รีเซ็ตลิสต์: ใส่คลาส g-list แล้วบังคับด้วย !important */
+    .g-list{ list-style-position: outside !important; padding-left: 1.6em !important; margin: .2em 0 .6em 0 !important; }
+    .g-list ul{ padding-left: 1.6em !important; margin: .15em 0 .5em 0 !important; }
+    .g-list{ list-style-type: disc; }
+    .g-list.g-lv1{ list-style-type: circle; }
+    .g-list.g-lv2{ list-style-type: square; }
 
     table{border-collapse:collapse;width:100%;margin:12px 0}
     th,td{border:1px solid #e0e0e0;padding:8px;vertical-align:top}
@@ -134,14 +128,10 @@
 
   <footer class="footer full-bleed">&copy; 2025 20nxskypqz Exam Review</footer>
 
-  <!-- ถ้าเปิดแบบออฟไลน์และ CDN ไม่โหลด ให้ดาวน์โหลดไฟล์และเปลี่ยน src เป็น ./mammoth.browser.min.js -->
   <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
-  <!-- <script src="./mammoth.browser.min.js"></script> -->
-
   <script src="../script.js"></script>
 
   <script>
-    /* ---------- สถานะ/ยูทิลิตี้ ---------- */
     function setStatus(el, text, cls){
       if(!el) return;
       el.textContent = text;
@@ -155,18 +145,16 @@
       return await res.arrayBuffer();
     }
 
-    /* ---------- ไม่โปรโมตหัวข้ออัตโนมัติ (กันตัวอักษรใหญ่โดยไม่ตั้งใจ) ---------- */
-    function normalizeHeadingsByStrong(){ /* ปิดไว้ */ }
+    // ไม่โปรโมตหัวข้อ เพื่อไม่กระทบขนาด
+    function normalizeHeadingsByStrong(){}
 
-    /* ---------- แก้ "บูลเล็ตปลอม" ให้เป็นลิสต์จริง (คงสไตล์ inline) ---------- */
+    // >>> เวอร์ชันใหม่: สร้าง "ซ้อน" UL ภายใน LI ของระดับก่อนหน้าเสมอ <<<
     function normalizeLists(root){
       if(!root) return;
-      // bullet ที่พบบ่อย รวม dash
       const BULLET_RE = /^([•◦○▪■\-–—])\s+/;
-      // map สัญลักษณ์ -> ชนิด list-style (เพื่อกรณี Word ตั้งสัญลักษณ์เป็นตัวบอกเลเวล)
       const bulletStyleMap = { '•':'disc', '◦':'circle', '○':'circle', '▪':'square', '■':'square', '-':'disc', '–':'disc', '—':'disc' };
+      const symbolLevelHint = {'•':0,'-':0,'–':0,'—':0,'◦':1,'○':1,'▪':2,'■':2};
 
-      // แปลงหน่วยเป็น px (เดาหยาบ ๆ เพื่อคำนวณเลเวลจาก margin-left)
       const unitToPx = (val, unit) => {
         const dpi = 96;
         switch((unit||'').toLowerCase()){
@@ -183,59 +171,72 @@
         const m = /margin-left:\s*([\d\.]+)(cm|mm|in|px|pt)/i.exec(style);
         if(!m) return null;
         const px = unitToPx(parseFloat(m[1]), m[2]);
-        // ทุกๆ ~22-26px ถือเป็น 1 เลเวล (ตั้งที่ 24px)
         return Math.min(6, Math.max(0, Math.round(px/24)));
       };
       const getLevelByWhitespace = (text) => {
-        // นับ &nbsp;/space/แท็บ ต้นบรรทัดแบบหยาบ ๆ (2 ตัว = 1 เลเวล)
         const m = text.match(/^(?:\u00a0|\t| ){1,}/);
         if(!m) return 0;
-        const n = m[0].replace(/\t/g,'  ').length; // นับแท็บเป็น 2
+        const n = m[0].replace(/\t/g,'  ').length;
         return Math.min(6, Math.floor(n/2));
       };
 
       const paras = Array.from(root.querySelectorAll('p'));
-      let stack = []; // ul ตามเลเวล
-      let changes = 0;
+      // สแตกเก็บโครงสร้างจริง: [{ul, lastLi}]
+      const stack = [];
 
-      const closeTo = (level) => { while(stack.length > level+1) stack.pop(); };
-      const ensureUl = (refNode, level, styleHint) => {
-        if(!stack[level]){
-          closeTo(level-1);
-          const ul = document.createElement('ul');
-          if(styleHint) ul.style.listStyleType = styleHint;
-          refNode.parentNode.insertBefore(ul, refNode);
-          stack[level] = ul;
-        }
+      const createUL = (parent, level, styleType) => {
+        const ul = document.createElement('ul');
+        ul.classList.add('g-list', level===0?'':'g-lv'+level);
+        ul.style.listStyleType = styleType || (level===0?'disc':level===1?'circle':'square');
+        ul.style.paddingLeft = '1.6em';
+        ul.style.margin = '.2em 0 .6em 0';
+        if(parent) parent.appendChild(ul);
+        return ul;
       };
 
+      let converted = 0;
+
       paras.forEach(p=>{
-        // ข้าม p ว่างๆ
-        if(!p.textContent || !p.textContent.trim()){
-          stack = []; // จบลิสต์
+        const raw = p.textContent || "";
+        if(!raw.trim()){ // เว้นวรรคล้วน: ตัดสแตก
+          stack.length = 0;
           return;
         }
-
-        // ตรวจ bullet
-        const raw = p.textContent;
         const m = BULLET_RE.exec(raw);
         if(!m){
-          stack = []; // ไม่ใช่ bullet → จบลิสต์ปัจจุบัน
+          stack.length = 0; // ไม่ใช่ bullet → จบกลุ่มลิสต์
           return;
         }
 
-        // เดาเลเวล
+        // คำนวนระดับ
         let level = getLevelByStyle(p);
         if(level === null) level = getLevelByWhitespace(raw);
-        // แพทเทิร์นจากสัญลักษณ์ก็ช่วยบอกเลเวล: •(0) → ○/◦(1) → ▪/■(2)
-        const symbol = m[1];
-        const symbolLevelHint = ({'•':0,'-':0,'–':0,'—':0,'◦':1,'○':1,'▪':2,'■':2})[symbol];
-        if(symbolLevelHint != null && level < symbolLevelHint) level = symbolLevelHint;
+        const sym = m[1];
+        if(symbolLevelHint[sym] != null && level < symbolLevelHint[sym]) level = symbolLevelHint[sym];
 
-        ensureUl(p, level, bulletStyleMap[symbol]);
-        closeTo(level);
+        // ทำให้แน่ใจว่ามีระดับที่ต้องการ โดย "ซ้อน" ภายใน lastLi ของระดับก่อนหน้า
+        while(stack.length <= level){
+          if(stack.length === 0){
+            // สร้าง UL ระดับ 0 วางก่อน p
+            const ul0 = createUL(null, 0, bulletStyleMap[sym]);
+            p.parentNode.insertBefore(ul0, p);
+            stack.push({ ul: ul0, lastLi: null });
+          }else{
+            const prev = stack[stack.length-1];
+            // ต้องมี lastLi; ถ้าไม่มี ให้สร้าง li เปล่ารองรับ
+            if(!prev.lastLi){
+              prev.lastLi = document.createElement('li');
+              prev.ul.appendChild(prev.lastLi);
+            }
+            // สร้าง UL ชั้นถัดไป "ภายใน lastLi" ของระดับก่อนหน้า
+            const ulN = createUL(prev.lastLi, stack.length, bulletStyleMap[sym]);
+            stack.push({ ul: ulN, lastLi: null });
+          }
+        }
+        // ถ้ามีระดับเกินที่ต้องการ ให้ตัดทิ้ง
+        while(stack.length > level+1) stack.pop();
 
-        // ย้ายลูกทุกโหนด (clone) เข้า <li> แล้ว “ตัดสัญลักษณ์นำหน้า” ออกจากโหนด text ตัวแรก
+        // สร้าง LI จาก p (คง inline nodes)
         const li = document.createElement('li');
         const frag = document.createDocumentFragment();
         Array.from(p.childNodes).forEach((node, idx)=>{
@@ -247,37 +248,41 @@
           }
         });
         li.appendChild(frag);
-        stack[level].appendChild(li);
 
+        // ใส่ลง UL ของระดับปัจจุบัน
+        const curr = stack[level];
+        curr.ul.appendChild(li);
+        curr.lastLi = li;
+
+        // ลบ p เดิม
         p.remove();
-        changes++;
+        converted++;
       });
 
-      if(changes) {
-        // ล้าง <p> ว่างๆ รอบลิสต์
-        root.querySelectorAll('p').forEach(p=>{
-          if(!p.textContent.trim() && (p.previousElementSibling?.matches('ul,ol') || p.nextElementSibling?.matches('ul,ol'))){
-            p.remove();
+      if(converted){
+        // เก็บกวาด p ว่างแปะรอบลิสต์
+        root.querySelectorAll('p').forEach(pp=>{
+          if(!pp.textContent.trim() && (pp.previousElementSibling?.matches('ul,ol') || pp.nextElementSibling?.matches('ul,ol'))){
+            pp.remove();
           }
         });
       }
-      console.log(`[NormalizeLists] Converted ${changes} paragraphs -> list items.`);
+      console.log(`[NormalizeLists:NESTED] Converted ${converted} paragraphs -> nested list items.`);
     }
 
-    /* ---------- เกลี่ยช่องไฟรอบลิสต์ให้พอดี (ไม่แตะ font-size) ---------- */
     function fixListSpacing(container){
       if(!container) return;
       container.querySelectorAll('ul,ol').forEach(list=>{
+        if(!list.classList.contains('g-list')) return; // เราคุมเฉพาะที่เราสร้าง
         if(!list.style.marginTop) list.style.marginTop = '.2em';
-        if(!list.style.marginBottom) list.style.marginBottom = '.75em';
+        if(!list.style.marginBottom) list.style.marginBottom = '.6em';
         if(!list.style.paddingLeft) list.style.paddingLeft = '1.6em';
       });
     }
 
-    /* ---------- ตัวเลือก mammoth (เน้นคงโครงให้ตรง Word) ---------- */
     const options = {
       styleMap: [
-        "p[style-name='Title'] => p:fresh",      // ไม่โปรโมตเป็น Hx เพื่อไม่ให้ตัวใหญ่
+        "p[style-name='Title'] => p:fresh",
         "p[style-name='Subtitle'] => p:fresh",
         "u => u",
         "strike => s"
@@ -290,7 +295,6 @@
       })
     };
 
-    /* ---------- โหลด-แปลง-แสดง ---------- */
     function makeDocLoader(fileName, statusId, boxId){
       const statusEl = document.getElementById(statusId);
       const boxEl    = document.getElementById(boxId);
@@ -314,13 +318,11 @@
           const html   = result.value;
           const notes  = result.messages || [];
 
-          // แสดงผลดิบก่อน
           boxEl.innerHTML = html;
 
-          // จัดย่อหน้า/ลิสต์
-          normalizeHeadingsByStrong(boxEl); // (ปิดไว้ ไม่ทำอะไร)
-          normalizeLists(boxEl);            // <-- ตัวหลัก: รวมบูลเล็ตปลอมให้เป็นลิสต์จริง
-          fixListSpacing(boxEl);            // เกลี่ยช่องไฟรอบลิสต์
+          normalizeHeadingsByStrong(boxEl); // (ว่าง)
+          normalizeLists(boxEl);            // <-- เวอร์ชัน NESTED ใหม่
+          fixListSpacing(boxEl);
 
           if (notes.length){
             setStatus(statusEl, `Done with notes (${notes.length}).`, 'status-warn');
@@ -336,7 +338,6 @@
       })();
     }
 
-    /* ---------- เรียกทุกบท ---------- */
     document.addEventListener('DOMContentLoaded', () => {
       // ภาค 1
       makeDocLoader("บทที่ 1 การเมืองการปกครอง รูปแบบ ลักษณะ และลัทธิ.docx", "pol-ch1-status", "pol-ch1-box");
