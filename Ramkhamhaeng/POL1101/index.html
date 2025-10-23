@@ -121,13 +121,23 @@
     function makeDocLoader(fileUrl, statusId, boxId){
       const statusEl = document.getElementById(statusId);
       const boxEl    = document.getElementById(boxId);
-      if (!statusEl || !boxEl) { /* ... */ return; }
+      if (!statusEl || !boxEl) {
+        console.error(`[Loader] Element not found for ${statusId} or ${boxId}`);
+        if (statusEl) statusEl.textContent = 'Error: HTML elements missing.';
+        return;
+       }
       (async () => {
         const fullFileUrl = `files/${fileUrl}`;
-        /* ... ส่วนโหลดไฟล์ ... */
+        console.log(`[Loader] Starting for: ${fullFileUrl}`);
+        statusEl.textContent = 'Loading...';
+        boxEl.innerHTML = '<i>Loading content...</i>';
         try{
           const buf = await loadArrayBuffer(fullFileUrl);
-          /* ... ตรวจสอบ buf ... */
+          if (!(buf instanceof ArrayBuffer) || buf.byteLength < 50) {
+            console.error(`[Loader] Invalid ArrayBuffer received for ${fullFileUrl}. Type: ${typeof buf}, Instance: ${buf instanceof ArrayBuffer}, Size: ${buf?.byteLength}`);
+            throw new Error(`ข้อมูลไฟล์ที่ได้รับมาไม่ถูกต้อง (ไม่ใช่ ArrayBuffer หรือขนาดเล็กเกินไป)`);
+          }
+          console.log(`[Loader] Attempting Mammoth conversion for ${fullFileUrl}`);
           const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
           boxEl.innerHTML = html; // แสดง HTML ดิบก่อน
 
@@ -140,12 +150,20 @@
 
           statusEl.textContent = 'Done.';
           console.log(`[Loader] Successfully loaded (without restructuring): ${fullFileUrl}`);
-        } catch(e) { /* ... */ }
+        } catch(e) {
+          console.error(`[Loader] Failed for ${fullFileUrl}:`, e);
+          statusEl.textContent = 'Error loading document.';
+          boxEl.innerHTML = `<div style="color:#c00;font-weight:700">เกิดข้อผิดพลาด: ${e.message}</div>`;
+         }
       })();
     }
 
-    // เรียกโหลดไฟล์ (เหมือนเดิม)
+    // *** EDITED: ลองโหลดแค่ไฟล์เดียว ***
+    console.log("--- Loading only Chapter 1 ---");
     makeDocLoader("บทที่ 1 การเมืองการปกครอง รูปแบบ ลักษณะ และลัทธิ.docx", "pol-ch1-status", "pol-ch1-box");
+
+    // Comment out การโหลดไฟล์อื่นๆ ทั้งหมดชั่วคราว
+    /*
     makeDocLoader("บทที่ 2 หลักประชาธิปไตย.docx", "pol-ch2-status", "pol-ch2-box");
     makeDocLoader("บทที่ 3 สุโขทัย อยุธยา รัตนโกสินทร์.docx", "pol-ch3-status", "pol-ch3-box");
     makeDocLoader("บทที่ 4 ปฏิวัติ 24 มิถุนายน 2475.docx", "pol-ch4-status", "pol-ch4-box");
@@ -164,6 +182,7 @@
     makeDocLoader("บทที่ 17 การปกครองส่วนภูมิภาค.docx", "pol-ch17-status", "pol-ch17-box");
     makeDocLoader("บทที่ 18 การปกครองส่วนท้องถิ่น (ตอนที่ 1).docx", "pol-ch18-status", "pol-ch18-box");
     makeDocLoader("บทที่ 19 การปกครองส่วนท้องถิ่น (ตอนที่ 2).docx", "pol-ch19-status", "pol-ch19-box");
+    */
 
   </script>
 </body>
