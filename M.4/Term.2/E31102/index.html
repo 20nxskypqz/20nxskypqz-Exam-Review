@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>E31102 — 20nxskypqz Exam Review</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@400;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/20nxskypqz-Exam-Review/styles.css" />
+</head>
+<body>
+  <div data-include="/20nxskypqz-Exam-Review/shared/header.html"></div>
+  <div data-include="/20nxskypqz-Exam-Review/shared/side-menu.html"></div>
+
+  <main class="content">
+    <section class="hero">
+      <h1 style="margin:.2em 0 .4em;">ภาษาอังกฤษ – อ31102</h1>
+    </section>
+
+    <section class="section-card">
+      <h2 style="margin:0 0 8px;">Midterm</h2>
+      <div class="card" id="midterm-status" style="font-weight:700;color:#666;margin-bottom:8px;">Loading document…</div>
+      <div class="card" id="midterm-box">Preparing…</div>
+    </section>
+  </main>
+
+  <div data-include="/20nxskypqz-Exam-Review/shared/footer.html"></div>
+
+  <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+
+  <script src="/20nxskypqz-Exam-Review/script.js"></script>
+
+  <script>
+    (function () {
+      const midtermStatus = document.getElementById('midterm-status');
+      const midtermBox    = document.getElementById('midterm-box');
+      // path ไฟล์สำหรับ อ31102 Midterm
+      const fileUrl       = "/20nxskypqz-Exam-Review/files/m.4/term.2/อ31102_midterm.docx";
+
+      const options = {
+        styleMap: [
+          "p[style-name='Title'] => h1:fresh",
+          "p[style-name='Subtitle'] => h2:fresh",
+          "p[style-name='Heading 1'] => h1:fresh",
+          "p[style-name='Heading 2'] => h2:fresh",
+          "p[style-name='Heading 3'] => h3:fresh",
+          "b => strong",
+          "i => em"
+        ]
+      };
+
+      function fixListSpacing(container){
+        container.querySelectorAll('li').forEach(li=>{
+          li.innerHTML = li.innerHTML
+            .replace(/^(\d+)\.\s?/, (_,m)=> m + '. ')
+            .replace(/^•\s?/, '• ');
+        });
+      }
+
+      async function loadArrayBuffer(url){
+        const res = await fetch(encodeURI(url), { cache: 'no-store' });
+        if(!res.ok) throw new Error('โหลดไฟล์ไม่ได้: ' + url + ' [' + res.status + ']');
+        return await res.arrayBuffer();
+      }
+
+      (async () => {
+        try{
+          const buf = await loadArrayBuffer(fileUrl);
+          const { value: html } = await window.mammoth.convertToHtml({ arrayBuffer: buf }, options);
+          midtermBox.innerHTML = html;
+          fixListSpacing(midtermBox);
+          midtermStatus.textContent = 'Done.';
+        }catch(e){
+          console.error(e);
+          midtermStatus.textContent = 'Error loading document.';
+          midtermBox.innerHTML = '<div style="color:#c00;font-weight:700">เกิดข้อผิดพลาดในการโหลดเอกสาร</div>';
+        }
+      })();
+    })();
+  </script>
+</body>
+</html>
